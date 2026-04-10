@@ -1,3 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
     background-color: yellow;
+}
+
+.moj-test {
+    @apply bg-orange-500 p-20;
 }

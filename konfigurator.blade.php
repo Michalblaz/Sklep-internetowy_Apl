@@ -1,3 +1,7 @@
-<h1 class="bg-blue-600 text-white p-10 text-center rounded-xl shadow-2xl">
-    Tailwind działa jak należy!
-</h1>
+@extends('layouts.app')
+
+@section('content')
+
+<h1 class="text-3xl mb-6">Konfigurator</h1>
+
+@endsection
