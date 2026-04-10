@@ -1,15 +1,8 @@
-Route::get('/', function () {
-    return view('home');
-});
+<?php
 
-Route::get('/koszyk', function () {
-    return view('koszyk');
-});
+use Illuminate\Support\Facades\Route;
 
-Route::get('/profil', function () {
-    return view('profil');
-});
-
-Route::get('/konfigurator', function () {
-    return view('konfigurator');
-});
+Route::get('/', fn() => view('app'));
+Route::get('/koszyk', fn() => view('koszyk'));
+Route::get('/profil', fn() => view('profil'));
+Route::get('/konfigurator', fn() => view('konfigurator'));
