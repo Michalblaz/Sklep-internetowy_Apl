@@ -1,0 +1,13 @@
+
+
+
+        wyświetlanie produktów w danym miejscu 
+
+                            # lg:grid-cols- ile w rzędzie się pokaże 
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-10 p-10 bg-[#0f172a]">
+            @foreach($products as $product)
+                <x-product-card :product="$product" />
+            @endforeach 
+        </div>
+
