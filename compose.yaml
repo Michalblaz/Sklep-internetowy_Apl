@@ -54,7 +54,7 @@ services:
   php-cli:
     build:
       context: .
-      dockerfile: ./docker/php-cli/Dockerfile
+      dockerfile: ./php-cli/Dockerfile
     tty: true # Enables an interactive terminal
     stdin_open: true # Keeps standard input open for 'docker exec'
   postgres:
@@ -67,7 +67,7 @@ services:
           POSTGRES_USER: '${DB_USERNAME:-user}'
           POSTGRES_PASSWORD: '${DB_PASSWORD:-9f3irfsdhidw}'
       volumes:
-          - './postgresql:/var/lib/postgresql'
+          # - './postgresql:/var/lib/postgresql'
           - './seed.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
       healthcheck:
           test:
@@ -82,7 +82,6 @@ services:
           timeout: 5s
   pgadmin:
       image: dpage/pgadmin4
-      restart: unless-stopped
       ports:
       - "8888:80"
       environment:
