@@ -116,16 +116,16 @@ ALTER SEQUENCE public.addresses_id_seq OWNED BY public.addresses.id;
 
 --
 -- TOC entry 414 (class 1259 OID 20110)
--- Name: attribute_cathegory; Type: TABLE; Schema: public; Owner: postgres
+-- Name: attribute_category; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.attribute_cathegory (
+CREATE TABLE public.attribute_category (
     id integer NOT NULL,
     name character varying(100) NOT NULL
 );
 
 
-ALTER TABLE public.attribute_cathegory OWNER TO postgres;
+ALTER TABLE public.attribute_category OWNER TO postgres;
 
 --
 -- TOC entry 416 (class 1259 OID 20120)
@@ -134,7 +134,7 @@ ALTER TABLE public.attribute_cathegory OWNER TO postgres;
 
 CREATE TABLE public.attribute_values (
     id integer NOT NULL,
-    attribute_cathegory_id integer NOT NULL,
+    attribute_category_id integer NOT NULL,
     value character varying(100) NOT NULL
 );
 
@@ -188,7 +188,7 @@ ALTER SEQUENCE public.attributes_id_seq OWNER TO postgres;
 -- Name: attributes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.attributes_id_seq OWNED BY public.attribute_cathegory.id;
+ALTER SEQUENCE public.attributes_id_seq OWNED BY public.attribute_category.id;
 
 
 --
@@ -485,7 +485,7 @@ ALTER SEQUENCE public.orders_id_seq OWNED BY public.orders.id;
 CREATE TABLE public.product_attributes (
     id integer NOT NULL,
     product_id integer NOT NULL,
-    attribute_cathegory_id integer NOT NULL,
+    attribute_category_id integer NOT NULL,
     attribute_value_id integer
 );
 
@@ -749,10 +749,10 @@ ALTER TABLE ONLY public.addresses ALTER COLUMN id SET DEFAULT nextval('public.ad
 
 --
 -- TOC entry 3771 (class 2604 OID 20113)
--- Name: attribute_cathegory id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: attribute_category id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.attribute_cathegory ALTER COLUMN id SET DEFAULT nextval('public.attributes_id_seq'::regclass);
+ALTER TABLE ONLY public.attribute_category ALTER COLUMN id SET DEFAULT nextval('public.attributes_id_seq'::regclass);
 
 
 --
@@ -891,7 +891,7 @@ ALTER TABLE ONLY public.addresses
 --
 
 ALTER TABLE ONLY public.attribute_values
-    ADD CONSTRAINT attribute_values_attribute_id_value_key UNIQUE (attribute_cathegory_id, value);
+    ADD CONSTRAINT attribute_values_attribute_id_value_key UNIQUE (attribute_category_id, value);
 
 
 --
@@ -905,19 +905,19 @@ ALTER TABLE ONLY public.attribute_values
 
 --
 -- TOC entry 3810 (class 2606 OID 20118)
--- Name: attribute_cathegory attributes_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: attribute_category attributes_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.attribute_cathegory
+ALTER TABLE ONLY public.attribute_category
     ADD CONSTRAINT attributes_name_key UNIQUE (name);
 
 
 --
 -- TOC entry 3812 (class 2606 OID 20116)
--- Name: attribute_cathegory attributes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: attribute_category attributes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.attribute_cathegory
+ALTER TABLE ONLY public.attribute_category
     ADD CONSTRAINT attributes_pkey PRIMARY KEY (id);
 
 
@@ -1053,7 +1053,7 @@ ALTER TABLE ONLY public.shipping_methods
 --
 
 ALTER TABLE ONLY public.attribute_values
-    ADD CONSTRAINT unique_category_value UNIQUE (attribute_cathegory_id, value);
+    ADD CONSTRAINT unique_category_value UNIQUE (attribute_category_id, value);
 
 
 --
@@ -1097,7 +1097,7 @@ ALTER TABLE ONLY public.wishlists
 -- Name: idx_pa_attr_val; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX idx_pa_attr_val ON public.product_attributes USING btree (attribute_cathegory_id, attribute_value_id);
+CREATE INDEX idx_pa_attr_val ON public.product_attributes USING btree (attribute_category_id, attribute_value_id);
 
 
 --
@@ -1128,11 +1128,11 @@ ALTER TABLE ONLY public.addresses
 
 --
 -- TOC entry 3844 (class 2606 OID 24168)
--- Name: attribute_values attribute_values_attribute_cathegory_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: attribute_values attribute_values_attribute_category_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.attribute_values
-    ADD CONSTRAINT attribute_values_attribute_cathegory_id_fkey FOREIGN KEY (attribute_cathegory_id) REFERENCES public.attribute_cathegory(id) ON DELETE CASCADE;
+    ADD CONSTRAINT attribute_values_attribute_category_id_fkey FOREIGN KEY (attribute_category_id) REFERENCES public.attribute_category(id) ON DELETE CASCADE;
 
 
 --
@@ -1159,7 +1159,7 @@ ALTER TABLE ONLY public.cart_items
 --
 
 ALTER TABLE ONLY public.category_attributes
-    ADD CONSTRAINT category_attributes_attribute_id_fkey FOREIGN KEY (attribute_id) REFERENCES public.attribute_cathegory(id) ON DELETE CASCADE;
+    ADD CONSTRAINT category_attributes_attribute_id_fkey FOREIGN KEY (attribute_id) REFERENCES public.attribute_category(id) ON DELETE CASCADE;
 
 
 --
@@ -1218,11 +1218,11 @@ ALTER TABLE ONLY public.orders
 
 --
 -- TOC entry 3845 (class 2606 OID 24163)
--- Name: product_attributes product_attributes_attribute_cathegory_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: product_attributes product_attributes_attribute_category_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.product_attributes
-    ADD CONSTRAINT product_attributes_attribute_cathegory_id_fkey FOREIGN KEY (attribute_cathegory_id) REFERENCES public.attribute_cathegory(id) ON DELETE CASCADE;
+    ADD CONSTRAINT product_attributes_attribute_category_id_fkey FOREIGN KEY (attribute_category_id) REFERENCES public.attribute_category(id) ON DELETE CASCADE;
 
 
 --
@@ -1384,12 +1384,12 @@ GRANT ALL ON SEQUENCE public.addresses_id_seq TO service_role;
 --
 -- TOC entry 4014 (class 0 OID 0)
 -- Dependencies: 414
--- Name: TABLE attribute_cathegory; Type: ACL; Schema: public; Owner: postgres
+-- Name: TABLE attribute_category; Type: ACL; Schema: public; Owner: postgres
 --
 
-GRANT ALL ON TABLE public.attribute_cathegory TO anon;
-GRANT ALL ON TABLE public.attribute_cathegory TO authenticated;
-GRANT ALL ON TABLE public.attribute_cathegory TO service_role;
+GRANT ALL ON TABLE public.attribute_category TO anon;
+GRANT ALL ON TABLE public.attribute_category TO authenticated;
+GRANT ALL ON TABLE public.attribute_category TO service_role;
 
 
 --
