@@ -1,11 +1,46 @@
-@import 'tailwindcss';
-
+@import url('https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap');
+@import "tailwindcss";
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-bruno: 'Bruno Ace', sans-serif;
+    --color-neon-purple: #7a42b8;
+    --color-neon-blue: #4e8cff;
+    --color-text-main: #e0e0e0;
+    --color-text-muted: #9ba0aa;
+    --color-green-check: #00ff40;
+}
+
+@layer base {
+    :root {
+        --neon-purple: #7a42b8;
+        --neon-purple-glow: rgba(122, 66, 184, 0.6);
+        --neon-blue: #4e8cff;
+        --text-main: #e0e0e0;
+        --text-muted: #9ba0aa;
+        --green-check: #00ff40;
+    }
+
+    body {
+        font-family: var(--font-bruno);
+        background-color: #0b0e1e;
+        
+        /* Zaktualizowany, łagodniejszy gradient (teraz w komentarzu) */
+        background-image: radial-gradient(circle at top left, #084e4e 0%, transparent 40%),
+                          radial-gradient(circle at bottom right, #2d135c 0%, transparent 40%),
+                          linear-gradient(135deg, #0b0e1e 0%, #070912 100%);
+        
+        background-attachment: fixed;
+        min-height: 100vh;
+        color: var(--color-text-main);
+        background: radial-gradient(circle at top right, #1a1a2e, #0a0a0a);
+        min-height: 100-vh;
+    }
+
+    input, button, select, textarea {
+        font-family: var(--font-bruno);
+    }
 }

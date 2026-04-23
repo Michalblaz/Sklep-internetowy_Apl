@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Techblef</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-[#0b0e1e] text-white font-sans min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col">
 
     <header>
         <div class="flex items-center justify-between p-4 bg-black/20">
@@ -31,7 +32,7 @@
             <a href="#" class="hover:text-purple-400 transition">Polecane produkty</a>
             <a href="#" class="hover:text-purple-400 transition">Oferty promocyjne</a>
             <a href="#" class="hover:text-purple-400 transition">Kategorie</a>
-            <a href="/konfigurator" class="hover:text-purple-400 transition">Konfigurator PC</a>
+            <a href="{{ route('products.index') }}" class="hover:text-purple-400 transition">Konfigurator PC</a>
         </nav>
     </header>
 
@@ -41,7 +42,9 @@
 
     <footer class="p-10 border-t border-cyan-400/20 bg-black/10">
         <h2 class="font-bold text-lg mb-2">Informacje</h2>
-        <p class="text-gray-400">techblef@gmail.com</p>
+        <p class="text-gray-400 font-bruno">E-mail: techblef@gmail.com</p>
+        <p class="text-gray-400 font-bruno">Numer kontaktowy: +48 109247685</p>
+        <p class="text-gray-400 font-bruno">Lokalizacja: al. Tadeusza Rejtana 16C, 35-310 Rzeszów</p>
     </footer>
 
 </body>

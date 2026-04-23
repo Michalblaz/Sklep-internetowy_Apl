@@ -6,7 +6,7 @@
     </div>
 
     <div class="bg-white rounded-xl p-4 mb-6 overflow-hidden">
-        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" 
+        <img src="{{ asset('images/' . $product->image_url) }}" alt="{{ $product->name }}"
              class="w-full h-48 object-contain transition-transform duration-500 group-hover:scale-110">
     </div>
 

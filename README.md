@@ -9,6 +9,10 @@
    `docker compose up -d --build`
 4. Utworz schemat i dane startowe:
    `docker compose exec php-cli php artisan migrate --seed`
+## powershell 
+   cd laravel
+5. npm install
+6. npm run dev 
 
 ## pgAdmin
 

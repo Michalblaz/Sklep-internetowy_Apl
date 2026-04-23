@@ -2,14 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Product;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // $products = Product::all();
+        
+        $query = Product::query();
 
-        // return view('app', compact('products'));
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+        $products = $query->get();
+
+        return view('konfigurator', compact('products'));
     }
 }
