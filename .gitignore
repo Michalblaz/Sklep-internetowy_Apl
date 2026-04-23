@@ -1,1 +1,4 @@
-laravel-storage-production/
+pgadmin-data/
+.env
+psysh_history
+manual_update_check.json

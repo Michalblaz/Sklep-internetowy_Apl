@@ -9,7 +9,6 @@ set -e
 if [ ! "$(ls -A /var/www/storage)" ]; then
   echo "Initializing storage directory..."
   cp -R /var/www/storage-init/. /var/www/storage
-  chown -R www-data:www-data /var/www/storage
 fi
 
 # Remove storage-init directory
@@ -19,14 +18,14 @@ rm -rf /var/www/storage-init
 # -----------------------------------------------------------
 # Ensure the database schema is up to date.
 # -----------------------------------------------------------
-php artisan migrate --force
+# php artisan migrate --force
 
 # Clear and cache configurations
 # -----------------------------------------------------------
 # Improves performance by caching config and routes.
 # -----------------------------------------------------------
-php artisan config:cache
-php artisan route:cache
+php artisan config:clear
+php artisan route:clear
 
 # Run the default command
 exec "$@"
