@@ -10,6 +10,6 @@ class AttributeValue extends Model
 
     public function attribute()
     {
-        return $this->belongsTo(Attribute::class, 'attribute_cathegory_id');
+        return $this->belongsTo(Attribute::class, 'attribute_category_id');
     }
 }

@@ -26,15 +26,13 @@ class StoreSeeder extends Seeder
     try {
         $this->command->info('Rozpoczynam wgrywanie danych...');
         
-        // Rozbijamy zapytania, jeśli są rozdzielone średnikami (opcjonalnie)
-        // Ale przy dużych zrzutach lepiej użyć unprepared:
         DB::unprepared($sql);
         
         $this->command->info('Dane wgrane pomyślnie!');
     } catch (\Exception $e) {
         $this->command->error("Błąd podczas wgrywania danych: " . $e->getMessage());
     } finally {
-        // Zawsze przywracamy tryb origin, nawet po błędzie
+       
         DB::statement("SET session_replication_role = 'origin';");
     }
 }
