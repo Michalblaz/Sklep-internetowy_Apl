@@ -23,4 +23,13 @@ class Product extends Model
         'power_draw_w', 
         'image_url'
     ];
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
+    public function attributes() {
+    
+    return $this->belongsToMany(Attribute::class, 'product_attributes')
+                ->withPivot('value');
+    }
 }

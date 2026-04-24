@@ -3,3 +3,4 @@ pgadmin-data/
 psysh_history
 manual_update_check.json
 pgadmin4.db
+laravel-storage-production/

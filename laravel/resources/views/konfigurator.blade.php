@@ -10,22 +10,69 @@
             <div class="bg-black/40 p-5 rounded-r-2xl border-y border-r border-white/10 backdrop-blur-xl sticky top-6 -ml-4 lg:-ml-8 shadow-2xl shadow-purple-900/10">
                 <h2 class="text-neon-blue font-bruno text-sm mb-6 uppercase tracking-widest italic">Panel Filtrów</h2>
                 
-                
+                <form id="filter-form" action="{{ route('products.index') }}" method="GET" class="space-y-6">
+                    <input type="hidden" name="category_id" value="{{ $category->id }}">
+
+                    <div>
+                        <label class="text-[9px] text-text-muted uppercase mb-3 block font-bold">Marka</label>
+                        <div class="space-y-2">
+                            @foreach($brands as $brand)
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <input type="checkbox" name="brands[]" value="{{ $brand->id }}" 
+                                        class="w-3 h-3 rounded border-white/20 bg-white/5 text-neon-purple focus:ring-neon-purple">
+                                    <span class="text-[11px] text-white/60 group-hover:text-white transition">{{ $brand->brand->name }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                 @foreach($category->attributes as $attribute)
+                        <div class="mb-1 border-t border-white/5 pt-2" x-data="{ open: false }">
+                            <label class="text-[9px] text-text-muted uppercase mb-3 block font-bold tracking-widest">
+                                {{ $attribute->name }}
+                            </label>
+                            
+                            <div class="space-y-2">
+                                @foreach($attribute->values as $index => $val)
+                                    <label class="flex items-center gap-3 cursor-pointer group" 
+                                        x-show="open || {{ $index }} < 3">
+                                        <input type="checkbox" name="attrs[{{ $attribute->id }}][]" value="{{ $val->id }}" 
+                                            class="w-3 h-3 rounded border-white/20 bg-white/5 text-neon-blue focus:ring-neon-blue">
+                                        <span class="text-[11px] text-white/60 group-hover:text-white transition uppercase font-bruno">
+                                            {{ $val->value }}
+                                        </span>
+                                    </label>
+                                @endforeach
+                            </div>
+
+                            @if($attribute->values->count() > 3)
+                                <button @click="open = !open" type="button" 
+                                        class="mt-3 text-[9px] text-neon-blue hover:text-white transition uppercase font-bold flex items-center gap-1">
+                                    <span x-text="open ? '- Pokaż mniej' : '+ Pokaż więcej ({{ $attribute->values->count() - 3 }})'"></span>
+                                </button>
+                            @endif
+                        </div>
+                    @endforeach
+                     
+                </form>
             </div>
         </aside>
 
         <main class="col-span-12 lg:col-span-7 xl:col-span-8">
             <div class="flex items-center gap-4 mb-8">
-                <div class="h-[1px] flex-grow bg-gradient-to-r from-neon-blue/50 to-transparent"></div>
+                <div class="h-px grow bg-linear-to-r from-neon-blue/50 to-transparent"></div>
                 <h1 class="text-xl font-bruno text-white uppercase italic">Wybierz podzespół</h1>
-                 <span class="text-[10px] text-text-muted">Znaleziono: {{ $products->count() }}</span>
-                <div class="h-[1px] flex-grow bg-gradient-to-l from-neon-blue/50 to-transparent"></div>
+                 <span class="text-[10px] text-text-muted">Wyświetlono: {{ $products->firstItem() }}-{{ $products->lastItem() }} z {{ $products->total() }}</span>
+                <div class="h-px grow bg-linear-to-l from-neon-blue/50 to-transparent"></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10">
                 @foreach($products as $product)
                     <x-product-card :product="$product" />
                 @endforeach
+            </div>
+            <div class="mt-8 flex justify-end px-4">
+                {{ $products->links() }}
             </div>
         </main>
 
@@ -68,5 +115,12 @@
     </div>
 </div>
     
-
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js">
+   
+ document.querySelectorAll('#filter-form input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+    document.getElementById('filter-form').submit();
+    });
+});
+</script>
 @endsection

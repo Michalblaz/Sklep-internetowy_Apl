@@ -161,10 +161,8 @@ INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (1
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (114, 3, '20');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (125, 39, '300');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (140, 5, '3500');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (141, 4, '12.0');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (144, 5, '3600');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (147, 39, '220');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (155, 3, '8.0');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (164, 39, '150');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (171, 39, '200');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (173, 14, '32');
