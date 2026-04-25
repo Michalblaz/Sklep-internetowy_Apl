@@ -8,6 +8,7 @@ Route::get('/', fn() => view('app'));
 Route::get('/koszyk', fn() => view('koszyk'));
 Route::get('/profil', fn() => view('profil'));
 Route::get('/konfigurator', fn() => view('konfigurator'));
+Route::get('/produkt', fn() => view('produkt'))->name('product.show');
 Route::get('/products', [ConfiguratorController::class, 'index'])->name('products.index');
 Route::get('/log_in', [AuthController::class, 'showLoginForm'])->name('log_in');
 Route::get('/sing_in', [AuthController::class, 'showSinginForm'])->name('sing_in');
