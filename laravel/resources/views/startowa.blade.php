@@ -20,7 +20,7 @@
     }
 @endphp
 
-<x-product-card :product="$product" :discount="$discount" />
+<x-product-card-home :product="$product" :discount="$discount" />
                     </div>
                 @endforeach
             </div>
@@ -48,7 +48,7 @@
                                 $discount = round((($product->base_price - $product->promo_price) / $product->base_price) * 100);
                             }
                         @endphp
-                        <x-product-card :product="$product" :discount="$discount" />
+                       <x-product-card-home :product="$product" :discount="$discount" />
                     </div>
                 @endforeach
             </div>
@@ -104,7 +104,7 @@
     }
 @endphp
 
-<x-product-card :product="$product" :discount="$discount" class="h-full w-full" />
+<x-product-card-home :product="$product" :discount="$discount" />
                 </div>
             @endforeach
         </div>
