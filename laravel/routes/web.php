@@ -1,11 +1,10 @@
 <?php
 use App\Http\Controllers\ConfiguratorController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StartowaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-
+use App\Models\Product;
 Route::get('/', fn() => view('app'));
 Route::get('/koszyk', fn() => view('koszyk'));
 Route::get('/konfigurator', fn() => view('konfigurator'));
@@ -32,6 +31,7 @@ Route::post('/configurator/select', function (Request $request) {
 
     return redirect()->back();
 })->name('configurator.select');
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/startowa', [StartowaController::class, 'startowa'])->name('startowa');
-Route::get('/', [StartowaController::class, 'startowa']);
+Route::get('/', [StartowaController::class, 'startowa'])->name('home');
+Route::get('/produkt/{product}', function (Product $product) {
+    return view('produkt', compact('product'));
+})->name('products.show');

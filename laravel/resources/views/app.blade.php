@@ -13,12 +13,12 @@
     <header>
         <div class="flex items-center justify-between p-4 bg-black/20">
             <div class="w-15 h-15 bg-linear-to-br from-[#101321]/80 to-[#190c30]/90 border border-white/10 rounded-xl flex items-center justify-center shadow-[0_0_15px_-3px] shadow-neon-purple/50 backdrop-blur-lg">
-                <a href="/startowa">
-                    <img src="{{ asset('images/logo.png') }}"
-                        class="w-10 h-10 opacity-90 brightness-110 drop-shadow-[0_0_3px_#fff]"
-                        alt="Logo">
-                </a>
-            </div>
+   <a href="{{ route('home') }}">
+    <img src="{{ asset('images/logo.png') }}"
+         class="w-10 h-10 opacity-90 brightness-110 drop-shadow-[0_0_3px_#fff]"
+         alt="Logo">
+</a>
+</div>
 
             <input type="text"
                    placeholder="WYSZUKIWARKA"
