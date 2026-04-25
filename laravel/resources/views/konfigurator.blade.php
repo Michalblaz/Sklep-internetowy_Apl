@@ -9,18 +9,37 @@
         <aside class="col-span-12 lg:col-span-2 xl:col-span-2">
             <div class="bg-black/40 p-5 rounded-r-2xl border-y border-r border-white/10 backdrop-blur-xl sticky top-6 -ml-4 lg:-ml-8 shadow-2xl shadow-purple-900/10">
                 <h2 class="text-neon-blue font-bruno text-sm mb-6 uppercase tracking-widest italic">Panel Filtrów</h2>
-                
                 <form id="filter-form" action="{{ route('products.index') }}" method="GET" class="space-y-6">
                     <input type="hidden" name="category_id" value="{{ $category->id }}">
-
+                    <div class="mb-6 border-t border-white/5 pt-4">
+                        <label class="text-[9px] text-text-muted uppercase mb-3 block font-bold tracking-widest">Sortowanie</label>
+                        <select name="sort" class="w-full bg-black/20 border border-white/10 rounded-lg py-2 px-3 text-[11px] text-white focus:border-neon-purple outline-none cursor-pointer">
+                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Najnowsze</option>
+                            <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Cena rosnąco ↑</option>
+                            <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Cena malejąco ↓</option>
+                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nazwa A-Z</option>
+                        </select>
+                    </div>
+                       <div class="mb-6">
+                            <label class="text-[9px] text-text-muted uppercase mb-3 block font-bold tracking-widest">Cena</label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" name="min_price" value="{{ request('min_price') }}" placeholder="Od"
+                                    class="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-[11px] text-white focus:border-neon-blue focus:ring-0 outline-none transition">
+                                
+                                <div class="h-px w-4 bg-white/20"></div>
+                                
+                                <input type="number" name="max_price" value="{{ request('max_price') }}" placeholder="Do"
+                                    class="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-[11px] text-white focus:border-neon-blue focus:ring-0 outline-none transition">
+                            </div>
+                        </div>
                     <div>
                         <label class="text-[9px] text-text-muted uppercase mb-3 block font-bold">Marka</label>
                         <div class="space-y-2">
                             @foreach($brands as $brand)
                                 <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input type="checkbox" name="brands[]" value="{{ $brand->id }}" 
+                                    <input type="checkbox" name="brands[]" value="{{ $brand->id }}" {{ in_array($brand->id, request('brands', [])) ? 'checked' : '' }}
                                         class="w-3 h-3 rounded border-white/20 bg-white/5 text-neon-purple focus:ring-neon-purple">
-                                    <span class="text-[11px] text-white/60 group-hover:text-white transition">{{ $brand->brand->name }}</span>
+                                    <span class="text-[11px] text-white/60 group-hover:text-white transition"> {{ $brand->name }} </span>
                                 </label>
                             @endforeach
                         </div>
@@ -37,6 +56,7 @@
                                     <label class="flex items-center gap-3 cursor-pointer group" 
                                         x-show="open || {{ $index }} < 3">
                                         <input type="checkbox" name="attrs[{{ $attribute->id }}][]" value="{{ $val->id }}" 
+                                            {{ is_array(request()->input("attrs." . $attribute->id)) && in_array($val->id, request()->input("attrs." . $attribute->id)) ? 'checked' : '' }}
                                             class="w-3 h-3 rounded border-white/20 bg-white/5 text-neon-blue focus:ring-neon-blue">
                                         <span class="text-[11px] text-white/60 group-hover:text-white transition uppercase font-bruno">
                                             {{ $val->value }}
@@ -53,7 +73,10 @@
                             @endif
                         </div>
                     @endforeach
-                     
+                      <a href="{{ route('products.index', ['category_id' => $category->id]) }}" 
+                        class="w-full bg-neon-purple/80 hover:bg-neon-purple py-1 rounded font-bruno text-xs uppercase transition-all shadow-lg shadow-neon-purple/20">
+                        Resetuj filtry
+                    </a>
                 </form>
             </div>
         </aside>
@@ -81,32 +104,37 @@
                 <div class="text-[11px] tracking-[2px] mb-5 text-text-muted font-bruno">BUILD STATUS</div>
                 <div class="text-neon-blue text-[10px] mb-3 uppercase font-bruno">Wymagane elementy</div>
                 <ul class="space-y-2 mb-8">
-                    <a href="{{ route('products.index', ['category_id' => 1]) }}"> <x-config-item label="CPU" id="cpu-status" /> </a>
-                    <a href="{{ route('products.index', ['category_id' => 2]) }}"> <x-config-item label="GPU" id="gpu-status" /> </a>
-                    <a href="{{ route('products.index', ['category_id' => 3]) }}"> <x-config-item label="Płyta główna" id="plyta-status" /></a>
-                    <a href="{{ route('products.index', ['category_id' => 4]) }}"> <x-config-item label="Pamięć RAM" id="ram-status" /></a>
-                    <a href="{{ route('products.index', ['category_id' => 5]) }}"> <x-config-item label="Dysk" id="dysk-status" /></a>
-                    <a href="{{ route('products.index', ['category_id' => 6]) }}"> <x-config-item label="Zasilacz" id="zasilacz-status" /></a>
-                    <a href="{{ route('products.index', ['category_id' => 7]) }}"> <x-config-item label="Obudowa" id="obudowa-status" /></a>
+                   <a href="{{ route('products.index', ['category_id' => 1]) }}"> <x-config-item label="CPU" id="cpu-status" :categoryId="1" /> </a>
+                    <a href="{{ route('products.index', ['category_id' => 2]) }}"> <x-config-item label="GPU" id="gpu-status" :categoryId="2" /> </a>
+                    <a href="{{ route('products.index', ['category_id' => 3]) }}"> <x-config-item label="Płyta główna" id="plyta-status":categoryId="3" /></a>
+                    <a href="{{ route('products.index', ['category_id' => 4]) }}"> <x-config-item label="Pamięć RAM" id="ram-status":categoryId="4" /></a>
+                    <a href="{{ route('products.index', ['category_id' => 5]) }}"> <x-config-item label="Dysk" id="dysk-status" :categoryId="5"/></a>
+                    <a href="{{ route('products.index', ['category_id' => 6]) }}"> <x-config-item label="Zasilacz" id="zasilacz-status" :categoryId="6"/></a>
+                    <a href="{{ route('products.index', ['category_id' => 7]) }}"> <x-config-item label="Obudowa" id="obudowa-status" :categoryId="7"/></a>
                 </ul>
 
                 <div class="text-neon-blue text-[10px] mb-3 uppercase font-bruno">Dodatkowe elementy</div>
                 <ul class="space-y-2">
-                <a href="{{ route('products.index', ['category_id' => 8]) }}"> <x-config-item label="Myszka" id="myszka-status" /></a>
-                    <a href="{{ route('products.index', ['category_id' => 9]) }}"><x-config-item label="Klawiatura" id="klawiatura-status" /></a>
-                    <a href="{{ route('products.index', ['category_id' => 10]) }}"><x-config-item label="Słuchawki" id="sluchawki-status" /></a>
-                    <a href="{{ route('products.index', ['category_id' => 11]) }}"><x-config-item label="Głośniki" id="glosniki-status" /></a>
-                    <a href="{{ route('products.index', ['category_id' => 12]) }}"><x-config-item label="Chłodzenie CPU" id="chlodzenie-status" /></a>
-                    <a href="{{ route('products.index', ['category_id' => 13]) }}"><x-config-item label="Karty sieciowe" id="karty_sieciowe-status" /></a>
-                    <a href="{{ route('products.index', ['category_id' => 14]) }}"><x-config-item label="Monitor" id="monitor-status" /></a>
+                <a href="{{ route('products.index', ['category_id' => 8]) }}"> <x-config-item label="Myszka" id="myszka-status":categoryId="8" /></a>
+                    <a href="{{ route('products.index', ['category_id' => 9]) }}"><x-config-item label="Klawiatura" id="klawiatura-status" :categoryId="9"/></a>
+                    <a href="{{ route('products.index', ['category_id' => 10]) }}"><x-config-item label="Słuchawki" id="sluchawki-status" :categoryId="10" /></a>
+                    <a href="{{ route('products.index', ['category_id' => 11]) }}"><x-config-item label="Głośniki" id="glosniki-status" :categoryId="11" /></a>
+                    <a href="{{ route('products.index', ['category_id' => 12]) }}"><x-config-item label="Chłodzenie CPU" id="chlodzenie-status" :categoryId="12" /></a>
+                    <a href="{{ route('products.index', ['category_id' => 13]) }}"><x-config-item label="Karty sieciowe" id="karty_sieciowe-status" :categoryId="13" /></a>
+                    <a href="{{ route('products.index', ['category_id' => 14]) }}"><x-config-item label="Monitor" id="monitor-status" :categoryId="14"/></a>
                 </ul>
                     <div class="mt-auto pt-6 border-t border-white/10 space-y-3">
                     <div class="bg-white/5 p-3 rounded flex justify-between items-center">
                         <span class="text-[10px] text-text-muted uppercase">Wartość:</span>
-                        <span class="text-neon-blue font-bruno">... zł</span>
+                       <span class="text-neon-blue font-bruno text-lg">
+                            {{ collect(session()->get('configurator_build', []))->sum('price') }} zł
+                        </span>
                     </div>
                     <button class="w-full bg-neon-purple/80 hover:bg-neon-purple py-3 rounded font-bruno text-xs uppercase transition-all shadow-lg shadow-neon-purple/20">
                         KUP ZESTAW
+                    </button>
+                    <button class="w-full bg-neon-purple/80 hover:bg-neon-purple py-3 rounded font-bruno text-xs uppercase transition-all shadow-lg shadow-neon-purple/20">
+                        RESETUJ ZESTAW
                     </button>
                 </div>
             </section>
@@ -115,12 +143,33 @@
     </div>
 </div>
     
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js">
-   
- document.querySelectorAll('#filter-form input[type="checkbox"]').forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-    document.getElementById('filter-form').submit();
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"> </script>
+<script>    
+  document.addEventListener('DOMContentLoaded', function() {
+        const filterForm = document.getElementById('filter-form');
+        
+        if (filterForm) {
+            // 1. Obsługa Checkboxów i Selecta (Sortowanie)
+            filterForm.querySelectorAll('input[type="checkbox"], select').forEach(element => {
+                element.addEventListener('change', function() {
+                    console.log('Zmiana w: ' + this.name + ' -> Wysyłam formularz');
+                    filterForm.submit();
+                });
+            });
+
+            let typingTimer;
+            filterForm.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    clearTimeout(typingTimer);
+                    typingTimer = setTimeout(() => {
+                        console.log('Cena zmieniona -> Wysyłam formularz');
+                        filterForm.submit();
+                    }, 800); 
+                });
+            });
+        } else {
+            console.error('Błąd: Nie znaleziono formularza o ID #filter-form');
+        }
     });
-});
 </script>
 @endsection

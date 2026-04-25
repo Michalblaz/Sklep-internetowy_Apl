@@ -14,10 +14,15 @@
         {{ $product->name }}
     </h3>
 
-    <button class="w-full py-3 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-full transition-all duration-300 shadow-lg uppercase tracking-tighter">
-        Wybierz
-    </button>
+    <form action="{{ route('configurator.select') }}" method="POST">
+        @csrf
+        <input type="hidden" name="product_id" value="{{ $product->id }}">
+        <input type="hidden" name="category_id" value="{{ $product->category_id }}">
+        <input type="hidden" name="price" value="{{ $product->base_price }}">
+        <input type="hidden" name="name" value="{{ $product->name }}">
+
+        <button type="submit" class="w-full py-3 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-full transition-all duration-300 shadow-lg uppercase tracking-tighter">
+            Wybierz
+        </button>
+    </form>
 </div>
-
-
-    

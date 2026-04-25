@@ -13,9 +13,9 @@
     <div class="w-full max-w-3xl p-8 flex flex-col items-center">
         
         <h1 class="font-sci-fi text-8xl font-bold mb-12 tracking-widest text-center
-           bg-gradient-to-r from-[#ff4d4d] via-[#888888] to-[#00aaff] 
+           bg-linear-to-r from-[#ff4d4d] via-[#888888] to-[#00aaff] 
            bg-clip-text text-transparent">
-            SING IN
+            SIGN IN
         </h1>
 
         <form class="w-full flex flex-col gap-6 -ml-30" action="#" method="POST">
@@ -54,7 +54,7 @@
             <div class="flex justify-center gap-6 mt-10 ml-40">
                 <button type="submit" 
                         class="font-sci-fi text-white text-lg bg-purple-900/40 border-2 border-purple-500/50 rounded-xl 
-                   px-10 py-4  min-w-[180px] shadow-[0_0_25px_rgba(168,85,247,0.5)] 
+                   px-10 py-4  min-w-45 shadow-[0_0_25px_rgba(168,85,247,0.5)] 
                    hover:bg-purple-600/60 hover:shadow-[0_0_35px_rgba(168,85,247,0.8)] 
                    transition-all duration-300 uppercase tracking-widest">
                         UTWÓRZ KONTO
@@ -64,7 +64,7 @@
                 <a href="/log_in" 
                     class="font-sci-fi text-white text-center text-sm bg-purple-900/40 border-2 border-purple-500/50 rounded-xl 
                         px-10 py-4 
-                        min-w-[180px]
+                        min-w-45
                         shadow-[0_0_25px_rgba(168,85,247,0.5)] 
                         hover:bg-purple-600/60 hover:shadow-[0_0_35px_rgba(168,85,247,0.8)] 
                         transition-all duration-300 flex items-center justify-center uppercase tracking-tighter">
