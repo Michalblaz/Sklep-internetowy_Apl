@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Techblef</title>
     <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
-    
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen flex flex-col">
@@ -13,9 +13,9 @@
     <header>
         <div class="flex items-center justify-between p-4 bg-black/20">
             <div class="w-15 h-15 bg-linear-to-br from-[#101321]/80 to-[#190c30]/90 border border-white/10 rounded-xl flex items-center justify-center shadow-[0_0_15px_-3px] shadow-neon-purple/50 backdrop-blur-lg">
-                <a href="/">
-                    <img src="{{ asset('images/logo.png') }}" 
-                        class="w-10 h-10 opacity-90 brightness-110 drop-shadow-[0_0_3px_#fff]" 
+                <a href="/startowa">
+                    <img src="{{ asset('images/logo.png') }}"
+                        class="w-10 h-10 opacity-90 brightness-110 drop-shadow-[0_0_3px_#fff]"
                         alt="Logo">
                 </a>
             </div>
