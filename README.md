@@ -2,7 +2,7 @@
 
 
 ## Szybki start
-
+0 . zainstalowac composera w folderze laravel , docker compose run --rm php-cli bash
 1. Skopiuj `./.env.example` do `./.env`.
 2. Skopiuj `./laravel/.env.example` do `./laravel/.env`.
 3. Uruchom kontenery:
@@ -27,3 +27,9 @@ Dodaj serwer w pgAdmin z ustawieniami:
 - Database: `app`
 - Username: `user`
 - Password: `9f3irfsdhidw`
+
+
+# wejsice 
+cd laravel
+docker compose up -d
+npm run dev

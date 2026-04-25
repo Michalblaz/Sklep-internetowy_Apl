@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Warstwa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 95 95" style="enable-background:new 0 0 95 95;" xml:space="preserve">
+<style type="text/css">
+	.st0{display:none;}
+	.st1{display:inline;fill:none;stroke:#4F4F4F;stroke-width:1.2536;stroke-linecap:round;stroke-linejoin:round;}
+	.st2{fill:none;stroke:#4F4F4F;stroke-width:1.2536;stroke-linecap:round;stroke-linejoin:round;}
+</style>
+<g id="Warstwa_1_1_" class="st0">
+	<path class="st1" d="M19.4,30.8c0.2-0.4,0.8-2.1,2.5-3c2.6-1.4,5.2,0,5.4,0.2c5.1,2.5,10.1,5.1,15.2,7.6c1.1,0.6,1.9,1.7,1.9,3V45
+		c0,0.8-0.3,1.6-0.8,2.3L41,50.2c-0.4,0.5-0.4,1.2,0.1,1.6l2.2,1.9c0.7,0.6,1.1,1.5,1.1,2.5V65c0,3.9-4,6.6-7.6,5.1L21.7,64
+		c-0.4-0.1-1.5-0.6-2.1-1.9c-1-1.9-0.2-3.6-0.2-3.9"/>
+	<line class="st1" x1="30.3" y1="46.9" x2="40.7" y2="50.9"/>
+	<path class="st1" d="M52.7,71.9V37.4c0-1.2,0.7-2.3,1.9-2.7l14.2-5.3c4.5-1.7,9.2,1.6,9.2,6.3V58c0,2.4-1.4,4.7-3.6,5.8L55,73.3
+		C53.9,73.7,52.7,73,52.7,71.9z"/>
+</g>
+<g>
+	<path class="st2" d="M68.1,59V13.3c0-4.5-3.5-8.1-8.1-8.1H11.1C6.7,5.2,3,8.7,3,13.3v64c0,4.5,3.5,8.1,8.1,8.1H32"/>
+	<polyline class="st2" points="40.1,71.4 61.9,88.5 92.3,52.3 	"/>
+	<line class="st2" x1="55.1" y1="25.1" x2="15.6" y2="25.1"/>
+	<line class="st2" x1="55.1" y1="39.4" x2="15.6" y2="39.4"/>
+	<line class="st2" x1="55.1" y1="52.3" x2="15.6" y2="52.3"/>
+	<line class="st2" x1="31.6" y1="65.9" x2="15.6" y2="65.9"/>
+	<path class="st2" d="M68.1,23.3v-10c0-4.5-3.5-8.1-8.1-8.1h-7.2h-6.5H11.1C6.7,5.2,3,8.7,3,13.3v45.1V73"/>
+	<path class="st2" d="M26,5.2H11.1C6.7,5.2,3,8.7,3,13.3v21.8"/>
+</g>
+</svg>

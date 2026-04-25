@@ -66,50 +66,50 @@ services:
       postgres:
         condition: service_healthy
   postgres:
-      image: 'postgres:18-alpine'
-      ports:
-          - '${FORWARD_DB_PORT:-5432}:5432'
-      environment:
-          PGPASSWORD: '${DB_PASSWORD:-9f3irfsdhidw}'
-          POSTGRES_DB: '${DB_DATABASE:-app}'
-          POSTGRES_USER: '${DB_USERNAME:-user}'
-          POSTGRES_PASSWORD: '${DB_PASSWORD:-9f3irfsdhidw}'
-      volumes:
-          - postgres-data:/var/lib/postgresql/data
-      healthcheck:
-          test:
-              - CMD
-              - pg_isready
-              - '-q'
-              - '-d'
-              - '${DB_DATABASE}'
-              - '-U'
-              - '${DB_USERNAME}'
-          retries: 3
-          timeout: 5s
+    image: "postgres:18-alpine"
+    ports:
+      - "${FORWARD_DB_PORT:-5432}:5432"
+    environment:
+      PGPASSWORD: "${DB_PASSWORD:-9f3irfsdhidw}"
+      POSTGRES_DB: "${DB_DATABASE:-app}"
+      POSTGRES_USER: "${DB_USERNAME:-user}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD:-9f3irfsdhidw}"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - "-q"
+        - "-d"
+        - "${DB_DATABASE}"
+        - "-U"
+        - "${DB_USERNAME}"
+      retries: 3
+      timeout: 5s
   pgadmin:
-      image: dpage/pgadmin4
-      user: root
-      ports:
+    image: dpage/pgadmin4
+    user: root
+    ports:
       - "8888:80"
-      environment:
-          PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
-          PGADMIN_DEFAULT_PASSWORD: strong-password
-      volumes:
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
+      PGADMIN_DEFAULT_PASSWORD: strong-password
+    volumes:
       - ./pgadmin-data:/var/lib/pgadmin
   redis:
-      image: redis:alpine
-      restart: unless-stopped # Automatically restart unless the service is explicitly stopped
-      # Health check for Redis
-      # -----------------------------------------------------------
-      # Checks if Redis is responding to the 'PING' command.
-      # This ensures that the service is not only running but also operational.
-      # -----------------------------------------------------------
-      healthcheck:
-          test: ["CMD", "redis-cli", "ping"]
-          interval: 10s
-          timeout: 5s
-          retries: 3
+    image: redis:alpine
+    restart: unless-stopped # Automatically restart unless the service is explicitly stopped
+    # Health check for Redis
+    # -----------------------------------------------------------
+    # Checks if Redis is responding to the 'PING' command.
+    # This ensures that the service is not only running but also operational.
+    # -----------------------------------------------------------
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
   postgres-data:
