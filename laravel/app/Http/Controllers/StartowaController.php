@@ -8,18 +8,30 @@ use Illuminate\Http\Request;
 
 class StartowaController extends Controller
 {
-    public function startowa()
-    {
-        $products = Product::whereNull('promo_price')->take(10)->get();
+    public function startowa(Request $request)
+{
+    $selectedCategory = $request->query('category');
 
-        $promo_products = Product::whereNotNull('promo_price')
-            ->whereColumn('promo_price', '<', 'base_price')
-            ->get();
+    $products = Product::whereNull('promo_price')->take(10)->get();
 
-        $categories = Category::all();
+    $promo_products = Product::whereNotNull('promo_price')
+        ->whereColumn('promo_price', '<', 'base_price')
+        ->get();
 
-        $all_products = Product::paginate(80);
+    $categories = Category::all();
 
-        return view('startowa', compact('products', 'promo_products', 'categories', 'all_products'));
-    }
+    $all_products = Product::when($selectedCategory, function ($query) use ($selectedCategory) {
+        $query->where('category_id', $selectedCategory);
+    })
+    ->paginate(80)
+    ->withQueryString();
+
+    return view('startowa', compact(
+        'products',
+        'promo_products',
+        'categories',
+        'all_products',
+        'selectedCategory'
+    ));
+}
 }
