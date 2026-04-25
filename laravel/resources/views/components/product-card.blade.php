@@ -1,9 +1,18 @@
-@props(['product'])
+@props(['product', 'discount' => 0])
+
 <div class="relative group bg-[#1a202c] border border-gray-700 rounded-2xl p-4 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)]">
-    
+
     <div class="absolute top-3 left-3 z-10 bg-green-500 text-black font-bold px-4 py-1 rounded-full text-sm shadow-[0_0_10px_rgba(34,197,94,0.5)]">
-        {{ number_format($product->base_price, 0, ',', ' ') }} zł
+        {{ number_format($product->promo_price ?? $product->base_price, 0, ',', ' ') }} zł
     </div>
+
+    @if($discount > 0)
+    <div class="absolute top-3 right-3 z-20">
+        <div class="bg-red-600 text-white font-bold px-4 py-1 rounded-full text-sm shadow-[0_0_15px_rgba(220,38,38,0.5)] font-bruno">
+            -{{ $discount }}%
+        </div>
+    </div>
+    @endif
 
     <div class="bg-white rounded-xl p-4 mb-6 overflow-hidden">
         <img src="{{ asset('images/' . $product->image_url) }}" alt="{{ $product->name }}"
