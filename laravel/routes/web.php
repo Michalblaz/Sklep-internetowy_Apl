@@ -2,6 +2,7 @@
 use App\Http\Controllers\ConfiguratorController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StartowaController;
+use App\Http\Controllers\WyszukajWitrynaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -12,6 +13,7 @@ Route::get('/produkt', fn() => view('produkt'))->name('product.show');
 Route::get('/products', [ConfiguratorController::class, 'index'])->name('products.index');
 Route::get('/log_in', [AuthController::class, 'showLoginForm'])->name('log_in');
 Route::get('/sing_in', [AuthController::class, 'showSinginForm'])->name('sing_in');
+
 
 Route::post('/configurator/select', function (Request $request) {
     $selection = session()->get('configurator_build', []);
@@ -26,4 +28,7 @@ Route::post('/configurator/select', function (Request $request) {
 
     return redirect()->back();
 })->name('configurator.select');
+
 Route::get('/', [StartowaController::class, 'startowa'])->name('home');
+
+Route::get('/Strona_Wyszukiwania', [WyszukajWitrynaController::class, 'PrzeniesNaStrone']);
