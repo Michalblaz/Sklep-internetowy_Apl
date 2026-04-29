@@ -34,7 +34,7 @@
             <a href="#" class="hover:text-purple-400 transition">Polecane produkty</a>
             <a href="#" class="hover:text-purple-400 transition">Oferty promocyjne</a>
             <a href="#" class="hover:text-purple-400 transition">Kategorie</a>
-            <a href="{{ route('products.index') }}" class="hover:text-purple-400 transition">Konfigurator PC</a>
+            <a href="{{ route('konfigurator.index') }}" class="hover:text-purple-400 transition">Konfigurator PC</a>
         </nav>
     </header>
 
