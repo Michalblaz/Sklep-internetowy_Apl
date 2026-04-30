@@ -74,6 +74,14 @@ INSERT INTO public.attribute_category (id, name) VALUES (8, 'connector_type');
 INSERT INTO public.attribute_category (id, name) VALUES (9, 'chipset_manufacturer');
 INSERT INTO public.attribute_category (id, name) VALUES (38, 'fan_included');
 INSERT INTO public.attribute_category (id, name) VALUES (39, 'fan_max_tdp');
+INSERT INTO public.attribute_category (id, name) VALUES (40, 'GPU_length');
+INSERT INTO public.attribute_category (id, name) VALUES (41, 'CPU_cooler_height');
+INSERT INTO public.attribute_category (id, name) VALUES (42, 'cpu_generation');
+INSERT INTO public.attribute_category (id, name) VALUES (43, 'supported_cpu_generations');
+INSERT INTO public.attribute_category (id, name) VALUES (44, 'ram_slots');
+INSERT INTO public.attribute_category (id, name) VALUES (45, 'ram_modules');
+INSERT INTO public.attribute_category (id, name) VALUES (46, 'gpu_power_connectors');
+INSERT INTO public.attribute_category (id, name) VALUES (47, 'cpu_power_connector');
 
 
 --
@@ -258,43 +266,28 @@ INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (2
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (206, 23, 'Full Tower');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (207, 36, '400 cd/m²');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (208, 23, 'Middle Tower');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (209, 32, 'IEEE 802.1 p, IEEE 802.1 q, IEEE 802.3, IEEE 802.3 ab, IEEE 802.3 u, IEEE 802.3 x');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (210, 34, '2560 x 1440');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (211, 32, 'Wi-Fi 7, Bluetooth 5.4');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (212, 36, '200');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (213, 8, 'PCI Express 4.0 x16');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (214, 32, 'LAN');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (213, 8, 'PCIe 4.0 x16');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (215, 36, '300');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (216, 36, '350');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (217, 36, '250 cd/m²');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (218, 36, '300 cd/m²');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (219, 34, '3440 x 1440');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (220, 32, 'Wi-Fi 4');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (221, 32, 'Wi-Fi 6');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (222, 32, 'Wi-Fi 4, Wi-Fi 5, Wi-Fi 6');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (223, 33, 'USB');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (224, 34, '2560 x 1440 (WQHD)');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (225, 36, '450');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (226, 30, 'Powietrzne');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (227, 32, 'Wi-Fi 7');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (228, 23, 'Micro Tower');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (229, 32, 'Wi-Fi 6, Wi-Fi 6, Bluetooth 5.2');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (230, 33, 'PCI-E');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (231, 32, 'Wi-Fi 6, Bluetooth 5.3');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (232, 8, 'PCIe 5.0 x16');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (233, 34, '3840 x 2160 (UHD 4K)');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (234, 32, 'IEEE 802.3, IEEE 802.3 ab, IEEE 802.3 an, IEEE 802.3 az, IEEE 802.3 bz, IEEE 802.3 u, IEEE 802.3 x');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (235, 36, '1300');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (236, 36, '400');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (237, 34, '1920 x 1080');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (238, 34, '3840 x 2160');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (239, 32, 'Wi-Fi 6E, Bluetooth 5.2');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (240, 8, 'PCIe 5.0 x16 ');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (241, 32, 'Wi-Fi 6, Bluetooth 5.0');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (242, 30, 'Wodne');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (243, 32, 'Wi-Fi 5');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (244, 36, '250');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (245, 32, 'IEEE 802.3, IEEE 802.3 ab, IEEE 802.3 bz, IEEE 802.3 u, IEEE 802.3 x');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (101, 24, '459');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (100, 4, '20');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (81, 20, '850');
@@ -322,8 +315,78 @@ INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (2
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (255, 27, 'Optyczna');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (261, 27, 'Laserow');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (187, 18, '2048');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (300, 32, 'Wi-Fi 4');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (301, 32, 'Wi-Fi 5');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (302, 32, 'Wi-Fi 6');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (303, 32, 'Wi-Fi 6E');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (304, 32, 'Wi-Fi 7');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (305, 32, 'Bluetooth 5.0');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (306, 32, 'Bluetooth 5.2');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (307, 32, 'Bluetooth 5.3');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (308, 32, 'Bluetooth 5.4');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (309, 32, 'LAN');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (310, 32, 'IEEE 802.1 p');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (311, 32, 'IEEE 802.1 q');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (312, 32, 'IEEE 802.3');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (313, 32, 'IEEE 802.3 ab');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (314, 32, 'IEEE 802.3 u');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (315, 32, 'IEEE 802.3 x');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (316, 32, 'IEEE 802.3 an');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (317, 32, 'IEEE 802.3 az');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (318, 32, 'IEEE 802.3 bz');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (320, 40, '269');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (321, 40, '282');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (322, 40, '225');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (323, 40, '267'); 
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (324, 40, '337'); 
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (325, 40, '300');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (326, 40, '297'); 
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (327, 40, '182'); 
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (328, 40, '320'); 
+-- Dodawanie wartości (kategoria 41: Wymiary chłodzenia)
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (400, 41, '240'); -- AiO 240
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (401, 41, '360'); -- AiO 360
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (402, 41, '159'); -- Fortis 5 / Dark Rock 5
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (403, 41, '155'); -- Fera 5 / Assassin X
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (404, 41, '154'); -- Phantom Spirit 120 SE
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (405, 41, '161'); -- Pure Rock 3
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (406, 41, '165'); -- Noctua NH-D15
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (407, 41, '280'); -- AiO 280
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (600, 43, 'Intel 12th Gen');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (601, 43, 'Intel 13th Gen');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (602, 43, 'Intel 14th Gen');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (603, 43, 'Intel Core Ultra Gen 2');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (604, 43, 'AMD Ryzen 3000');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (605, 43, 'AMD Ryzen 4000');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (606, 43, 'AMD Ryzen 5000');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (607, 43, 'AMD Ryzen 7000');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (608, 43, 'AMD Ryzen 8000');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (609, 43, 'AMD Ryzen 9000');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (510, 44, '2 x DDR4');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (511, 44, '4 x DDR4');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (512, 44, '2 x DDR5');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (513, 44, '4 x DDR5');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (610, 42, 'Intel 12th Gen');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (611, 42, 'Intel 13th Gen');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (612, 42, 'Intel 14th Gen');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (613, 42, 'Intel Core Ultra Gen 2');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (614, 42, 'AMD Ryzen 3000');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (615, 42, 'AMD Ryzen 4000');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (616, 42, 'AMD Ryzen 5000');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (617, 42, 'AMD Ryzen 7000');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (618, 42, 'AMD Ryzen 8000');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (619, 42, 'AMD Ryzen 9000');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (700, 45, '1');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (701, 45, '2');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (702, 45, '4');
+-- Kategoria 46: gpu_power_connectors
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (800, 46, '6-pin PCIe');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (801, 46, '8-pin (6+2) PCIe');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (802, 46, '12VHPWR (16-pin)');
 
-
+-- Kategoria 47: cpu_power_connector
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (810, 47, '4-pin CPU');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (811, 47, '8-pin (4+4) CPU');
 --
 -- TOC entry 3982 (class 0 OID 17574)
 -- Dependencies: 395
@@ -814,7 +877,16 @@ INSERT INTO public.category_attributes (id, category_id, attribute_id, is_requir
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (4, 1, 4, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (5, 1, 5, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (6, 1, 6, false);
-
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (44, 2, 40, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (45, 3, 43, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (46, 3, 44, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (47, 1, 42, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (54, 12, 41, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (56, 4, 45, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (55, 6, 46, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (51, 6, 47, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (52, 2, 46, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (53, 3, 47, true);
 
 --
 -- TOC entry 3991 (class 0 OID 17649)
@@ -859,12 +931,10 @@ INSERT INTO public.product_attributes (id, product_id, attribute_category_id, at
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (37, 14, 8, 213);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (40, 15, 8, 213);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (133, 37, 8, 232);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (166, 44, 8, 240);
+INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (166, 44, 8, 242);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (9, 2, 1, 1);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (10, 2, 2, 9);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (487, 142, 32, 231);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (488, 142, 33, 230);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (489, 143, 32, 243);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (490, 143, 33, 223);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (16, 3, 1, 1);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (17, 3, 2, 9);
@@ -1001,9 +1071,9 @@ INSERT INTO public.product_attributes (id, product_id, attribute_category_id, at
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (245, 70, 9, 55);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (246, 70, 10, 21);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (247, 71, 13, 38);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (169, 45, 8, 240);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (172, 46, 8, 240);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (175, 47, 8, 240);
+INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (169, 45, 8, 242);
+INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (172, 46, 8, 242);
+INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (175, 47, 8, 242);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (251, 72, 13, 38);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (178, 48, 8, 232);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (181, 49, 8, 232);
@@ -1085,41 +1155,33 @@ INSERT INTO public.product_attributes (id, product_id, attribute_category_id, at
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (400, 110, 36, 216);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (402, 111, 34, 238);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (404, 111, 36, 225);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (412, 114, 32, 239);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (413, 114, 33, 230);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (423, 118, 32, 243);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (424, 118, 33, 223);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (437, 123, 32, 214);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (407, 112, 21, 48);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (408, 112, 22, 51);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (438, 123, 33, 230);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (410, 113, 21, 49);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (411, 113, 22, 51);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (445, 126, 32, 227);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (415, 115, 21, 48);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (416, 115, 22, 51);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (446, 126, 33, 223);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (418, 116, 21, 48);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (419, 116, 22, 51);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (450, 128, 32, 211);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (421, 117, 21, 46);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (422, 117, 22, 51);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (451, 128, 33, 230);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (426, 119, 21, 48);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (427, 119, 22, 51);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (464, 133, 32, 209);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (429, 120, 21, 50);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (430, 120, 22, 51);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (465, 133, 33, 230);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (432, 121, 21, 46);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (433, 121, 22, 51);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (469, 135, 32, 241);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (435, 122, 21, 48);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (436, 122, 22, 51);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (470, 135, 33, 230);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (440, 124, 21, 46);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (441, 124, 22, 51);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (482, 140, 32, 234);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (443, 125, 21, 48);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (444, 125, 22, 51);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (483, 140, 33, 230);
@@ -1147,25 +1209,21 @@ INSERT INTO public.product_attributes (id, product_id, attribute_category_id, at
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (492, 144, 21, 48);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (493, 144, 22, 51);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (11, 2, 3, 91);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (494, 145, 32, 229);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (499, 147, 21, 48);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (500, 147, 22, 51);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (495, 145, 33, 230);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (502, 148, 21, 50);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (503, 148, 22, 51);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (496, 146, 32, 222);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (505, 149, 21, 49);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (506, 149, 22, 51);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (497, 146, 33, 223);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (508, 150, 21, 46);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (509, 150, 22, 51);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (519, 154, 32, 243);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (511, 151, 21, 46);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (512, 151, 22, 51);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (520, 154, 33, 223);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (514, 152, 21, 46);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (515, 152, 22, 51);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (521, 155, 32, 221);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (517, 153, 21, 48);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (518, 153, 22, 51);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (522, 155, 33, 223);
@@ -1173,25 +1231,18 @@ INSERT INTO public.product_attributes (id, product_id, attribute_category_id, at
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (539, 163, 22, 51);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (540, 164, 1, 2);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (541, 164, 2, 9);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (523, 156, 32, 243);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (524, 156, 33, 223);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (525, 157, 32, 220);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (526, 157, 33, 230);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (547, 165, 1, 2);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (548, 165, 2, 10);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (527, 158, 32, 211);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (528, 158, 33, 230);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (529, 159, 32, 245);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (530, 159, 33, 230);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (554, 166, 1, 2);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (555, 166, 2, 11);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (531, 160, 32, 220);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (532, 160, 33, 230);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (533, 161, 32, 220);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (534, 161, 33, 223);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (561, 167, 1, 2);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (562, 167, 2, 9);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (535, 162, 32, 220);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (536, 162, 33, 223);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (546, 164, 7, 204);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (553, 165, 7, 204);
@@ -1975,4 +2026,341 @@ INSERT INTO public.product_attributes (id, product_id, attribute_category_id, at
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (1142, 346, 27, 255);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (1143, 347, 26, 250);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (1144, 347, 27, 255);
+SELECT setval('product_attributes_id_seq', (SELECT MAX(id) FROM product_attributes));
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (114, 32, 303); -- Wi-Fi 6E
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (114, 32, 306); -- Bluetooth 5.2
 
+-- Produkt 118 (Stare ID 243: Wi-Fi 5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (118, 32, 301);
+
+-- Produkt 123 (Stare ID 214: LAN)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (123, 32, 309);
+
+-- Produkt 126 (Stare ID 227: Wi-Fi 7)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (126, 32, 304);
+
+-- Produkt 128 (Stare ID 211: Wi-Fi 7, Bluetooth 5.4)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (128, 32, 304); -- Wi-Fi 7
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (128, 32, 308); -- Bluetooth 5.4
+
+-- Produkt 133 (Stare ID 209: Pełna lista IEEE 802.1/802.3)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (133, 32, 310); -- 802.1 p
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (133, 32, 311); -- 802.1 q
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (133, 32, 312); -- 802.3
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (133, 32, 313); -- 802.3 ab
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (133, 32, 314); -- 802.3 u
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (133, 32, 315); -- 802.3 x
+
+-- Produkt 135 (Stare ID 241: Wi-Fi 6, Bluetooth 5.0)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (135, 32, 302); -- Wi-Fi 6
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (135, 32, 305); -- Bluetooth 5.0
+
+-- Produkt 140 (Stare ID 234: Rozszerzona lista IEEE 802.3)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (140, 32, 312); -- 802.3
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (140, 32, 313); -- 802.3 ab
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (140, 32, 316); -- 802.3 an
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (140, 32, 317); -- 802.3 az
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (140, 32, 318); -- 802.3 bz
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (140, 32, 314); -- 802.3 u
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (140, 32, 315); -- 802.3 x
+
+-- Produkt 142 (Stare ID 231: Wi-Fi 6, Bluetooth 5.3)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (142, 32, 302); -- Wi-Fi 6
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (142, 32, 307); -- Bluetooth 5.3
+
+-- Produkt 143 (Stare ID 243: Wi-Fi 5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (143, 32, 301);
+
+-- Produkt 145 (Stare ID 229: Wi-Fi 6, Bluetooth 5.2)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (145, 32, 302); -- Wi-Fi 6
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (145, 32, 306); -- Bluetooth 5.2
+
+-- Produkt 146 (Stare ID 222: Wi-Fi 4, 5, 6)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (146, 32, 300); -- Wi-Fi 4
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (146, 32, 301); -- Wi-Fi 5
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (146, 32, 302); -- Wi-Fi 6
+
+-- Produkt 154 (Stare ID 243: Wi-Fi 5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (154, 32, 301);
+
+-- Produkt 155 (Stare ID 221: Wi-Fi 6)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (155, 32, 302);
+
+-- Produkt 156 (Stare ID 243: Wi-Fi 5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (156, 32, 301);
+
+-- Produkty 157, 160, 161, 162 (Stare ID 220: Wi-Fi 4)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (157, 32, 300);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (160, 32, 300);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (161, 32, 300);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (162, 32, 300);
+
+-- Produkt 158 (Stare ID 211: Wi-Fi 7, Bluetooth 5.4)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (158, 32, 304); -- Wi-Fi 7
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (158, 32, 308); -- Bluetooth 5.4
+
+-- Produkt 159 (Stare ID 245: IEEE 802.3 bz itd.)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (159, 32, 312); -- 802.3
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (159, 32, 313); -- 802.3 ab
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (159, 32, 318); -- 802.3 bz
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (159, 32, 314); -- 802.3 u
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (159, 32, 315); -- 802.3 x
+
+-- Przypisanie długości do konkretnych kart
+-- ID 14: ASRock Rx 6700 XT Challenger (269mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (14, 40, 320);
+
+-- ID 15: ASRock Rx 6600 Challenger (269mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (15, 40, 320);
+
+-- ID 37: Gigabyte RX 9060 XT Gaming OC (282mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (37, 40, 321);
+
+-- ID 44: MSI RTX 5060 Ventus 2X (225mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (44, 40, 322);
+
+-- ID 47: ASUS RTX 5070 Dual (267mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (47, 40, 323);
+
+-- ID 48: MSI RTX 5070 Ti Gaming Trio (337mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (48, 40, 324);
+
+-- ID 49: Gigabyte RTX 5080 Windforce (300mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (49, 40, 325);
+
+-- ID 51: INNO3D RTX 5080 X3 (297mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (51, 40, 326);
+
+-- ID 52: Zotac RTX 5060 Twin Edge (225mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (52, 40, 322);
+
+-- ID 54: Sapphire RX 9060 XT Pure (320mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (54, 40, 328);
+
+-- ID 62: Zotac RTX 5050 Low Profile (182mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (62, 40, 327);
+
+-- ID 66: ASUS RTX 5070 Ti ROG Strix (337mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (66, 40, 324);
+
+-- ID 69: Gigabyte RTX 5060 Aero OC (300mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (69, 40, 325);
+-- ENDORFY
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (212, 41, 400); -- Navis F240
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (213, 41, 402); -- Fortis 5
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (214, 41, 403); -- Fera 5
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (215, 41, 401); -- Navis F360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (216, 41, 400); -- Navis F240 (standard)
+
+-- Thermalright
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (217, 41, 401); -- Vision 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (218, 41, 404); -- Phantom Spirit 120
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (219, 41, 403); -- Assassin X 120
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (220, 41, 401); -- Aqua Elite 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (221, 41, 400); -- Vision 240
+
+-- be quiet!
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (222, 41, 402); -- Dark Rock 5
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (223, 41, 405); -- Pure Rock Pro 3
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (225, 41, 401); -- Light Loop 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (226, 41, 400); -- Light Loop 240
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (227, 41, 405); -- Pure Rock 3
+
+-- Pozostałe AiO 360mm
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (228, 41, 401); -- ASUS RYUO IV 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (229, 41, 401); -- Krux HydroGlance 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (231, 41, 401); -- Genesis Hydria 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (233, 41, 401); -- MasterLiquid 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (237, 41, 401); -- MSI MAG A13 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (240, 41, 401); -- Kraken Plus 360
+
+-- Pozostałe AiO 240mm / 280mm
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (230, 41, 400); -- Genesis Hydria 240
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (234, 41, 400); -- MasterLiquid 240
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (238, 41, 400); -- MSI MAG A13 240
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (241, 41, 407); -- Kraken Elite 280
+
+-- Powietrzne Premium
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (236, 41, 406); -- Noctua NH-D15
+-- ASUS TUF GAMING B760-PLUS (Obsługuje 12, 13 i 14 gen)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (182, 43, 600);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (182, 43, 601);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (182, 43, 602);
+
+-- Gigabyte B550 GAMING X V2 (Obsługuje Ryzen 3000, 4000 i 5000)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (190, 43, 604);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (190, 43, 605);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (190, 43, 606);
+
+-- Gigabyte B650 EAGLE AX (Obsługuje Ryzen 7000, 8000 i 9000)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (189, 43, 607);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (189, 43, 608);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (189, 43, 609);
+-- ASUS
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (182, 44, 513); -- B860-PLUS (Intel Ultra, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (183, 44, 513); -- B850-PLUS (AMD AM5, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (185, 44, 511); -- B760M-A D4 (Intel, 4xDDR4)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (186, 44, 511); -- B550M-A (AMD AM4, 4xDDR4)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (188, 44, 513); -- Z790-P (Intel, 4xDDR5)
+
+-- Gigabyte
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (189, 44, 513); -- B650 EAGLE (AMD AM5, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (190, 44, 511); -- B550 GAMING X (AMD AM4, 4xDDR4)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (191, 44, 511); -- B760M DS3H D4 (Intel, 4xDDR4)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (193, 44, 512); -- B650M S2H (AMD AM5, 2xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (196, 44, 513); -- B850 EAGLE (AMD AM5, 4xDDR5)
+
+-- ASRock
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (198, 44, 510); -- B760M-HDV D4 (Intel, 2xDDR4)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (199, 44, 513); -- Z790 Pro RS (Intel, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (201, 44, 510); -- B550M-HDV (AMD AM4, 2xDDR4)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (203, 44, 512); -- B860M-H2 (Intel Ultra, 2xDDR5)
+
+-- MSI
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (206, 44, 513); -- MAG B860 TOMAHAWK (Intel Ultra, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (208, 44, 513); -- MAG B850M MORTAR (AMD AM5, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (210, 44, 513); -- Z790 GAMING PLUS (Intel, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (211, 44, 511);
+
+-- AMD Ryzen Seria 5000 (ID 606: AMD Ryzen 5000)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (1, 42, 616); -- Ryzen 5 5600
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (2, 42, 616); -- Ryzen 5 5500
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (3, 42, 616); -- Ryzen 5 5600XT
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (4, 42, 616); -- Ryzen 7 5700X
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (5, 42, 616); -- Ryzen 7 5800X
+
+-- AMD Ryzen Seria 7000 (ID 607: AMD Ryzen 7000)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (29, 42, 617); -- Ryzen 5 7600X
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (30, 42, 617); -- Ryzen 5 7600
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (35, 42, 617); -- Ryzen 7 7800X3D
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (164, 42, 617); -- Ryzen 5 7500X3D
+
+-- AMD Ryzen Seria 8000 (ID 608: AMD Ryzen 8000)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (173, 42, 618); -- Ryzen 5 8400F
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (174, 42, 618); -- Ryzen 5 8500G
+
+-- AMD Ryzen Seria 9000 (ID 609: AMD Ryzen 9000)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (38, 42, 619); -- Ryzen 7 9800X3D
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (165, 42, 619); -- Ryzen 7 9700X
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (166, 42, 619); -- Ryzen 9 9950X3D
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (167, 42, 619); -- Ryzen 5 9600X
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (168, 42, 619); -- Ryzen 7 9850X3D
+
+-- Intel 12th Gen (ID 600)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (171, 42, 610); -- i5-12400F
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (179, 42, 610); -- i5-12600KF
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (180, 42, 610); -- i7-12700KF
+
+-- Intel 14th Gen (ID 602)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (41, 42, 612); -- i7-14700KF
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (169, 42, 612); -- i9-14900K
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (170, 42, 612); -- i9-14900KF
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (175, 42, 612); -- i5-14400F
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (178, 42, 612); -- i5-14600KF
+
+-- Intel Core Ultra Gen 2 (ID 603: LGA 1851)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (26, 42, 613); -- Ultra 5 245KF
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (27, 42, 613); -- Ultra 5 225F
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (172, 42, 613); -- Ultra 7 265KF
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (176, 42, 613); -- Ultra 5 225
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (177, 42, 613); -- Ultra 5 250KF Plus
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (181, 42, 613); -- Ultra 9 285
+-- Zestawy 2 modułów (ID 701)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (23, 45, 701); -- Patriot 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (28, 45, 701); -- GOODRAM 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (31, 45, 701); -- Kingston 2x8GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (32, 45, 701); -- GOODRAM 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (33, 45, 701); -- Kingston 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (34, 45, 701); -- Patriot 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (36, 45, 701); -- Kingston 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (39, 45, 701); -- G.SKILL 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (40, 45, 701); -- Lexar 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (42, 45, 701); -- GOODRAM 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (43, 45, 701); -- Kingston 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (71, 45, 701); -- Kingston 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (72, 45, 701); -- ADATA 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (74, 45, 701); -- Kingston 2x8GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (75, 45, 701); -- GOODRAM 2x32GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (76, 45, 701); -- GOODRAM 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (77, 45, 701); -- Patriot 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (78, 45, 701); -- Crucial 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (80, 45, 701); -- Patriot 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (82, 45, 701); -- Kingston 2x32GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (84, 45, 701); -- Kingston 2x8GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (85, 45, 701); -- Kingston 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (86, 45, 701); -- Kingston 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (87, 45, 701); -- Corsair 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (89, 45, 701); -- Kingston 2x8GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (90, 45, 701); -- GOODRAM 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (91, 45, 701); -- Kingston 2x16GB
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (93, 45, 701); -- Patriot 2x32GB
+
+-- Pojedyncze moduły (ID 700)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (83, 45, 700); -- Kingston Impact (16GB)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (88, 45, 700); -- Crucial (1x16GB)
+
+-- Karty z 1x 8-pin PCIe (ID 801)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+(14, 46, 801), (15, 46, 801), (37, 46, 801), (44, 46, 801), (52, 46, 801), 
+(56, 46, 801), (57, 46, 801), (61, 46, 801), (62, 46, 801), (64, 46, 801), 
+(65, 46, 801), (68, 46, 801), (69, 46, 801), (70, 46, 801);
+
+-- Karty z 1x 12VHPWR (ID 802) - Nowe serie RTX 5000 i mocne jednostki
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+(45, 46, 802), (46, 46, 802), (47, 46, 802), (48, 46, 802), (49, 46, 802), 
+(50, 46, 802), (51, 46, 802), (55, 46, 802), (59, 46, 802), (66, 46, 802), (67, 46, 802);
+
+-- Karty wymagające 2x 8-pin PCIe (Podwójne wpisy dla produktu)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+(54, 46, 801), (54, 46, 801), -- Sapphire Pure
+(58, 46, 801), (58, 46, 801), -- ASRock AI PRO
+(60, 46, 801), (60, 46, 801), -- ASUS RX 9070
+(63, 46, 801), (63, 46, 801); -- ASUS RX 9070 Prime
+
+-- Standardowe płyty (1x 8-pin CPU - ID 811)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+(184, 47, 811), (185, 47, 811), (186, 47, 811), (191, 47, 811), (193, 47, 811), 
+(194, 47, 811), (197, 47, 811), (198, 47, 811), (201, 47, 811), (202, 47, 811), (203, 47, 811);
+
+-- Płyty dla entuzjastów (2x 8-pin CPU - Podwójne wpisy)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+(182, 47, 811), (182, 47, 811), (183, 47, 811), (183, 47, 811),
+(187, 47, 811), (187, 47, 811), (188, 47, 811), (188, 47, 811),
+(189, 47, 811), (189, 47, 811), (192, 47, 811), (192, 47, 811),
+(195, 47, 811), (195, 47, 811), (196, 47, 811), (196, 47, 811),
+(199, 47, 811), (199, 47, 811), (200, 47, 811), (200, 47, 811),
+(204, 47, 811), (204, 47, 811), (205, 47, 811), (205, 47, 811),
+(206, 47, 811), (206, 47, 811), (207, 47, 811), (207, 47, 811),
+(208, 47, 811), (208, 47, 811), (209, 47, 811), (209, 47, 811),
+(210, 47, 811), (210, 47, 811), (211, 47, 811), (211, 47, 811);
+
+-- Zasilacze High-End (ATX 3.1 / 12VHPWR + 2x CPU)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+-- be quiet! Pure Power 13 M / Dark Power 14
+(112, 46, 802), (112, 47, 811), (112, 47, 811),
+(120, 46, 802), (120, 47, 811), (120, 47, 811),
+(125, 46, 802), (125, 47, 811), (125, 47, 811),
+(131, 46, 802), (131, 47, 811), (131, 47, 811),
+(136, 46, 802), (136, 47, 811), (136, 47, 811),
+-- MSI MPG/MEG
+(122, 46, 802), (122, 47, 811), (122, 47, 811),
+(148, 46, 802), (148, 47, 811), (148, 47, 811),
+-- ENDORFY Supremo FM6 (ATX 3.1)
+(115, 46, 802), (115, 47, 811), (115, 47, 811),
+(119, 46, 802), (119, 47, 811), (119, 47, 811),
+(127, 46, 802), (127, 47, 811), (127, 47, 811);
+
+-- Zasilacze Standardowe (Bez 12VHPWR, zazwyczaj 2x 8-pin PCIe i 1x lub 2x CPU)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+-- Vero L5 / System Power 11
+(129, 46, 801), (129, 46, 801), (129, 47, 811),
+(117, 46, 801), (117, 46, 801), (117, 47, 811), (117, 47, 811),
+(130, 46, 801), (130, 46, 801), (130, 47, 811),
+-- MAG 650W / 550W
+(121, 46, 801), (121, 46, 801), (121, 47, 811),
+(124, 46, 801), (124, 47, 811),
+-- ASRock Challenger
+(150, 46, 801), (150, 47, 811),
+(151, 46, 801), (151, 46, 801), (151, 47, 811),
+(152, 46, 801), (152, 46, 801), (152, 47, 811),
+(153, 46, 801), (153, 46, 801), (153, 47, 811), (153, 47, 811);
