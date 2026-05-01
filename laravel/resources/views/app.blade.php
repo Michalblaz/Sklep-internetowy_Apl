@@ -34,10 +34,29 @@
                placeholder="WYSZUKIWARKA"
                class="w-1/2 px-4 py-2 rounded-full bg-purple-900/40 border border-purple-500/40 text-white">
 
-        <div class="flex gap-4 text-2xl">
-            <a href="/koszyk">🛒</a>
-            <a href="/profil">👤</a>
-        </div>
+        <div class="flex gap-4 text-2xl items-center">
+
+    <a href="/koszyk">🛒</a>
+
+    @auth
+        <span class="text-2xl text-gray-300">
+            👤 {{ Auth::user()->first_name }}
+        </span>
+
+        <form method="POST" action="/logout">
+            @csrf
+            <button class="text-2xl text-red-400 hover:text-red-300">
+                Wyloguj
+            </button>
+        </form>
+
+    @else
+        <a href="/log_in" class="text-2xl hover:text-purple-400 transition">
+            👤 Logowanie
+        </a>
+    @endauth
+
+</div>
     </div>
 
     <nav class="flex justify-center gap-10 py-4 text-xs uppercase tracking-widest border-b border-white/5">
