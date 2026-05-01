@@ -25,7 +25,11 @@ class AuthController extends Controller
     {
         $data = $request->validate([
             'email' => ['required', 'email'],
-            'password' => ['required', 'min:6'],
+            'password' => ['required'],
+        ], [
+            'email.required' => 'Email jest wymagany',
+            'email.email' => 'Podaj poprawny adres email',
+            'password.required' => 'Hasło jest wymagane',
         ]);
 
         $user = User::where('email', $data['email'])->first();
@@ -52,6 +56,20 @@ class AuthController extends Controller
             'email' => ['required', 'email', 'unique:users'],
             'phone' => ['nullable', 'string'],
             'password' => ['required', 'min:6', 'confirmed'],
+        ], [
+            'first_name.required' => 'Imię jest wymagane',
+            'first_name.max' => 'Imię może mieć maksymalnie 255 znaków',
+
+            'last_name.required' => 'Nazwisko jest wymagane',
+            'last_name.max' => 'Nazwisko może mieć maksymalnie 255 znaków',
+
+            'email.required' => 'Email jest wymagany',
+            'email.email' => 'Podaj poprawny adres email',
+            'email.unique' => 'Ten email jest już zajęty',
+
+            'password.required' => 'Hasło jest wymagane',
+            'password.min' => 'Hasło musi mieć minimum 6 znaków',
+            'password.confirmed' => 'Hasła muszą być takie same',
         ]);
 
         $user = User::create([
