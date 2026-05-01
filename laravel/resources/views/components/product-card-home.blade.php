@@ -5,13 +5,28 @@
 
 <div class="relative group flex flex-col h-full bg-[#1a202c] border border-gray-700 rounded-2xl p-4 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)]">
 
-    <div class="absolute top-3 left-3 z-10 bg-green-500 text-black font-bold px-4 py-1 rounded-full text-sm shadow-[0_0_10px_rgba(34,197,94,0.5)]">
-        {{ number_format($product->promo_price ?? $product->base_price, 0, ',', ' ') }} zł
+    <div class="absolute top-3 left-3 z-10 bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-xl text-sm shadow-[0_0_15px_rgba(34,197,94,0.3)] transition-all duration-300 group-hover:scale-105">
+
+        @if($discount > 0)
+            <div class="flex flex-col leading-tight">
+                <span class="text-gray-400 line-through text-xs">
+                    {{ number_format($product->base_price, 0, ',', ' ') }} zł
+                </span>
+                <span class="text-green-400 font-bold text-base">
+                    {{ number_format($product->promo_price, 0, ',', ' ') }} zł
+                </span>
+            </div>
+        @else
+            <span class="text-green-400 font-bold text-base">
+                {{ number_format($product->base_price, 0, ',', ' ') }} zł
+            </span>
+        @endif
+
     </div>
 
     @if($discount > 0)
     <div class="absolute top-3 right-3 z-20">
-        <div class="bg-red-600 text-white font-bold px-4 py-1 rounded-full text-sm shadow-[0_0_15px_rgba(220,38,38,0.5)] font-bruno">
+        <div class="bg-red-600/90 backdrop-blur-md text-white font-bold px-4 py-1 rounded-full text-sm shadow-[0_0_15px_rgba(220,38,38,0.5)] font-bruno transition-all duration-300 group-hover:scale-105">
             -{{ $discount }}%
         </div>
     </div>
@@ -27,7 +42,7 @@
             {{ $product->name }}
         </h3>
 
-        <a href="{{ route('products.show', $product) }}"
+        <a href="{{ route('products.show', $product->id) }}"
            class="mt-auto w-full inline-flex justify-center py-3 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-full transition-all duration-300 shadow-lg uppercase tracking-tighter">
             Zobacz
         </a>
