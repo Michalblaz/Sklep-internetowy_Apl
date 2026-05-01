@@ -6,6 +6,7 @@ use App\Http\Controllers\WyszukajWitrynaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Http\Controllers\AdminController;
 
         //Strona startowa
     Route::get('/', [StartowaController::class, 'startowa'])->name('home');
@@ -30,6 +31,7 @@ use App\Models\Product;
     Route::get('/produkt/{id}', function (int $id) {
         request()->merge(['id' => $id]);
 
+
         return view('produkt');
     })->whereNumber('id')->name('product.show.by-id');
 
@@ -41,3 +43,15 @@ use App\Models\Product;
     Route::get('/koszyk', fn() => view('koszyk'));
 
 
+
+        // Admin
+     Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+
+     // Logowanie / Rejestracja
+    Route::get('/log_in', [AuthController::class, 'showLoginForm'])->name('log_in');
+    Route::post('/log_in', [AuthController::class, 'login']);
+
+    Route::get('/sing_in', [AuthController::class, 'showSinginForm'])->name('sing_in');
+    Route::post('/sing_in', [AuthController::class, 'register']);
+
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
