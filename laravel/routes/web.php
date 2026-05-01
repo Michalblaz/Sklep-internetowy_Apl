@@ -29,15 +29,15 @@ use App\Models\Product;
     })->name('products.show');
     Route::get('/produkt/{id}', function (int $id) {
         request()->merge(['id' => $id]);
-    
+
         return view('produkt');
     })->whereNumber('id')->name('product.show.by-id');
 
         //Wyszukiwarka
-    Route::get('/Strona_Wyszukiwania', [WyszukajWitrynaController::class, 'PrzeniesNaStrone']);
+    Route::get('/wyszukaj', [WyszukajWitrynaController::class, 'PrzeniesNaStrone']) ->name('wyszukaj');
 
 
         // Koszyk
     Route::get('/koszyk', fn() => view('koszyk'));
 
-    
+
