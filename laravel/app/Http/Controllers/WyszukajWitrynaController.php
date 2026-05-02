@@ -6,13 +6,38 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
-class WyszukajWitrynaController extends Controller{
+class WyszukajWitrynaController extends Controller
+{
+    public function PrzeniesNaStrone(Request $request)
+    {
+        $selectedCategory = $request->query('category');
 
-    public function PrzeniesNaStrone(){
+        // produkty do karuzeli
+        $products = Product::whereNull('promo_price')
+            ->take(10)
+            ->get();
 
+        // promo (jeśli chcesz mieć sekcję jak na startowej)
+        $promo_products = Product::whereNotNull('promo_price')
+            ->whereColumn('promo_price', '<', 'base_price')
+            ->get();
 
-    return view("Strona_Wyszukiwania");
+        // kategorie
+        $categories = Category::all();
 
+        // wszystkie produkty (lista + pagination)
+        $all_products = Product::when($selectedCategory, function ($query) use ($selectedCategory) {
+                $query->where('category_id', $selectedCategory);
+            })
+            ->paginate(80)
+            ->withQueryString();
+
+        return view("Strona_Wyszukiwania", compact(
+            'products',
+            'promo_products',
+            'categories',
+            'all_products',
+            'selectedCategory'
+        ));
     }
-
 }

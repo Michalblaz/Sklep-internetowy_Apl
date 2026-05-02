@@ -14,27 +14,36 @@
         <div class="h-px grow bg-linear-to-l from-neon-blue/50 to-transparent"></div>
     </div>
 
-    <div class="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-12 px-20 shadow-2xl shadow-purple-900/10 overflow-hidden">
-        <div id="featured-container" class="overflow-hidden">
-            <div id="featured-track" class="flex transition-transform duration-500 ease-out gap-10 items-stretch">
-                @foreach($products as $product)
-                    <div class="flex-none w-[260px] carousel-item">
-                        @php
-                            $discount = ($product->base_price > 0 && $product->promo_price)
-                                ? round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
-                                : 0;
-                        @endphp
-                        <x-product-card-home :product="$product" :discount="$discount" />
-                    </div>
-                @endforeach
+    <div id="recommended-container" class="overflow-hidden">
+    <div id="recommended-track"
+        class="flex transition-transform duration-500 ease-out gap-10 items-stretch">
+
+        @foreach($products as $product)
+            <div class="carousel-item flex-none w-[220px] sm:w-[240px] lg:w-[260px]">
+
+                @php
+                    $discount = ($product->base_price > 0 && $product->promo_price)
+                        ? round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
+                        : 0;
+                @endphp
+
+                <x-product-card-home :product="$product" :discount="$discount" />
+
             </div>
-        </div>
+        @endforeach
 
-        <button id="featured-prev" onclick="moveCarousel('featured', -1)"
-        class="absolute left-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">◀</button>
+    </div>
+</div>
 
-        <button id="featured-next" onclick="moveCarousel('featured', 1)"
-        class="absolute right-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">▶</button>
+<button id="recommended-prev" onclick="moveCarousel('recommended', -1)"
+class="absolute left-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
+    ◀
+</button>
+
+<button id="recommended-next" onclick="moveCarousel('recommended', 1)"
+class="absolute right-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
+    ▶
+</button>
     </div>
 </div>
 

@@ -33,3 +33,14 @@ Dodaj serwer w pgAdmin z ustawieniami:
 cd laravel
 docker compose up -d
 npm run dev
+
+
+# GIT komendy
+
+----
+
+* git reset --hard HEAD
+- ustawia projekt dokładnie na ostatni commit (stan projektu)
+- usuwa wszystkie lokalne zmiany także niecommitowane
+
+---
