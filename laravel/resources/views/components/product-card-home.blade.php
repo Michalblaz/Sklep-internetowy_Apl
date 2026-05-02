@@ -43,7 +43,7 @@
         </h3>
 
         <a href="{{ route('products.show', $product->id) }}"
-           class="mt-auto w-full inline-flex justify-center py-3 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-full transition-all duration-300 shadow-lg uppercase tracking-tighter">
+           class="mt-auto w-full inline-flex justify-center py-3 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-full transition-all duration-300 shadow-lg uppercase tracking-widest">
             Zobacz
         </a>
     </div>
