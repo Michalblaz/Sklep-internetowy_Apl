@@ -44,8 +44,10 @@ use App\Http\Controllers\AdminController;
 
 
 
-        // Admin
+     // Admin
      Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+     Route::post('/admin/users/{user}/suspend', [AdminController::class, 'suspend'])->name('admin.users.suspend');
+     Route::post('/admin/users/{user}/ban', [AdminController::class, 'ban'])->name('admin.users.ban');
 
      // Logowanie / Rejestracja
     Route::get('/log_in', [AuthController::class, 'showLoginForm'])->name('log_in');

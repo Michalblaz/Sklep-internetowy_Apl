@@ -1,0 +1,29 @@
+.admin-chart-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(34, 211, 238, 0.72) rgba(255, 255, 255, 0.08);
+}
+
+.admin-chart-scroll::-webkit-scrollbar {
+    height: 12px;
+}
+
+.admin-chart-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-chart-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, rgba(34, 211, 238, 0.9), rgba(168, 85, 247, 0.82));
+    border-radius: 9999px;
+    border: 2px solid rgba(15, 23, 42, 0.94);
+    box-shadow: 0 0 18px rgba(34, 211, 238, 0.22);
+}
+
+.admin-chart-scroll::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, rgba(34, 211, 238, 1), rgba(192, 38, 211, 0.94));
+}
+
+.admin-chart-label {
+    transform: translateX(-40%) rotate(32deg);
+}
