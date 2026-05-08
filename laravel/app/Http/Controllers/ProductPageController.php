@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Attribute;
 use Illuminate\Support\Facades\DB;
 
 class ProductPageController extends Controller
@@ -23,8 +24,11 @@ class ProductPageController extends Controller
         }
 
         if ($product) {
+            $attributeTable = (new Attribute())->getTable();
+            $attributeColumn = Product::attributeCategoryPivotColumn();
+
             $specs = DB::table('product_attributes as pa')
-                ->join('attribute_category as ac', 'ac.id', '=', 'pa.attribute_category_id')
+                ->join($attributeTable . ' as ac', 'ac.id', '=', 'pa.' . $attributeColumn)
                 ->leftJoin('attribute_values as av', 'av.id', '=', 'pa.attribute_value_id')
                 ->where('pa.product_id', $product->id)
                 ->orderBy('ac.name')

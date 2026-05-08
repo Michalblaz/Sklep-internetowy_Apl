@@ -30,9 +30,22 @@
                  class="w-10 h-10">
         </a>
 
-        <input type="text"
-               placeholder="WYSZUKIWARKA"
-               class="w-1/2 px-4 py-2 rounded-full bg-purple-900/40 border border-purple-500/40 text-white">
+        <form action="{{ route('wyszukaj') }}" method="GET" class="w-1/2 flex items-center gap-2">
+            <input
+                type="text"
+                name="search"
+                value="{{ request('search') }}"
+                placeholder="Szukaj produktu, marki lub kategorii"
+                maxlength="100"
+                class="w-full px-4 py-2 rounded-full bg-purple-900/40 border border-purple-500/40 text-white placeholder:text-white/40 focus:border-purple-400 outline-none"
+            >
+            <button
+                type="submit"
+                class="px-4 py-2 rounded-full bg-purple-600 hover:bg-purple-500 text-sm font-bold transition"
+            >
+                Szukaj
+            </button>
+        </form>
 
         <div class="flex gap-4 text-2xl items-center">
 

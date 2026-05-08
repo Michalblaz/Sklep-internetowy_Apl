@@ -28,8 +28,8 @@ use App\Http\Controllers\AdminController;
     Route::get('/produkt/{id}', [ProductPageController::class, 'show'])->whereNumber('id')->name('products.show');
 
         //Wyszukiwarka
-    Route::get('/wyszukaj', [WyszukajWitrynaController::class, 'PrzeniesNaStrone']) ->name('wyszukaj');
-
+    Route::get('/wyszukiwanie', [WyszukajWitrynaController::class, 'PrzeniesNaStrone'])
+    ->name('wyszukaj');
 
         // Koszyk
     Route::get('/koszyk', fn() => view('koszyk'));

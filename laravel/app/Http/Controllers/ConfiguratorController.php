@@ -43,7 +43,7 @@ class ConfiguratorController extends Controller
                 if (in_array($attrId, $currentCategoryAttributeIds)) {
                     
                     $query->whereHas('attributeValues', function($q) use ($attrId, $attrValueId) {
-                        $q->where('product_attributes.attribute_category_id', $attrId)
+                        $q->where('product_attributes.' . Product::attributeCategoryPivotColumn(), $attrId)
                         ->where('product_attributes.attribute_value_id', $attrValueId);
                     });
                 }
@@ -118,7 +118,7 @@ class ConfiguratorController extends Controller
         $attrs = [];
 
         foreach ($product->attributeValues as $val) {
-            $attrId = (int) $val->pivot->attribute_category_id;
+            $attrId = (int) $val->pivot->{Product::attributeCategoryPivotColumn()};
 
             if (in_array($attrId, $requiredAttributeIds, true)) {
                 $attrs[$attrId] = $val->id;
