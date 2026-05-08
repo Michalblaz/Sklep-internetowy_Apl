@@ -26,6 +26,7 @@ use App\Http\Controllers\AdminController;
         // Strona Produktu
     Route::get('/produkt', [ProductPageController::class, 'show'])->name('product.show');
     Route::get('/produkt/{id}', [ProductPageController::class, 'show'])->whereNumber('id')->name('products.show');
+    Route::post('/produkt/{id}/opinie', [ProductPageController::class, 'storeReview'])->whereNumber('id')->middleware('auth')->name('products.reviews.store');
 
         //Wyszukiwarka
     Route::get('/wyszukaj', [WyszukajWitrynaController::class, 'PrzeniesNaStrone']) ->name('wyszukaj');

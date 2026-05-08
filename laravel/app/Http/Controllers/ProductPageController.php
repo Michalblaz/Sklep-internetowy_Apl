@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ProductPageController extends Controller
@@ -12,6 +13,7 @@ class ProductPageController extends Controller
         $product = null;
         $specs = collect();
         $reviews = collect();
+        $currentUserReview = null;
         $topSpecs = [];
         $rating = 0.0;
         $ratingColorSegments = array_fill(0, 5, 0);
@@ -57,11 +59,10 @@ class ProductPageController extends Controller
 
                     return [
                         'author' => $author !== '' ? $author : 'Użytkownik',
-                        'content' => $review->content,
+                        'content' => $review->content ?? '',
                         'stars' => (int) $review->stars,
                     ];
                 })
-                ->filter(fn ($review) => filled($review['content']))
                 ->values();
 
             $rating = round((float) $reviews->avg('stars'), 2);
@@ -87,6 +88,17 @@ class ProductPageController extends Controller
             if (empty($topSpecs) && $specs->isNotEmpty()) {
                 $topSpecs = $specs->take(4)->all();
             }
+
+            if (auth()->check()) {
+                $currentUserReview = DB::table('reviews')
+                    ->where('product_id', $product->id)
+                    ->where('user_id', auth()->id())
+                    ->first([
+                        'id',
+                        'rating',
+                        'comment',
+                    ]);
+            }
         }
 
         $currentPrice = $product && $product->promo_price !== null && (float) $product->promo_price < (float) $product->base_price
@@ -106,6 +118,7 @@ class ProductPageController extends Controller
             'product' => $product,
             'specs' => $specs,
             'reviews' => $reviews,
+            'currentUserReview' => $currentUserReview,
             'topSpecs' => $topSpecs,
             'rating' => $rating,
             'ratingColorSegments' => $ratingColorSegments,
@@ -116,6 +129,46 @@ class ProductPageController extends Controller
             'imagePath' => $imagePath,
             'description' => null,
         ]);
+    }
+
+    public function storeReview(Request $request, int $id)
+    {
+        $product = Product::findOrFail($id);
+
+        $validated = $request->validate([
+            'rating' => ['required', 'integer', 'between:1,5'],
+            'comment' => ['nullable', 'string'],
+        ], [
+            'rating.required' => 'Wybierz ocenę.',
+            'rating.between' => 'Ocena musi być w zakresie od 1 do 5.',
+        ]);
+
+        $existingReview = DB::table('reviews')
+            ->where('product_id', $product->id)
+            ->where('user_id', $request->user()->id)
+            ->first(['id']);
+
+        if ($existingReview) {
+            DB::table('reviews')
+                ->where('id', $existingReview->id)
+                ->update([
+                    'rating' => $validated['rating'],
+                    'comment' => $validated['comment'] ?? '',
+                    'created_at' => now(),
+                ]);
+        } else {
+            DB::table('reviews')->insert([
+                'product_id' => $product->id,
+                'user_id' => $request->user()->id,
+                'rating' => $validated['rating'],
+                'comment' => $validated['comment'] ?? '',
+                'created_at' => now(),
+            ]);
+        }
+
+        return redirect()
+            ->route('products.show', $product->id)
+            ->with('success', $existingReview ? 'Opinia została zaktualizowana.' : 'Opinia została dodana.');
     }
 
     private function buildRatingSegments(float $rating): array

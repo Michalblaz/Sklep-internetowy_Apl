@@ -88,6 +88,7 @@
     <h2 class="font-bold text-lg mb-2">Informacje</h2>
     <p class="text-gray-400 font-bruno">E-mail: techblef@gmail.com</p>
     <p class="text-gray-400 font-bruno">Numer kontaktowy: +48 109247685</p>
+    <p class="text-gray-400 font-bruno">Lokalizacja: al. Tadeusza Rejtana 16C, 35-310 Rzeszów</p>
 </footer>
 
 </body>
