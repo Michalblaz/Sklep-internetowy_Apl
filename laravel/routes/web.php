@@ -2,10 +2,10 @@
 use App\Http\Controllers\ConfiguratorController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StartowaController;
+use App\Http\Controllers\ProductPageController;
 use App\Http\Controllers\WyszukajWitrynaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use App\Models\Product;
 use App\Http\Controllers\AdminController;
 
         //Strona startowa
@@ -24,16 +24,8 @@ use App\Http\Controllers\AdminController;
     Route::get('/sing_in', [AuthController::class, 'showSinginForm'])->name('sing_in');
 
         // Strona Produktu
-    Route::get('/produkt', fn() => view('produkt'))->name('product.show');
-    Route::get('/produkt/{product}', function (Product $product) {
-        return view('produkt', compact('product'));
-    })->name('products.show');
-    Route::get('/produkt/{id}', function (int $id) {
-        request()->merge(['id' => $id]);
-
-
-        return view('produkt');
-    })->whereNumber('id')->name('product.show.by-id');
+    Route::get('/produkt', [ProductPageController::class, 'show'])->name('product.show');
+    Route::get('/produkt/{id}', [ProductPageController::class, 'show'])->whereNumber('id')->name('products.show');
 
         //Wyszukiwarka
     Route::get('/wyszukaj', [WyszukajWitrynaController::class, 'PrzeniesNaStrone']) ->name('wyszukaj');
