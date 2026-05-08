@@ -231,7 +231,5 @@
             @endif
         </article>
     </section>
-
-    <script src="{{ asset('js/product-page.js') }}" defer></script>
 @endif
 @endsection
