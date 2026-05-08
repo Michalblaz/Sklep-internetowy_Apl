@@ -4,6 +4,11 @@
 
 
 <div class="w-full px-4 lg:px-8 py-6">
+    @if(session('error'))
+        <div class="col-span-full mb-4 p-4 bg-red-500/20 border border-red-500 text-red-500 rounded-xl font-bruno text-xs uppercase tracking-widest">
+            ⚠️ {{ session('error') }}
+        </div>
+    @endif
     <div class="grid grid-cols-12 gap-6 items-start">
         
         <aside class="col-span-12 lg:col-span-2 xl:col-span-2">
@@ -15,10 +20,12 @@
                         $build = session('configurator_build', []);
                         $requiredValueIds = [];
 
-                        foreach($build as $bItem) {
-                            if(isset($bItem['attributes'])) {
-                                foreach($bItem['attributes'] as $aId => $vId) {
-                                    $requiredValueIds[$aId] = $vId;
+                        // Standardowe atrybuty (Socket itp)
+                        foreach($build as $catId => $bItem) {
+                            $itemData = isset($bItem[0]) ? $bItem[0] : $bItem; // Obsługa tablic np. dla RAMu
+                            if(isset($itemData['attributes'])) {
+                                foreach($itemData['attributes'] as $aId => $vId) {
+                                    $requiredValueIds[$aId] = is_array($vId) ? $vId[0] : $vId;
                                 }
                             }
                         }
@@ -62,6 +69,15 @@
                     @php
                         $forcedValueId = $requiredValueIds[$attribute->id] ?? null;
                         $isForcedAttribute = !is_null($forcedValueId);
+                        //Wczytywanie z sesji odpowiednich atrybutów do dopasowania długości
+                        $constraintsMap = [
+                            24 => ['val' => $buildLimits['gpu_len'],      'type' => 'min'],
+                            25 => ['val' => $buildLimits['cooler_h'],     'type' => 'min'],
+                            50 => ['val' => $buildLimits['radiator_s'],   'type' => 'min'],
+                            40 => ['val' => $buildLimits['case_gpu'],     'type' => 'max'],
+                            41 => ['val' => $buildLimits['case_cooler'],  'type' => 'max'],
+                            49 => ['val' => $buildLimits['case_radiator'],'type' => 'max'],
+                        ];
                     @endphp
 
                     <div class="mb-1 border-t border-white/5 pt-2" x-data="{ open: false }">
@@ -70,32 +86,46 @@
                         </label>
 
                         <div class="space-y-2">
-                            @foreach($attribute->values as $index => $val)
-                                @php
-                                    $isRequiredByBuild = $isForcedAttribute && (int) $forcedValueId === (int) $val->id;
-                                    $isSelectedInRequest = is_array(request()->input('attrs.' . $attribute->id)) && in_array($val->id, request()->input('attrs.' . $attribute->id));
-                                    $shouldBeChecked = $isForcedAttribute ? $isRequiredByBuild : $isSelectedInRequest;
-                                    $shouldBeDisabled = $isForcedAttribute;
-                                @endphp
+                        @foreach($attribute->values as $index => $val)
+                           @php
+                                $numericVal = (float) preg_replace('/[^0-9.]/', '', $val->value);
+                                $isDisabledByDimension = false;
 
-                                <label
-                                    class="flex items-center gap-3 group {{ $shouldBeDisabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer' }}"
-                                    x-show="open || {{ $index }} < 3"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        name="attrs[{{ $attribute->id }}][]"
-                                        value="{{ $val->id }}"
-                                        {{ $shouldBeChecked ? 'checked' : '' }}
-                                        {{ $shouldBeDisabled ? 'disabled' : '' }}
-                                        class="w-3 h-3 rounded border-white/20 bg-white/5 text-neon-blue focus:ring-neon-blue"
-                                    >
+                                if (isset($constraintsMap[$attribute->id])) {
+                                    $check = $constraintsMap[$attribute->id];
+                                    if ($check['val'] > 0) {
+                                        $isDisabledByDimension = ($check['type'] === 'min') 
+                                            ? ($numericVal < $check['val']) 
+                                            : ($numericVal > $check['val']);
+                                    }
+                                }
+                                
+                                $isAvailableInResults = in_array($val->id, $availableValueIds ?? []);
+                                $isRequiredByBuild = $isForcedAttribute && (int) $forcedValueId === (int) $val->id;
+                                $isSelectedInRequest = is_array(request()->input('attrs.' . $attribute->id)) && in_array($val->id, request()->input('attrs.' . $attribute->id));
+                                $shouldBeChecked = $isForcedAttribute ? $isRequiredByBuild : $isSelectedInRequest;
 
-                                    <span class="text-[11px] {{ $shouldBeDisabled ? 'text-white/30' : 'text-white/60 group-hover:text-white' }} transition uppercase font-bruno">
-                                        {{ $val->value }}
-                                    </span>
-                                </label>
-                            @endforeach
+                                $isGrayedOut = $isDisabledByDimension || (!$isAvailableInResults && !$shouldBeChecked);
+                                $shouldBeDisabled = $isForcedAttribute || $isGrayedOut; 
+                            @endphp
+
+                            <label class="flex items-center gap-3 group {{ $shouldBeDisabled ? 'opacity-25 cursor-not-allowed grayscale' : 'cursor-pointer' }}" x-show="open || {{ $index }} < 3">
+                                <input type="checkbox" name="attrs[{{ $attribute->id }}][]" value="{{ $val->id }}"
+                                    {{ $shouldBeChecked ? 'checked' : '' }}
+                                    {{ $shouldBeDisabled ? 'disabled' : '' }}
+                                    class="w-3 h-3 rounded border-white/20 bg-white/5 text-neon-blue focus:ring-neon-blue transition-all">
+                                
+                                <span class="text-[11px] {{ $shouldBeDisabled ? 'text-white/20' : 'text-white/60 group-hover:text-neon-blue' }} transition uppercase font-bruno">
+                                    {{ $val->value }} 
+                                    
+                                    @if($isDisabledByDimension)
+                                        <span class="text-[7px] text-red-500/70 ml-1 font-sans">(NIE ZMIEŚCI SIĘ)</span>
+                                    @elseif(!$isAvailableInResults && !$shouldBeChecked)
+                                        <span class="text-[7px] text-white/30 ml-1 font-sans">(0)</span>
+                                    @endif
+                                </span>
+                            </label>
+                        @endforeach
                         </div>
 
                         @if($attribute->values->count() > 3)
@@ -181,9 +211,20 @@
                     <div class="mt-auto pt-6 border-t border-white/10 space-y-3">
                     <div class="bg-white/5 p-3 rounded flex justify-between items-center">
                         <span class="text-[10px] text-text-muted uppercase">Wartość:</span>
-                       <span class="text-neon-blue font-bruno text-lg">
-                            {{ collect(session()->get('configurator_build', []))->sum('price') }} zł
-                        </span>
+                            @php
+                                $totalPrice = 0;
+                                foreach(session('configurator_build', []) as $catId => $data) {
+                                    if (isset($data['price'])) {
+                                        $totalPrice += $data['price'];
+                                    } else {
+                                        // Jeśli to tablica (RAM/Dyski)
+                                        foreach($data as $item) {
+                                            $totalPrice += $item['price'];
+                                        }
+                                    }
+                                }
+                            @endphp
+                            <span class="text-neon-blue font-bruno text-lg">{{ number_format($totalPrice, 2) }} zł</span>
                     </div>
                     <button class="w-full bg-neon-purple/80 hover:bg-neon-purple py-3 rounded font-bruno text-xs uppercase transition-all shadow-lg shadow-neon-purple/20">
                         KUP ZESTAW
