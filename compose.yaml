@@ -92,11 +92,12 @@ services:
     user: root
     ports:
       - "8888:80"
-    environment:
+    environment:  
       PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
       PGADMIN_DEFAULT_PASSWORD: strong-password
     volumes:
       - ./pgadmin-data:/var/lib/pgadmin
+      - ./laravel/database/backup:/var/lib/pgadmin/storage/user-name_domain-name.com
   redis:
     image: redis:alpine
     restart: unless-stopped # Automatically restart unless the service is explicitly stopped

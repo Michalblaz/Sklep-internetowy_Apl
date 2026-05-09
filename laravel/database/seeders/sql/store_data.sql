@@ -337,12 +337,12 @@ INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (3
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (320, 40, '269');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (321, 40, '282');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (322, 40, '225');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (323, 40, '267'); 
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (324, 40, '337'); 
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (323, 40, '267');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (324, 40, '337');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (325, 40, '300');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (326, 40, '297'); 
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (327, 40, '182'); 
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (328, 40, '320'); 
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (326, 40, '297');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (327, 40, '182');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (328, 40, '320');
 -- Dodawanie wartości (kategoria 41: Wymiary chłodzenia)
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (400, 41, '240'); -- AiO 240
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (401, 41, '360'); -- AiO 360
@@ -792,7 +792,7 @@ INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (319, 10, 63, 'Apple AirPods Max północ', 2209.00, NULL, 3, 0, 'products/headphones/Apple_AirPods_Max_północ.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (320, 10, 63, 'Redragon VibeCore 600X', 150.00, NULL, 6, 0, 'products/headphones/Redragon_VibeCore_600X.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (321, 10, 53, 'Redragon VibeCore 605X', 150.00, NULL, 8, 0, 'products/headphones/Redragon_VibeCore_605X.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (322, 10, 60, 'Razer_Barracuda_X_Chroma_Phantom_Green.jpg', 500.00, NULL, 18, 0, 'products/headphones/Razer_Barracuda_X_Chroma_Phantom_Green.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (322, 10, 60, 'Razer Barracuda X Chroma Phantom Green', 500.00, NULL, 18, 0, 'products/headphones/Razer_Barracuda_X_Chroma_Phantom_Green.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (323, 10, 60, 'Sony WH-CH520 Czarne', 120.00, NULL, 4, 0, 'products/headphones/Sony_WH-CH520_Czarne.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (324, 10, 65, 'JBL Tune 520C USB-C fioletowe', 110.00, NULL, 10, 0, 'products/headphones/JBL_Tune_520C_USB-C_fioletowe.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (325, 10, 65, 'JBL Tune 520C USB-C niebieskie', 110.00, NULL, 10, 0, 'products/headphones/JBL_Tune_520C_USB-C_niebieskie.jpg');
@@ -2300,30 +2300,30 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (88, 45, 700); -- Crucial (1x16GB)
 
 -- Karty z 1x 8-pin PCIe (ID 801)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
-(14, 46, 801), (15, 46, 801), (37, 46, 801), (44, 46, 801), (52, 46, 801), 
-(56, 46, 801), (57, 46, 801), (61, 46, 801), (62, 46, 801), (64, 46, 801), 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+(14, 46, 801), (15, 46, 801), (37, 46, 801), (44, 46, 801), (52, 46, 801),
+(56, 46, 801), (57, 46, 801), (61, 46, 801), (62, 46, 801), (64, 46, 801),
 (65, 46, 801), (68, 46, 801), (69, 46, 801), (70, 46, 801);
 
 -- Karty z 1x 12VHPWR (ID 802) - Nowe serie RTX 5000 i mocne jednostki
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
-(45, 46, 802), (46, 46, 802), (47, 46, 802), (48, 46, 802), (49, 46, 802), 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+(45, 46, 802), (46, 46, 802), (47, 46, 802), (48, 46, 802), (49, 46, 802),
 (50, 46, 802), (51, 46, 802), (55, 46, 802), (59, 46, 802), (66, 46, 802), (67, 46, 802);
 
 -- Karty wymagające 2x 8-pin PCIe (Podwójne wpisy dla produktu)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 (54, 46, 801), (54, 46, 801), -- Sapphire Pure
 (58, 46, 801), (58, 46, 801), -- ASRock AI PRO
 (60, 46, 801), (60, 46, 801), -- ASUS RX 9070
 (63, 46, 801), (63, 46, 801); -- ASUS RX 9070 Prime
 
 -- Standardowe płyty (1x 8-pin CPU - ID 811)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
-(184, 47, 811), (185, 47, 811), (186, 47, 811), (191, 47, 811), (193, 47, 811), 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+(184, 47, 811), (185, 47, 811), (186, 47, 811), (191, 47, 811), (193, 47, 811),
 (194, 47, 811), (197, 47, 811), (198, 47, 811), (201, 47, 811), (202, 47, 811), (203, 47, 811);
 
 -- Płyty dla entuzjastów (2x 8-pin CPU - Podwójne wpisy)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 (182, 47, 811), (182, 47, 811), (183, 47, 811), (183, 47, 811),
 (187, 47, 811), (187, 47, 811), (188, 47, 811), (188, 47, 811),
 (189, 47, 811), (189, 47, 811), (192, 47, 811), (192, 47, 811),
@@ -2335,7 +2335,7 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 (210, 47, 811), (210, 47, 811), (211, 47, 811), (211, 47, 811);
 
 -- Zasilacze High-End (ATX 3.1 / 12VHPWR + 2x CPU)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 -- be quiet! Pure Power 13 M / Dark Power 14
 (112, 46, 802), (112, 47, 811), (112, 47, 811),
 (120, 46, 802), (120, 47, 811), (120, 47, 811),
@@ -2351,7 +2351,7 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 (127, 46, 802), (127, 47, 811), (127, 47, 811);
 
 -- Zasilacze Standardowe (Bez 12VHPWR, zazwyczaj 2x 8-pin PCIe i 1x lub 2x CPU)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 -- Vero L5 / System Power 11
 (129, 46, 801), (129, 46, 801), (129, 47, 811),
 (117, 46, 801), (117, 46, 801), (117, 47, 811), (117, 47, 811),
