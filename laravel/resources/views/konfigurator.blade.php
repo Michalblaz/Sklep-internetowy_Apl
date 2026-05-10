@@ -10,7 +10,7 @@
         </div>
     @endif
     <div class="grid grid-cols-12 gap-6 items-start">
-        
+
         <aside class="col-span-12 lg:col-span-2 xl:col-span-2">
             @if($category)
             <div class="bg-black/40 p-5 rounded-r-2xl border-y border-r border-white/10 backdrop-blur-xl sticky top-6 -ml-4 lg:-ml-8 shadow-2xl shadow-purple-900/10">
@@ -45,9 +45,9 @@
                             <div class="flex items-center gap-2">
                                 <input type="number" name="min_price" value="{{ request('min_price') }}" placeholder="Od"
                                     class="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-[11px] text-white focus:border-neon-blue focus:ring-0 outline-none transition">
-                                
+
                                 <div class="h-px w-4 bg-white/20"></div>
-                                
+
                                 <input type="number" name="max_price" value="{{ request('max_price') }}" placeholder="Do"
                                     class="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-[11px] text-white focus:border-neon-blue focus:ring-0 outline-none transition">
                             </div>
@@ -94,19 +94,19 @@
                                 if (isset($constraintsMap[$attribute->id])) {
                                     $check = $constraintsMap[$attribute->id];
                                     if ($check['val'] > 0) {
-                                        $isDisabledByDimension = ($check['type'] === 'min') 
-                                            ? ($numericVal < $check['val']) 
+                                        $isDisabledByDimension = ($check['type'] === 'min')
+                                            ? ($numericVal < $check['val'])
                                             : ($numericVal > $check['val']);
                                     }
                                 }
-                                
+
                                 $isAvailableInResults = in_array($val->id, $availableValueIds ?? []);
                                 $isRequiredByBuild = $isForcedAttribute && (int) $forcedValueId === (int) $val->id;
                                 $isSelectedInRequest = is_array(request()->input('attrs.' . $attribute->id)) && in_array($val->id, request()->input('attrs.' . $attribute->id));
                                 $shouldBeChecked = $isForcedAttribute ? $isRequiredByBuild : $isSelectedInRequest;
 
                                 $isGrayedOut = $isDisabledByDimension || (!$isAvailableInResults && !$shouldBeChecked);
-                                $shouldBeDisabled = $isForcedAttribute || $isGrayedOut; 
+                                $shouldBeDisabled = $isForcedAttribute || $isGrayedOut;
                             @endphp
 
                             <label class="flex items-center gap-3 group {{ $shouldBeDisabled ? 'opacity-25 cursor-not-allowed grayscale' : 'cursor-pointer' }}" x-show="open || {{ $index }} < 3">
@@ -114,10 +114,10 @@
                                     {{ $shouldBeChecked ? 'checked' : '' }}
                                     {{ $shouldBeDisabled ? 'disabled' : '' }}
                                     class="w-3 h-3 rounded border-white/20 bg-white/5 text-neon-blue focus:ring-neon-blue transition-all">
-                                
+
                                 <span class="text-[11px] {{ $shouldBeDisabled ? 'text-white/20' : 'text-white/60 group-hover:text-neon-blue' }} transition uppercase font-bruno">
-                                    {{ $val->value }} 
-                                    
+                                    {{ $val->value }}
+
                                     @if($isDisabledByDimension)
                                         <span class="text-[7px] text-red-500/70 ml-1 font-sans">(NIE ZMIEŚCI SIĘ)</span>
                                     @elseif(!$isAvailableInResults && !$shouldBeChecked)
@@ -139,7 +139,7 @@
                         @endif
                     </div>
                 @endforeach
-                    <a href="{{ route('konfigurator.index', ['category_id' => $category->id]) }}" 
+                    <a href="{{ route('konfigurator.index', ['category_id' => $category->id]) }}"
                         class="block text-center w-full bg-neon-purple/80 hover:bg-neon-purple py-2 rounded font-bruno text-[10px] uppercase transition-all shadow-lg shadow-neon-purple/20">
                         Resetuj filtry
                     </a>
@@ -184,7 +184,7 @@
             @endif
         </main>
 
-        <aside class="col-span-12 lg:col-span-2">
+        <aside class="col-span-12 lg:col-span-2 xl:col-span-2">
            <section class="flex flex-col bg-black/30 p-6 rounded-lg border border-white/5 backdrop-blur-sm">
                 <div class="text-[11px] tracking-[2px] mb-5 text-text-muted font-bruno">BUILD STATUS</div>
                 <div class="text-neon-blue text-[10px] mb-3 uppercase font-bruno">Wymagane elementy</div>
@@ -240,12 +240,12 @@
         </aside>
     </div>
 </div>
-    
+
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"> </script>
-<script>    
+<script>
   document.addEventListener('DOMContentLoaded', function() {
         const filterForm = document.getElementById('filter-form');
-        
+
         if (filterForm) {
             // 1. Obsługa Checkboxów i Selecta (Sortowanie)
             filterForm.querySelectorAll('input[type="checkbox"], select').forEach(element => {
@@ -262,7 +262,7 @@
                     typingTimer = setTimeout(() => {
                         console.log('Cena zmieniona -> Wysyłam formularz');
                         filterForm.submit();
-                    }, 800); 
+                    }, 800);
                 });
             });
         } else {

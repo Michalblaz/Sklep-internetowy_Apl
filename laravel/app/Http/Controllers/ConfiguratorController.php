@@ -25,7 +25,7 @@ class ConfiguratorController extends Controller
                 'attributeValuesMap' => [],
             ]);
         }
-        
+
         $category = Category::with(['attributes.values' => function($q) {
             $q->orderByRaw('LENGTH(value) ASC')->orderBy('value', 'asc');
         }])->findOrFail($categoryId);
@@ -41,7 +41,7 @@ class ConfiguratorController extends Controller
         $currentCategoryAttributeIds = $category->attributes->pluck('id')->toArray();
 
         foreach ($build as $builtCategoryId => $builtItem) {
-            
+
             if ((int)$builtCategoryId === $categoryId) {
                 continue;
             }
@@ -122,7 +122,7 @@ class ConfiguratorController extends Controller
             // Przeglądamy Chłodzenie (12) a mamy wybrane Obudowy (7)
             if ($categoryId == 12 && $builtCategoryId == 7) {
                 $caseMaxCooler = $this->getNumericValueFromSession($builtItem, 25);
-                $caseMaxRadiator = $this->getNumericValueFromSession($builtItem, 50); 
+                $caseMaxRadiator = $this->getNumericValueFromSession($builtItem, 50);
 
                 $query->where(function($q) use ($caseMaxCooler, $caseMaxRadiator) {
                     // 1. Opcja dla chłodzeń powietrznych
@@ -144,7 +144,7 @@ class ConfiguratorController extends Controller
                 });
             }
         }
-        
+
 
         // FILTRY
         if (!empty($selectedAttrs)) {
@@ -153,28 +153,42 @@ class ConfiguratorController extends Controller
                 if (($attrId == 24 || $attrId == 25 || $attrId == 50) && $categoryId == 7) {
                     $values = \DB::table('attribute_values')->whereIn('id', $valIds)->pluck('value');
                     $minVal = $values->map(fn($v) => (float) preg_replace('/[^0-9.]/', '', $v))->min();
-                    
+
                     $query->whereHas('attributeValues', function($q) use ($attrId, $minVal) {
                         $q->where('product_attributes.attribute_category_id', $attrId)
                         ->whereRaw("attribute_values.value ~ '^[0-9]+(\.[0-9]+)?$'")
                         ->whereRaw("CAST(attribute_values.value AS DECIMAL) >= ?", [$minVal]);
+
+                        });
+                }
+                // Logika "od tej wartości w dół" dla GPU
+                elseif ($attrId == 40 && $categoryId == 2) {
+                    $values = \DB::table('attribute_values')->whereIn('id', $valIds)->pluck('value');
+                    $maxVal = $values->map(fn($v) => (float) preg_replace('/[^0-9.]/', '', $v))->max();
+
+                    $query->whereHas('attributeValues', function($q) use ($attrId, $maxVal) {
+                        $q->where('product_attributes.attribute_category_id', $attrId)
+                        ->whereRaw("CAST(NULLIF(regexp_replace(attribute_values.value, '[^0-9.]', '', 'g'), '') AS DECIMAL) <= ?", [$maxVal]);
                     });
-                } else {
+                }
+                else {
                     // Standardowe filtrowanie atrybutów
-                    $query->whereHas('attributeValues', function($q) use ($valIds) {
-                        $q->whereIn('attribute_value_id', $valIds);
-                    });
+                    foreach ($valIds as $valId) {
+                        $query->whereHas('attributeValues', function($q) use ($valId) {
+                            $q->where('product_attributes.attribute_value_id', $valId);
+                        });
+                    }
                 }
             }
         }
-       
+
 
         // Filtry marek
         if (!empty($selectedBrands)) {
             $query->whereIn('brand_id', $selectedBrands);
         }
 
-        // Filtry ceny 
+        // Filtry ceny
         if ($request->filled('min_price')) {
             $query->where('base_price', '>=', $request->min_price);
         }
@@ -182,7 +196,7 @@ class ConfiguratorController extends Controller
         if ($request->filled('max_price')) {
             $query->where('base_price', '<=', $request->max_price);
         }
-        
+
         // Filtry Producentów
         $brands = Brand::whereHas('products', function($q) use ($categoryId) {
             $q->where('category_id', $categoryId);
@@ -204,7 +218,7 @@ class ConfiguratorController extends Controller
                 break;
         }
 
-        // Pobieramy produkty 
+        // Pobieramy produkty
         $allMatchingProductIds = (clone $query)->pluck('id');
         $availableValueIds = \DB::table('product_attributes')
             ->whereIn('product_id', $allMatchingProductIds)
@@ -225,7 +239,7 @@ class ConfiguratorController extends Controller
 
         return view('konfigurator', compact('products', 'category', 'brands', 'availableValueIds', 'buildLimits'));
     }
-    
+
     // Zamienia atrybuty modelu produktu na tablicę [category_id => [values]]
     private function getProductAttributesArray($product)
     {
@@ -235,8 +249,8 @@ class ConfiguratorController extends Controller
         }
         return $attrs;
     }
-    
-    // Pobiera wartość liczbową konkretnego atrybutu dla produktu z bazy 
+
+    // Pobiera wartość liczbową konkretnego atrybutu dla produktu z bazy
     private function getSingleNumericValue($productOrId, $attrCategoryId)
     {
         if (is_numeric($productOrId)) {
@@ -254,7 +268,7 @@ class ConfiguratorController extends Controller
         return is_numeric($clean) ? (float)$clean : null;
     }
     // Pobiera wartość liczbową konkretnego atrybutu dla produktu z sesji
-   public function getNumericValueFromSession($builtItem, $attrCategoryId) 
+   public function getNumericValueFromSession($builtItem, $attrCategoryId)
    {
        if (!isset($builtItem['attributes'][$attrCategoryId])) {
             return null;
@@ -262,11 +276,11 @@ class ConfiguratorController extends Controller
 
         $valIds = $builtItem['attributes'][$attrCategoryId];
         $valId = is_array($valIds) ? $valIds[0] : $valIds;
-        
+
         $val = \DB::table('attribute_values')->where('id', $valId)->value('value');
-        
+
         $cleanVal = preg_replace('/[^0-9.]/', '', $val);
-        
+
         return is_numeric($cleanVal) ? (float)$cleanVal : null;
     }
         //Zapisujemy wybrany produkt w sesji
@@ -294,10 +308,10 @@ class ConfiguratorController extends Controller
                $attrs[$attrId][] = $val->id;
             }
         }
-        
+
         $selection = session()->get('configurator_build', []);
         $multiSelectCategories = [4, 5];
-        
+
         try {
             $this->validateCompatibility($product, $categoryId, $selection);
         } catch (\Exception $e) {
@@ -305,12 +319,12 @@ class ConfiguratorController extends Controller
         }
 
         if (in_array($categoryId, $multiSelectCategories)) {
-        $motherboard = $selection[3] ?? null; 
+        $motherboard = $selection[3] ?? null;
 
             if ($motherboard) {
                 // 1. Walidacja RAM (Kategoria 4)
                 if ($categoryId == 4) {
-                    $maxSlots = $this->getNumberFromAttr($motherboard['id'], 44); 
+                    $maxSlots = $this->getNumberFromAttr($motherboard['id'], 44);
                     $usedSlots = 0;
 
                     if (isset($selection[4])) {
@@ -319,8 +333,8 @@ class ConfiguratorController extends Controller
                         }
                     }
 
-                    $newProductSlots = $this->getNumberFromAttr($product->id, 45); 
-                    
+                    $newProductSlots = $this->getNumberFromAttr($product->id, 45);
+
                     if (($usedSlots + $newProductSlots) > $maxSlots) {
                         return back()->with('error', "Brak wolnych slotów RAM! (Dostępne: $maxSlots, Zajęte: $usedSlots)");
                     }
@@ -328,7 +342,7 @@ class ConfiguratorController extends Controller
 
                 // 2. Walidacja Dysków (Kategoria 5)
                 if ($categoryId == 5) {
-                    $maxM2 = $this->getNumberFromAttr($motherboard['id'], 48); 
+                    $maxM2 = $this->getNumberFromAttr($motherboard['id'], 48);
                     $usedDisks = isset($selection[5]) ? count($selection[5]) : 0;
 
                     if (($usedDisks + 1) > $maxM2) {
@@ -337,7 +351,7 @@ class ConfiguratorController extends Controller
                 }
             }
         }
-        
+
         $productData = [
             'id' => $product->id,
             'name' => $product->name,
@@ -367,12 +381,12 @@ class ConfiguratorController extends Controller
 
 
 
-    private function validateCompatibility($newProduct, $newCategoryId, $currentBuild) 
+    private function validateCompatibility($newProduct, $newCategoryId, $currentBuild)
     {
         foreach ($currentBuild as $catId => $items) {
             // Jeśli to RAM lub Dysk, to $items jest tablicą produktów
-           $productsToCompare = (is_array($items) && is_array(reset($items))) 
-                         ? $items 
+           $productsToCompare = (is_array($items) && is_array(reset($items)))
+                         ? $items
                          : [$items];
 
             foreach ($productsToCompare as $item) {
@@ -380,7 +394,7 @@ class ConfiguratorController extends Controller
                 if (($newCategoryId == 2 && $catId == 7) || ($newCategoryId == 7 && $catId == 2)) {
                     $gpuLength = ($newCategoryId == 2) ? $this->getSingleNumericValue($newProduct->id, 40)  : $this->getSingleNumericValue($item['id'], 40);
                     $caseMaxGpu = ($newCategoryId == 7) ? $this->getSingleNumericValue($newProduct, 24) : $this->getSingleNumericValue($item['id'], 24);
-                    
+
                     if ($gpuLength && $caseMaxGpu && $gpuLength > $caseMaxGpu) {
                         throw new \Exception("Karta graficzna ({$gpuLength}mm) nie zmieści się w tej obudowie (max {$caseMaxGpu}mm)!");
                     }
@@ -392,7 +406,7 @@ class ConfiguratorController extends Controller
                     $radiatorSize = ($newCategoryId == 12) ? $this->getSingleNumericValue($newProduct, 49) : $this->getSingleNumericValue($item['id'], 49);
                     $caseMaxCooler = ($newCategoryId == 7) ? $this->getSingleNumericValue($newProduct, 25) : $this->getSingleNumericValue($item['id'], 25);
                     $caseMaxRadiator = ($newCategoryId == 7) ? $this->getSingleNumericValue($newProduct, 50) : $this->getSingleNumericValue($item['id'], 50);
-                    
+
                     if ($coolerHeight && $caseMaxCooler && $coolerHeight > $caseMaxCooler) {
                         throw new \Exception("Chłodzenie CPU ({$coolerHeight}mm) jest za wysokie dla tej obudowy (max {$caseMaxCooler}mm)!");
                     }
@@ -420,19 +434,20 @@ class ConfiguratorController extends Controller
     }
 
 
-    public function getAvailableProducts($categoryId) 
+    public function getAvailableProducts($categoryId)
     {
         $query = Product::where('category_id', $categoryId);
         $selection = session()->get('configurator_build', []);
 
         foreach ($selection as $selectedCatId => $item) {
-            $rules = CategoryAttribute::where('category_id', $categoryId)
-                                    ->where('is_required', true)
-                                    ->get();
+            $rules = \DB::table('category_attributes')
+                        ->where('category_id', $categoryId)
+                        ->where('is_required', true)
+                        ->get();
 
             foreach ($rules as $rule) {
                 $selectedValues = $item['attributes'][$rule->attribute_id] ?? [];
-                
+
                 if (!empty($selectedValues)) {
                     $query->whereHas('attributeValues', function($q) use ($rule, $selectedValues) {
                         $q->where('attribute_category_id', $rule->attribute_id)
@@ -443,4 +458,4 @@ class ConfiguratorController extends Controller
         }
         return $query->get();
     }
-    }
+}
