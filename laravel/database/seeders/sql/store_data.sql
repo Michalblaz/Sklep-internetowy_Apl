@@ -341,12 +341,12 @@ INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (3
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (320, 40, '269');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (321, 40, '282');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (322, 40, '225');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (323, 40, '267');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (324, 40, '337');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (323, 40, '267'); 
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (324, 40, '337'); 
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (325, 40, '300');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (326, 40, '297');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (327, 40, '182');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (328, 40, '320');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (326, 40, '297'); 
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (327, 40, '182'); 
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (328, 40, '320'); 
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (329, 40, '167'); -- Intel Arc Pro B50
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (330, 40, '304'); -- ASUS Prime / Zotac Solid SFF
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (331, 40, '288'); -- Gigabyte RX 9070 XT Gaming OC
@@ -361,12 +361,6 @@ INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (3
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (340, 40, '221'); -- Zotac RTX 5050 Twin Edge
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (341, 40, '252'); -- Zotac RTX 5090 ArcticStorm AIO
 -- Dodawanie wartości (kategoria 41: Wysokość chłodzenia powietrznego)
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (326, 40, '297');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (327, 40, '182');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (328, 40, '320');
--- Dodawanie wartości (kategoria 41: Wymiary chłodzenia)
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (400, 41, '240'); -- AiO 240
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (401, 41, '360'); -- AiO 360
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (402, 41, '159'); -- Fortis 5 / Dark Rock 5
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (403, 41, '155'); -- Fera 5 / Assassin X
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (404, 41, '154'); -- Phantom Spirit 120 SE
@@ -893,8 +887,8 @@ INSERT INTO public.category_attributes (id, category_id, attribute_id, is_requir
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (22, 6, 21, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (23, 6, 22, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (24, 7, 23, false);
-INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (25, 7, 24, false);
-INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (26, 7, 25, false);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (25, 7, 24, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (26, 7, 25, true);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (27, 7, 12, true);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (28, 8, 26, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (29, 8, 27, false);
@@ -928,6 +922,7 @@ INSERT INTO public.category_attributes (id, category_id, attribute_id, is_requir
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (57, 3, 48, true);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (58, 12, 49, true);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (59, 7, 50, true);
+
 
 
 
@@ -2518,11 +2513,8 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 
 -- Karty z 1x 8-pin PCIe (ID 801)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
-(14, 46, 801), (15, 46, 801), (37, 46, 801), (44, 46, 801), (52, 46, 801),
-(56, 46, 801), (57, 46, 801), (61, 46, 801), (62, 46, 801), (64, 46, 801),
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
-(14, 46, 801), (15, 46, 801), (37, 46, 801), (44, 46, 801), (52, 46, 801),
-(56, 46, 801), (57, 46, 801), (61, 46, 801), (62, 46, 801), (64, 46, 801),
+(14, 46, 801), (15, 46, 801), (37, 46, 801), (44, 46, 801), (52, 46, 801), 
+(56, 46, 801), (57, 46, 801), (61, 46, 801), (62, 46, 801), (64, 46, 801), 
 (65, 46, 801), (68, 46, 801), (69, 46, 801), (70, 46, 801);
 
 -- Karty bez dodatkowego zasilania (ID 803)
@@ -2530,15 +2522,12 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 (53, 46, 803); -- Intel Arc Pro B50
 
 -- Karty z 1x 12VHPWR (ID 802) - Nowe serie RTX 5000 i mocne jednostki
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
 (45, 46, 802), (47, 46, 802), (48, 46, 802), (49, 46, 802), (50, 46, 802),
 (51, 46, 802), (55, 46, 802), (58, 46, 802), (59, 46, 802), (66, 46, 802), (67, 46, 802);
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
-(45, 46, 802), (46, 46, 802), (47, 46, 802), (48, 46, 802), (49, 46, 802),
-(50, 46, 802), (51, 46, 802), (55, 46, 802), (59, 46, 802), (66, 46, 802), (67, 46, 802);
 
 -- Karty wymagające 2x 8-pin PCIe (Podwójne wpisy dla produktu)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
 (54, 46, 801), (54, 46, 801), -- Sapphire Pure
 (60, 46, 801), (60, 46, 801), -- ASUS RX 9070
 (63, 46, 801), (63, 46, 801); -- ASUS RX 9070 Prime
@@ -2549,16 +2538,12 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 (60, 46, 801); -- ASUS RX 9070 XT Prime OC White (trzeci 8-pin)
 
 -- Standardowe płyty (1x 8-pin CPU - ID 811)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
-(184, 47, 811), (185, 47, 811), (186, 47, 811), (191, 47, 811), (193, 47, 811),
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+(184, 47, 811), (185, 47, 811), (186, 47, 811), (191, 47, 811), (193, 47, 811), 
 (190, 47, 811), (194, 47, 811), (197, 47, 811), (198, 47, 811), (201, 47, 811),
 (202, 47, 811), (203, 47, 811);
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
-(184, 47, 811), (185, 47, 811), (186, 47, 811), (191, 47, 811), (193, 47, 811),
-(194, 47, 811), (197, 47, 811), (198, 47, 811), (201, 47, 811), (202, 47, 811), (203, 47, 811);
 
 -- Płyty dla entuzjastów (2x 8-pin CPU - Podwójne wpisy)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 (182, 47, 811), (182, 47, 811), (183, 47, 811), (183, 47, 811),
 (187, 47, 811), (187, 47, 811), (188, 47, 811), (188, 47, 811),
@@ -2571,7 +2556,7 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 (210, 47, 811), (210, 47, 811), (211, 47, 811), (211, 47, 811);
 
 -- Zasilacze High-End (ATX 3.1 / 12VHPWR + 2x CPU)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
 -- be quiet! Pure Power 13 M / Dark Power 14
 (112, 46, 802), (112, 47, 811), (112, 47, 811),
 (120, 46, 802), (120, 47, 811), (120, 47, 811),
@@ -2600,7 +2585,6 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 (163, 46, 802), (163, 47, 811); -- Cooler Master MWE Bronze V3 650W
 
 -- Zasilacze Standardowe (Bez 12VHPWR, zazwyczaj 2x 8-pin PCIe i 1x lub 2x CPU)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 -- Vero L5 / System Power 11
 (129, 46, 801), (129, 46, 801), (129, 47, 811),
@@ -2661,4 +2645,3 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (209, 48, 901); -- PRO B850M-P (2 sloty)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (210, 48, 903); -- Z790 GAMING PLUS (4 sloty)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (211, 48, 901); -- MPG B550 GAMING PLUS (2 sloty)
-

@@ -126,25 +126,26 @@ class ConfiguratorController extends Controller
 
                 $query->where(function($q) use ($caseMaxCooler, $caseMaxRadiator) {
                     // 1. Opcja dla chłodzeń powietrznych
-                    $q->whereHas('attributeValues', function($sq) use ($caseMaxCooler) {
-                        $sq->where('product_attributes.attribute_category_id', 41)
-                        ->whereRaw("attribute_values.value ~ '^[0-9]+(\.[0-9]+)?$'")
-                        ->whereRaw("CAST(attribute_values.value AS DECIMAL) <= ?", [$caseMaxCooler]);
-                    })
+                    if ($caseMaxCooler) {
+                        $q->whereHas('attributeValues', function($sq) use ($caseMaxCooler) {
+                            $sq->where('product_attributes.attribute_category_id', 41)
+                            ->whereRaw("attribute_values.value ~ '^[0-9]+(\.[0-9]+)?$'")
+                            ->whereRaw("CAST(attribute_values.value AS DECIMAL) <= ?", [$caseMaxCooler]);
+                        });
+                    }
                     // 2. Opcja dla chłodzeń wodnych (AIO)
-                    ->whereHas('attributeValues', function($sq) use ($caseMaxRadiator) {
-                        $sq->where('product_attributes.attribute_category_id', 49)
-                        ->whereRaw("attribute_values.value ~ '^[0-9]+(\.[0-9]+)?$'")
-                        ->whereRaw("CAST(attribute_values.value AS DECIMAL) <= ?", [$caseMaxRadiator]);
-                    })
-                    // 3. LUB Pokaż te, które nie mają ani wysokości, ani rozmiaru radiatora
-                    ->orWhereDoesntHave('attributeValues', function($sq) {
-                        $sq->whereIn('product_attributes.attribute_category_id', [41, 49]);
-                    });
+                    if ($caseMaxRadiator) {
+                        $method = $caseMaxCooler ? 'orWhereHas' : 'whereHas';
+
+                        $q->{$method}('attributeValues', function($sq) use ($caseMaxRadiator) {
+                            $sq->where('product_attributes.attribute_category_id', 49)
+                            ->whereRaw("attribute_values.value ~ '^[0-9]+(\.[0-9]+)?$'")
+                            ->whereRaw("CAST(attribute_values.value AS DECIMAL) <= ?", [$caseMaxRadiator]);
+                        });
+                    }
                 });
             }
         }
-
 
         // FILTRY
         if (!empty($selectedAttrs)) {
@@ -238,16 +239,6 @@ class ConfiguratorController extends Controller
         ];
 
         return view('konfigurator', compact('products', 'category', 'brands', 'availableValueIds', 'buildLimits'));
-    }
-
-    // Zamienia atrybuty modelu produktu na tablicę [category_id => [values]]
-    private function getProductAttributesArray($product)
-    {
-        $attrs = [];
-        foreach ($product->attributeValues as $val) {
-            $attrs[$val->pivot->attribute_category_id][] = $val->id;
-        }
-        return $attrs;
     }
 
     // Pobiera wartość liczbową konkretnego atrybutu dla produktu z bazy
