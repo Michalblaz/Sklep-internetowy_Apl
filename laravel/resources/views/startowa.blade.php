@@ -10,40 +10,49 @@
 <div id="polecane" class="w-full px-4 lg:px-8 py-6">
     <div class="flex items-center gap-4 mb-8">
         <div class="h-px grow bg-linear-to-r from-neon-blue/50 to-transparent"></div>
-        <h2 class="text-xl font-bruno text-white uppercase italic">Polecane Produkty</h2>
+        <h2 class="text-xl font-bruno text-white uppercase italic">
+            Polecane Produkty
+        </h2>
         <div class="h-px grow bg-linear-to-l from-neon-blue/50 to-transparent"></div>
     </div>
 
-    <div id="recommended-container" class="overflow-hidden">
-    <div id="recommended-track"
-        class="flex transition-transform duration-500 ease-out gap-10 items-stretch">
+    <div class="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-12 px-20 shadow-2xl shadow-cyan-900/20 overflow-hidden">
 
-        @foreach($products as $product)
-            <div class="carousel-item flex-none w-[220px] sm:w-[240px] lg:w-[260px]">
+        <div id="recommended-container" class="overflow-hidden">
+            <div id="recommended-track"
+                class="flex transition-transform duration-500 ease-out gap-10 items-stretch">
 
-                @php
-                    $discount = ($product->base_price > 0 && $product->promo_price)
-                        ? round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
-                        : 0;
-                @endphp
+                @foreach($products as $product)
+                    <div class="carousel-item flex-none w-[260px]">
 
-                <x-product-card-home :product="$product" :discount="$discount" />
+                        @php
+                            $discount = ($product->base_price > 0 && $product->promo_price)
+                                ? round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
+                                : 0;
+                        @endphp
+
+                        <x-product-card-home
+                            :product="$product"
+                            :discount="$discount" />
+
+                    </div>
+                @endforeach
 
             </div>
-        @endforeach
+        </div>
 
-    </div>
-</div>
+        <button id="recommended-prev"
+            onclick="moveCarousel('recommended', -1)"
+            class="absolute left-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
+            ◀
+        </button>
 
-<button id="recommended-prev" onclick="moveCarousel('recommended', -1)"
-class="absolute left-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
-    ◀
-</button>
+        <button id="recommended-next"
+            onclick="moveCarousel('recommended', 1)"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
+            ▶
+        </button>
 
-<button id="recommended-next" onclick="moveCarousel('recommended', 1)"
-class="absolute right-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
-    ▶
-</button>
     </div>
 </div>
 
@@ -187,24 +196,37 @@ html {
 
 
 <script>
-const carouselPositions = { featured: 0, promo: 0 };
+const carouselPositions = {
+    recommended: 0,
+    promo: 0
+};
 
 function moveCarousel(id, direction) {
     const track = document.getElementById(`${id}-track`);
     const container = document.getElementById(`${id}-container`);
-    const items = track.querySelectorAll('.carousel-item');
+    const items = track?.querySelectorAll('.carousel-item');
 
-    if (!items.length) return;
+    if (!track || !container || !items.length) return;
 
-    const itemWidth = items[0].offsetWidth + 40;
-    const maxScroll = track.scrollWidth - container.offsetWidth;
+    const gap = 40; // gap-10 = 40px
+    const itemWidth = items[0].offsetWidth + gap;
+    const maxScroll = Math.max(
+        0,
+        track.scrollWidth - container.offsetWidth
+    );
 
     carouselPositions[id] += direction * itemWidth;
 
-    if (carouselPositions[id] < 0) carouselPositions[id] = 0;
-    if (carouselPositions[id] > maxScroll) carouselPositions[id] = maxScroll;
+    if (carouselPositions[id] < 0) {
+        carouselPositions[id] = 0;
+    }
 
-    track.style.transform = `translateX(-${carouselPositions[id]}px)`;
+    if (carouselPositions[id] > maxScroll) {
+        carouselPositions[id] = maxScroll;
+    }
+
+    track.style.transform =
+        `translateX(-${carouselPositions[id]}px)`;
 
     updateArrows(id, maxScroll);
 }
@@ -212,24 +234,63 @@ function moveCarousel(id, direction) {
 function updateArrows(id, maxScroll) {
     const prevBtn = document.getElementById(`${id}-prev`);
     const nextBtn = document.getElementById(`${id}-next`);
+
+    if (!prevBtn || !nextBtn) return;
+
     const current = carouselPositions[id];
 
     prevBtn.style.opacity = current <= 0 ? "0" : "0.4";
-    prevBtn.style.pointerEvents = current <= 0 ? "none" : "auto";
+    prevBtn.style.pointerEvents =
+        current <= 0 ? "none" : "auto";
 
-    nextBtn.style.opacity = current >= maxScroll ? "0" : "0.4";
-    nextBtn.style.pointerEvents = current >= maxScroll ? "none" : "auto";
+    nextBtn.style.opacity =
+        current >= maxScroll ? "0" : "0.4";
+
+    nextBtn.style.pointerEvents =
+        current >= maxScroll ? "none" : "auto";
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    ['featured','promo'].forEach(id => {
+document.addEventListener('DOMContentLoaded', function () {
+
+    ['recommended', 'promo'].forEach(id => {
+
         const track = document.getElementById(`${id}-track`);
         const container = document.getElementById(`${id}-container`);
+
         if (!track || !container) return;
 
-        const maxScroll = track.scrollWidth - container.offsetWidth;
+        const maxScroll = Math.max(
+            0,
+            track.scrollWidth - container.offsetWidth
+        );
+
         updateArrows(id, maxScroll);
     });
+
+    window.addEventListener('resize', () => {
+        ['recommended', 'promo'].forEach(id => {
+
+            const track = document.getElementById(`${id}-track`);
+            const container = document.getElementById(`${id}-container`);
+
+            if (!track || !container) return;
+
+            const maxScroll = Math.max(
+                0,
+                track.scrollWidth - container.offsetWidth
+            );
+
+            if (carouselPositions[id] > maxScroll) {
+                carouselPositions[id] = maxScroll;
+            }
+
+            track.style.transform =
+                `translateX(-${carouselPositions[id]}px)`;
+
+            updateArrows(id, maxScroll);
+        });
+    });
+
 });
 </script>
 
