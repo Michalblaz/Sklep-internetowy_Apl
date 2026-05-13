@@ -341,12 +341,12 @@ INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (3
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (320, 40, '269');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (321, 40, '282');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (322, 40, '225');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (323, 40, '267'); 
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (324, 40, '337'); 
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (323, 40, '267');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (324, 40, '337');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (325, 40, '300');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (326, 40, '297'); 
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (327, 40, '182'); 
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (328, 40, '320'); 
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (326, 40, '297');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (327, 40, '182');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (328, 40, '320');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (329, 40, '167'); -- Intel Arc Pro B50
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (330, 40, '304'); -- ASUS Prime / Zotac Solid SFF
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (331, 40, '288'); -- Gigabyte RX 9070 XT Gaming OC
@@ -2513,8 +2513,8 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 
 -- Karty z 1x 8-pin PCIe (ID 801)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
-(14, 46, 801), (15, 46, 801), (37, 46, 801), (44, 46, 801), (52, 46, 801), 
-(56, 46, 801), (57, 46, 801), (61, 46, 801), (62, 46, 801), (64, 46, 801), 
+(14, 46, 801), (15, 46, 801), (37, 46, 801), (44, 46, 801), (52, 46, 801),
+(56, 46, 801), (57, 46, 801), (61, 46, 801), (62, 46, 801), (64, 46, 801),
 (65, 46, 801), (68, 46, 801), (69, 46, 801), (70, 46, 801);
 
 -- Karty bez dodatkowego zasilania (ID 803)
@@ -2522,12 +2522,12 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 (53, 46, 803); -- Intel Arc Pro B50
 
 -- Karty z 1x 12VHPWR (ID 802) - Nowe serie RTX 5000 i mocne jednostki
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 (45, 46, 802), (47, 46, 802), (48, 46, 802), (49, 46, 802), (50, 46, 802),
 (51, 46, 802), (55, 46, 802), (58, 46, 802), (59, 46, 802), (66, 46, 802), (67, 46, 802);
 
 -- Karty wymagające 2x 8-pin PCIe (Podwójne wpisy dla produktu)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 (54, 46, 801), (54, 46, 801), -- Sapphire Pure
 (60, 46, 801), (60, 46, 801), -- ASUS RX 9070
 (63, 46, 801), (63, 46, 801); -- ASUS RX 9070 Prime
@@ -2538,8 +2538,8 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 (60, 46, 801); -- ASUS RX 9070 XT Prime OC White (trzeci 8-pin)
 
 -- Standardowe płyty (1x 8-pin CPU - ID 811)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
-(184, 47, 811), (185, 47, 811), (186, 47, 811), (191, 47, 811), (193, 47, 811), 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+(184, 47, 811), (185, 47, 811), (186, 47, 811), (191, 47, 811), (193, 47, 811),
 (190, 47, 811), (194, 47, 811), (197, 47, 811), (198, 47, 811), (201, 47, 811),
 (202, 47, 811), (203, 47, 811);
 
@@ -2556,7 +2556,7 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 (210, 47, 811), (210, 47, 811), (211, 47, 811), (211, 47, 811);
 
 -- Zasilacze High-End (ATX 3.1 / 12VHPWR + 2x CPU)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 -- be quiet! Pure Power 13 M / Dark Power 14
 (112, 46, 802), (112, 47, 811), (112, 47, 811),
 (120, 46, 802), (120, 47, 811), (120, 47, 811),
@@ -2645,3 +2645,55 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (209, 48, 901); -- PRO B850M-P (2 sloty)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (210, 48, 903); -- Z790 GAMING PLUS (4 sloty)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (211, 48, 901); -- MPG B550 GAMING PLUS (2 sloty)
+
+-- Dodanie użytkownika z nowego backupu
+INSERT INTO public.users VALUES (1, 'mb131406@stud.ur.edu.pl', '$2y$12$jp7RO2jXONMyriETrE7xxeNl9ziH4gDRxzyzAy2yga0ubsESR4eeS', 'Michał', 'Błaż', '123456789', false);
+INSERT INTO public.users VALUES (2, 'admin@admin', '$2y$12$pMYi.0BbkodP8g.JGJaiBOfwauCl5lUXaUN07rLHWdGWyBjHOqnPK', 'admin', 'admin', '111111111', true);
+INSERT INTO public.users VALUES (3, 'kb134890@stud.ur.edu.pl', '$2y$12$woyRsZFWJYOMIu6Wqd25m.VMtB6Q7v8z7eKK57zjulKJPINPLlRoO', 'Kornel', 'Barć', '123456789', false);
+INSERT INTO public.users VALUES (4, 'jc124896@stud.ur.edu.pl', '$2y$12$gorFwPdOo64n5f/QuujkruZCpWe/0fxNYKSgjnwq0/jEToMb9o7ba', 'Jakub', 'Chmiel', '531485472', false);
+
+-- Synchronizacja licznika ID dla tabeli użytkowników
+SELECT pg_catalog.setval('public.users_id_seq', (SELECT MAX(id) FROM public.users), true);
+
+
+-- 1. Produkty
+SELECT setval(pg_get_serial_sequence('public.products', 'id'), COALESCE(MAX(id), 1)) FROM public.products;
+
+-- 2. Atrybuty (Kategorie atrybutów)
+SELECT setval(pg_get_serial_sequence('public.attribute_category', 'id'), COALESCE(MAX(id), 1)) FROM public.attribute_category;
+
+-- 3. Wartości atrybutów
+SELECT setval(pg_get_serial_sequence('public.attribute_values', 'id'), COALESCE(MAX(id), 1)) FROM public.attribute_values;
+
+-- 4. Powiązania atrybutów produktów (EAV)
+SELECT setval(pg_get_serial_sequence('public.product_attributes', 'id'), COALESCE(MAX(id), 1)) FROM public.product_attributes;
+
+-- 5. Marki (Brands)
+SELECT setval(pg_get_serial_sequence('public.brands', 'id'), COALESCE(MAX(id), 1)) FROM public.brands;
+
+-- 6. Kategorie produktów
+SELECT setval(pg_get_serial_sequence('public.categories', 'id'), COALESCE(MAX(id), 1)) FROM public.categories;
+
+-- 7. Relacje Kategoria <-> Atrybut
+SELECT setval(pg_get_serial_sequence('public.category_attributes', 'id'), COALESCE(MAX(id), 1)) FROM public.category_attributes;
+
+-- 8. Użytkownicy
+SELECT setval(pg_get_serial_sequence('public.users', 'id'), COALESCE(MAX(id), 1)) FROM public.users;
+
+-- 9. Reklamacje (Complaints)
+SELECT setval(pg_get_serial_sequence('public.complaints', 'id'), COALESCE(MAX(id), 1)) FROM public.complaints;
+
+-- 10. Zamówienia
+SELECT setval(pg_get_serial_sequence('public.orders', 'id'), COALESCE(MAX(id), 1)) FROM public.orders;
+
+-- 11. Pozycje zamówień
+SELECT setval(pg_get_serial_sequence('public.order_items', 'id'), COALESCE(MAX(id), 1)) FROM public.order_items;
+
+-- 12. Metody wysyłki
+SELECT setval(pg_get_serial_sequence('public.shipping_methods', 'id'), COALESCE(MAX(id), 1)) FROM public.shipping_methods;
+
+-- 13. Adresy
+SELECT setval(pg_get_serial_sequence('public.addresses', 'id'), COALESCE(MAX(id), 1)) FROM public.addresses;
+
+-- 14. Koszyk
+SELECT setval(pg_get_serial_sequence('public.cart_items', 'id'), COALESCE(MAX(id), 1)) FROM public.cart_items;

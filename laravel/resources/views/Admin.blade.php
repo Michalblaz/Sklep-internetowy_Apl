@@ -37,339 +37,356 @@
         @endif
 
         <section class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-xl space-y-8">
-            <div id="sklep" class="space-y-4">
-                <div class="flex items-center justify-between gap-4">
-                    <h2 class="text-purple-400 text-xl font-bruno">Sklep</h2>
-                    <span class="text-xs uppercase tracking-[0.3em] text-gray-400">Podstawowe dane</span>
+            @if(request('action') === 'add-product')
+                {{-- SEKCJA FORMULARZA (DODAWANIE/EDYCJA) --}}
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <h2 class="text-cyan-400 text-xl font-bruno">
+                            {{ request('edit_id') ? 'Edycja produktu' : 'Nowy produkt' }}
+                        </h2>
+                        <a href="{{ route('admin') }}" class="text-xs text-gray-400 hover:text-white uppercase tracking-widest">
+                            ✕ Wróć do statystyk
+                        </a>
+                    </div>
+
+                    @livewire('admin.product-form', ['productId' => request('edit_id')])
+                </div>
+            @else
+                {{-- SEKCJA STATYSTYK --}}
+                <div id="sklep" class="space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <h2 class="text-purple-400 text-xl font-bruno">Sklep</h2>
+                        <span class="text-xs uppercase tracking-[0.3em] text-gray-400">Podstawowe dane</span>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-4 lg:gap-6 text-gray-200">
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                            <p class="text-sm text-gray-400 mb-2">Liczba klientów</p>
+                            <p class="text-3xl text-white">{{ number_format($storeStats['customers']) }}</p>
+                        </div>
+
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                            <p class="text-sm text-gray-400 mb-2">Liczba wyświetleń</p>
+                            <p class="text-3xl text-white">{{ number_format($storeStats['views']) }}</p>
+                            <p class="mt-2 text-xs text-gray-500">{{ $storeStats['views_note'] }}</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="grid sm:grid-cols-2 gap-4 lg:gap-6 text-gray-200">
-                    <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-                        <p class="text-sm text-gray-400 mb-2">Liczba klientów</p>
-                        <p class="text-3xl text-white">{{ number_format($storeStats['customers']) }}</p>
+                <div id="konta" class="space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <h2 class="text-purple-400 text-xl font-bruno">Konta</h2>
+                        <span class="text-xs uppercase tracking-[0.3em] text-gray-400">Status klientów</span>
                     </div>
 
-                    <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-                        <p class="text-sm text-gray-400 mb-2">Liczba wyświetleń</p>
-                        <p class="text-3xl text-white">{{ number_format($storeStats['views']) }}</p>
-                        <p class="mt-2 text-xs text-gray-500">{{ $storeStats['views_note'] }}</p>
-                    </div>
-                </div>
-            </div>
+                    <div class="grid sm:grid-cols-3 gap-4 lg:gap-6 text-gray-200">
+                        <div class="rounded-2xl border border-emerald-400/20 bg-emerald-500/5 p-5">
+                            <p class="text-sm text-gray-400 mb-2">Aktywne</p>
+                            <p class="text-3xl text-white">{{ number_format($accountStats['active']) }}</p>
+                        </div>
 
-            <div id="konta" class="space-y-4">
-                <div class="flex items-center justify-between gap-4">
-                    <h2 class="text-purple-400 text-xl font-bruno">Konta</h2>
-                    <span class="text-xs uppercase tracking-[0.3em] text-gray-400">Status klientów</span>
-                </div>
+                        <div class="rounded-2xl border border-amber-400/20 bg-amber-500/5 p-5">
+                            <p class="text-sm text-gray-400 mb-2">Zawieszone</p>
+                            <p class="text-3xl text-white">{{ number_format($accountStats['suspended']) }}</p>
+                        </div>
 
-                <div class="grid sm:grid-cols-3 gap-4 lg:gap-6 text-gray-200">
-                    <div class="rounded-2xl border border-emerald-400/20 bg-emerald-500/5 p-5">
-                        <p class="text-sm text-gray-400 mb-2">Aktywne</p>
-                        <p class="text-3xl text-white">{{ number_format($accountStats['active']) }}</p>
-                    </div>
-
-                    <div class="rounded-2xl border border-amber-400/20 bg-amber-500/5 p-5">
-                        <p class="text-sm text-gray-400 mb-2">Zawieszone</p>
-                        <p class="text-3xl text-white">{{ number_format($accountStats['suspended']) }}</p>
-                    </div>
-
-                    <div class="rounded-2xl border border-red-400/20 bg-red-500/5 p-5">
-                        <p class="text-sm text-gray-400 mb-2">Zbanowane</p>
-                        <p class="text-3xl text-white">{{ number_format($accountStats['banned']) }}</p>
+                        <div class="rounded-2xl border border-red-400/20 bg-red-500/5 p-5">
+                            <p class="text-sm text-gray-400 mb-2">Zbanowane</p>
+                            <p class="text-3xl text-white">{{ number_format($accountStats['banned']) }}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div id="statystyki" class="space-y-4">
-                <div class="flex items-center justify-between gap-4">
-                    <h2 class="text-purple-400 text-xl font-bruno">Statystyki</h2>
-                    <span class="text-xs uppercase tracking-[0.3em] text-gray-400">Aktywność sklepu</span>
-                </div>
-
-                <div class="grid sm:grid-cols-2 gap-4 lg:gap-6 text-gray-200">
-                    <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-                        <p class="text-sm text-gray-400 mb-2">Aktywne zamówienia</p>
-                        <p class="text-3xl text-white">{{ number_format($shopStats['active_orders']) }}</p>
+                <div id="statystyki" class="space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <h2 class="text-purple-400 text-xl font-bruno">Statystyki</h2>
+                        <span class="text-xs uppercase tracking-[0.3em] text-gray-400">Aktywność sklepu</span>
                     </div>
 
-                    <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-                        <p class="text-sm text-gray-400 mb-2">Wszystkie produkty</p>
-                        <p class="text-3xl text-white">{{ number_format($shopStats['products']) }}</p>
+                    <div class="grid sm:grid-cols-2 gap-4 lg:gap-6 text-gray-200">
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                            <p class="text-sm text-gray-400 mb-2">Aktywne zamówienia</p>
+                            <p class="text-3xl text-white">{{ number_format($shopStats['active_orders']) }}</p>
+                        </div>
+
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                            <p class="text-sm text-gray-400 mb-2">Wszystkie produkty</p>
+                            <p class="text-3xl text-white">{{ number_format($shopStats['products']) }}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
         </section>
 
-        <section id="wykresy" class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-xl space-y-8">
-            <div class="space-y-2">
-                <h2 class="text-purple-400 text-xl font-bruno">Wykresy</h2>
-                <p class="text-sm text-gray-400">
-                    Kliknij słupek kategorii, aby zobaczyć stany magazynowe modeli w wybranej kategorii.
-                </p>
-            </div>
+            <section id="wykresy" class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-xl space-y-8">
+                <div class="space-y-2">
+                    <h2 class="text-purple-400 text-xl font-bruno">Wykresy</h2>
+                    <p class="text-sm text-gray-400">
+                        Kliknij słupek kategorii, aby zobaczyć stany magazynowe modeli w wybranej kategorii.
+                    </p>
+                </div>
 
-            <div class="space-y-6">
-                <div class="min-w-0 rounded-3xl border border-white/10 bg-white/5 p-5">
-                    <div class="flex items-center justify-between gap-4 mb-5">
-                        <h3 class="text-white text-lg">Produkty w kategoriach</h3>
-                        <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Wykres 1</span>
-                    </div>
-
-                    @if ($categoryChartData->isEmpty())
-                        <div class="min-h-72 rounded-2xl border border-dashed border-white/10 flex items-center justify-center text-gray-500 text-center px-6">
-                            Brak danych o produktach i kategoriach do wyświetlenia wykresu.
+                <div class="space-y-6">
+                    <div class="min-w-0 rounded-3xl border border-white/10 bg-white/5 p-5">
+                        <div class="flex items-center justify-between gap-4 mb-5">
+                            <h3 class="text-white text-lg">Produkty w kategoriach</h3>
+                            <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Wykres 1</span>
                         </div>
-                    @else
-                        <div
-                            id="category-chart"
-                            class="admin-chart-scroll max-w-full rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-cyan-500/5 px-4 lg:px-6 py-5 overflow-x-auto overflow-y-hidden"
-                        >
-                            <div class="mb-4 flex items-center justify-between gap-4">
-                                <p class="text-xs uppercase tracking-[0.28em] text-gray-400">Ilość produktów</p>
-                                <p class="text-[11px] text-gray-500">Najedź na słupek, aby zobaczyć szczegóły</p>
-                            </div>
 
-                            <div class="relative min-w-max pb-36">
-                                <div class="absolute left-0 top-0 bottom-28 w-14">
-                                    @foreach ($categoryScale as $index => $tick)
-                                        @php
-                                            $position = count($categoryScale) > 1 ? ($index / (count($categoryScale) - 1)) * 100 : 0;
-                                        @endphp
-                                        <span
-                                            class="absolute right-2 -translate-y-1/2 text-[11px] text-gray-400"
-                                            style="top: {{ $position }}%;"
-                                        >
-                                            {{ number_format($tick) }}
-                                        </span>
-                                    @endforeach
+                        @if ($categoryChartData->isEmpty())
+                            <div class="min-h-72 rounded-2xl border border-dashed border-white/10 flex items-center justify-center text-gray-500 text-center px-6">
+                                Brak danych o produktach i kategoriach do wyświetlenia wykresu.
+                            </div>
+                        @else
+                            <div
+                                id="category-chart"
+                                class="admin-chart-scroll max-w-full rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-cyan-500/5 px-4 lg:px-6 py-5 overflow-x-auto overflow-y-hidden"
+                            >
+                                <div class="mb-4 flex items-center justify-between gap-4">
+                                    <p class="text-xs uppercase tracking-[0.28em] text-gray-400">Ilość produktów</p>
+                                    <p class="text-[11px] text-gray-500">Najedź na słupek, aby zobaczyć szczegóły</p>
                                 </div>
 
-                                <div class="ml-14 min-w-max">
-                                    <div class="relative flex h-[250px] min-h-[250px] items-end gap-5 border-l border-b border-white/20 px-4 pr-6">
+                                <div class="relative min-w-max pb-36">
+                                    <div class="absolute left-0 top-0 bottom-28 w-14">
                                         @foreach ($categoryScale as $index => $tick)
                                             @php
                                                 $position = count($categoryScale) > 1 ? ($index / (count($categoryScale) - 1)) * 100 : 0;
                                             @endphp
-                                            <div
-                                                class="pointer-events-none absolute left-0 right-0 border-t {{ $tick === 0 ? 'border-white/20' : 'border-dashed border-white/10' }}"
+                                            <span
+                                                class="absolute right-2 -translate-y-1/2 text-[11px] text-gray-400"
                                                 style="top: {{ $position }}%;"
-                                            ></div>
-                                        @endforeach
-
-                                        @foreach ($categoryChartData as $index => $category)
-                                            @php
-                                                $barHeight = max(20, (int) round(($category['value'] / $maxCategoryValue) * 198));
-                                                $color = $chartColors[$index % count($chartColors)];
-                                            @endphp
-                                            <button
-                                                type="button"
-                                                class="category-bar group relative w-[96px] shrink-0 rounded-2xl px-3 pt-2 pb-3 text-center transition hover:bg-white/5"
-                                                data-category-id="{{ $category['id'] }}"
-                                                data-category-name="{{ $category['label'] }}"
-                                                data-category-value="{{ $category['value'] }}"
                                             >
-                                                <div class="h-[250px] flex flex-col justify-end items-center">
-                                                    <div class="pointer-events-none absolute left-1/2 top-2 z-10 hidden -translate-x-1/2 rounded-xl border border-cyan-300/20 bg-slate-950/95 px-3 py-2 text-left shadow-xl group-hover:block">
-                                                        <p class="text-[11px] leading-4 text-white whitespace-nowrap">{{ $category['label'] }}</p>
-                                                        <p class="text-[11px] leading-4 text-cyan-300 whitespace-nowrap">Ilość: {{ $category['value'] }}</p>
-                                                    </div>
-                                                    <span class="mb-2 text-[11px] font-semibold text-gray-200">{{ $category['value'] }}</span>
-                                                    <div
-                                                        class="chart-bar w-12 rounded-t-xl border border-white/15 shadow-[0_0_20px_rgba(0,0,0,0.18)] transition duration-150 group-hover:-translate-y-1 group-hover:brightness-110"
-                                                        style="height: {{ $barHeight }}px; background: linear-gradient(180deg, {{ $color }} 0%, rgba(15, 23, 42, 0.9) 100%);"
-                                                    ></div>
-                                                </div>
-                                                <span class="admin-chart-label absolute left-1/2 top-full mt-4 ml-10 block w-28 origin-top-left text-left text-[12px] leading-[1.15rem] text-gray-200">
-                                                    {{ $category['label'] }}
-                                                </span>
-                                            </button>
+                                                {{ number_format($tick) }}
+                                            </span>
                                         @endforeach
+                                    </div>
+
+                                    <div class="ml-14 min-w-max">
+                                        <div class="relative flex h-[250px] min-h-[250px] items-end gap-5 border-l border-b border-white/20 px-4 pr-6">
+                                            @foreach ($categoryScale as $index => $tick)
+                                                @php
+                                                    $position = count($categoryScale) > 1 ? ($index / (count($categoryScale) - 1)) * 100 : 0;
+                                                @endphp
+                                                <div
+                                                    class="pointer-events-none absolute left-0 right-0 border-t {{ $tick === 0 ? 'border-white/20' : 'border-dashed border-white/10' }}"
+                                                    style="top: {{ $position }}%;"
+                                                ></div>
+                                            @endforeach
+
+                                            @foreach ($categoryChartData as $index => $category)
+                                                @php
+                                                    $barHeight = max(20, (int) round(($category['value'] / $maxCategoryValue) * 198));
+                                                    $color = $chartColors[$index % count($chartColors)];
+                                                @endphp
+                                                <button
+                                                    type="button"
+                                                    class="category-bar group relative w-[96px] shrink-0 rounded-2xl px-3 pt-2 pb-3 text-center transition hover:bg-white/5"
+                                                    data-category-id="{{ $category['id'] }}"
+                                                    data-category-name="{{ $category['label'] }}"
+                                                    data-category-value="{{ $category['value'] }}"
+                                                >
+                                                    <div class="h-[250px] flex flex-col justify-end items-center">
+                                                        <div class="pointer-events-none absolute left-1/2 top-2 z-10 hidden -translate-x-1/2 rounded-xl border border-cyan-300/20 bg-slate-950/95 px-3 py-2 text-left shadow-xl group-hover:block">
+                                                            <p class="text-[11px] leading-4 text-white whitespace-nowrap">{{ $category['label'] }}</p>
+                                                            <p class="text-[11px] leading-4 text-cyan-300 whitespace-nowrap">Ilość: {{ $category['value'] }}</p>
+                                                        </div>
+                                                        <span class="mb-2 text-[11px] font-semibold text-gray-200">{{ $category['value'] }}</span>
+                                                        <div
+                                                            class="chart-bar w-12 rounded-t-xl border border-white/15 shadow-[0_0_20px_rgba(0,0,0,0.18)] transition duration-150 group-hover:-translate-y-1 group-hover:brightness-110"
+                                                            style="height: {{ $barHeight }}px; background: linear-gradient(180deg, {{ $color }} 0%, rgba(15, 23, 42, 0.9) 100%);"
+                                                        ></div>
+                                                    </div>
+                                                    <span class="admin-chart-label absolute left-1/2 top-full mt-4 ml-10 block w-28 origin-top-left text-left text-[12px] leading-[1.15rem] text-gray-200">
+                                                        {{ $category['label'] }}
+                                                    </span>
+                                                </button>
+                                            @endforeach
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    @endif
-                </div>
-
-                <div class="min-w-0 rounded-3xl border border-white/10 bg-white/5 p-5">
-                    <div class="flex items-center justify-between gap-4 mb-5">
-                        <div>
-                            <h3 id="model-chart-title" class="text-white text-lg">Stany magazynowe modeli</h3>
-                            <p class="text-xs uppercase tracking-[0.3em] text-gray-500 mt-1">Wykres 2</p>
-                        </div>
+                        @endif
                     </div>
 
-                    <div id="model-chart-empty" class="min-h-72 rounded-2xl border border-dashed border-white/10 flex items-center justify-center text-gray-500 text-center px-6">
-                        Wybierz kategorię z pierwszego wykresu.
-                    </div>
-
-                    <div id="model-chart" class="admin-chart-scroll hidden max-w-full rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-cyan-500/5 px-4 lg:px-6 py-5 overflow-x-auto overflow-y-hidden"></div>
-                </div>
-            </div>
-        </section>
-
-        <div
-            id="admin-chart-data"
-            data-models='@json($modelChartDataByCategory)'
-            data-colors='@json($chartColors)'
-            class="hidden"
-        ></div>
-
-        <section id="reklamacje" class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div>
-                    <h2 class="text-purple-400 text-xl font-bruno">Reklamacje</h2>
-                    <p class="text-sm text-gray-400">Lista zgłoszeń z nazwą użytkownika, powodem i opisem.</p>
-                </div>
-                <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Stronicowanie włączone</span>
-            </div>
-
-            <div class="space-y-4">
-                @forelse ($complaints as $complaint)
-                    <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-                        <div class="flex flex-col lg:flex-row lg:items-start gap-5">
-                            <div class="lg:w-64 shrink-0">
-                                <p class="text-white text-lg">{{ $complaint->customer_name }}</p>
-                                <p class="text-sm text-gray-400">{{ $complaint->email ?? 'Brak adresu e-mail' }}</p>
-                                <p class="mt-3 text-xs uppercase tracking-[0.25em] text-gray-500">
-                                    Zamówienie #{{ $complaint->order_id ?? 'brak' }}
-                                </p>
-                            </div>
-
-                            <div class="flex-1 grid gap-4 md:grid-cols-2">
-                                <div class="rounded-2xl border border-white/10 bg-black/20 p-4">
-                                    <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">Powód</p>
-                                    <p class="text-gray-100">{{ $complaint->reason ?: 'Brak powodu' }}</p>
-                                </div>
-
-                                <div class="rounded-2xl border border-white/10 bg-black/20 p-4 md:col-span-1">
-                                    <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">Status</p>
-                                    <p class="text-gray-100">{{ $complaint->status ?: 'nowa' }}</p>
-                                </div>
-
-                                <div class="rounded-2xl border border-white/10 bg-black/20 p-4 md:col-span-2">
-                                    <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">Opis</p>
-                                    <p class="text-gray-200 whitespace-pre-line">{{ $complaint->description ?: 'Brak opisu reklamacji.' }}</p>
-                                </div>
-                            </div>
-
-                            <div class="flex lg:flex-col gap-3 lg:w-40">
-                                <button
-                                    type="button"
-                                    disabled
-                                    class="flex-1 rounded-xl border border-white/10 px-4 py-2 text-sm text-gray-500 bg-white/5 cursor-not-allowed"
-                                >
-                                    Odpowiedź
-                                </button>
-                                <button
-                                    type="button"
-                                    disabled
-                                    class="flex-1 rounded-xl border border-red-400/10 px-4 py-2 text-sm text-red-300/40 bg-red-500/5 cursor-not-allowed"
-                                >
-                                    Odrzuć
-                                </button>
+                    <div class="min-w-0 rounded-3xl border border-white/10 bg-white/5 p-5">
+                        <div class="flex items-center justify-between gap-4 mb-5">
+                            <div>
+                                <h3 id="model-chart-title" class="text-white text-lg">Stany magazynowe modeli</h3>
+                                <p class="text-xs uppercase tracking-[0.3em] text-gray-500 mt-1">Wykres 2</p>
                             </div>
                         </div>
+
+                        <div id="model-chart-empty" class="min-h-72 rounded-2xl border border-dashed border-white/10 flex items-center justify-center text-gray-500 text-center px-6">
+                            Wybierz kategorię z pierwszego wykresu.
+                        </div>
+
+                        <div id="model-chart" class="admin-chart-scroll hidden max-w-full rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-cyan-500/5 px-4 lg:px-6 py-5 overflow-x-auto overflow-y-hidden"></div>
                     </div>
-                @empty
-                    <div class="rounded-2xl border border-dashed border-white/10 p-10 text-center text-gray-500">
-                        Brak reklamacji do wyświetlenia.
+                </div>
+            </section>
+
+            <div
+                id="admin-chart-data"
+                data-models='@json($modelChartDataByCategory)'
+                data-colors='@json($chartColors)'
+                class="hidden"
+            ></div>
+            @if(request('action') !== 'add-product')
+            <section id="reklamacje" class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                        <h2 class="text-purple-400 text-xl font-bruno">Reklamacje</h2>
+                        <p class="text-sm text-gray-400">Lista zgłoszeń z nazwą użytkownika, powodem i opisem.</p>
                     </div>
-                @endforelse
-            </div>
-
-            @if ($complaints->hasPages())
-                <div class="pt-2">
-                    {{ $complaints->onEachSide(1)->links() }}
+                    <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Stronicowanie włączone</span>
                 </div>
-            @endif
-        </section>
 
-        <section id="uzytkownicy" class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div>
-                    <h2 class="text-purple-400 text-xl font-bruno">Użytkownicy</h2>
-                    <p class="text-sm text-gray-400">Status kont oraz szybkie akcje zawieszenia i bana.</p>
-                </div>
-                <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Stronicowanie włączone</span>
-            </div>
-
-            <div class="space-y-4">
-                @forelse ($users as $user)
-                    @php
-                        $statusClasses = match ($user->account_status) {
-                            'zawieszony' => 'border-amber-400/20 bg-amber-500/10 text-amber-200',
-                            'zbanowany' => 'border-red-400/20 bg-red-500/10 text-red-200',
-                            default => 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
-                        };
-                    @endphp
-
-                    <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-                        <div class="flex flex-col lg:flex-row lg:items-center gap-4">
-                            <div class="flex-1 grid gap-4 md:grid-cols-3">
-                                <div>
-                                    <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">Imię i nazwisko</p>
-                                    <p class="text-white">{{ $user->full_name }}</p>
+                <div class="space-y-4">
+                    @forelse ($complaints as $complaint)
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                            <div class="flex flex-col lg:flex-row lg:items-start gap-5">
+                                <div class="lg:w-64 shrink-0">
+                                    <p class="text-white text-lg">{{ $complaint->customer_name }}</p>
+                                    <p class="text-sm text-gray-400">{{ $complaint->email ?? 'Brak adresu e-mail' }}</p>
+                                    <p class="mt-3 text-xs uppercase tracking-[0.25em] text-gray-500">
+                                        Zamówienie #{{ $complaint->order_id ?? 'brak' }}
+                                    </p>
                                 </div>
 
-                                <div>
-                                    <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">E-mail</p>
-                                    <p class="text-gray-200 break-all">{{ $user->email }}</p>
+                                <div class="flex-1 grid gap-4 md:grid-cols-2">
+                                    <div class="rounded-2xl border border-white/10 bg-black/20 p-4">
+                                        <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">Powód</p>
+                                        <p class="text-gray-100">{{ $complaint->reason ?: 'Brak powodu' }}</p>
+                                    </div>
+
+                                    <div class="rounded-2xl border border-white/10 bg-black/20 p-4 md:col-span-1">
+                                        <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">Status</p>
+                                        <p class="text-gray-100">{{ $complaint->status ?: 'nowa' }}</p>
+                                    </div>
+
+                                    <div class="rounded-2xl border border-white/10 bg-black/20 p-4 md:col-span-2">
+                                        <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">Opis</p>
+                                        <p class="text-gray-200 whitespace-pre-line">{{ $complaint->description ?: 'Brak opisu reklamacji.' }}</p>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">Status</p>
-                                    <span class="inline-flex rounded-full border px-3 py-1 text-sm capitalize {{ $statusClasses }}">
-                                        {{ $user->account_status }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-col sm:flex-row gap-3 lg:w-[280px]">
-                                <form method="POST" action="{{ route('admin.users.suspend', $user->id) }}" class="flex-1">
-                                    @csrf
+                                <div class="flex lg:flex-col gap-3 lg:w-40">
                                     <button
-                                        type="submit"
-                                        @disabled($user->account_status !== 'aktywny')
-                                        class="w-full rounded-xl border border-amber-400/20 bg-amber-500/10 px-4 py-2 text-sm text-amber-200 transition enabled:hover:bg-amber-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                                        type="button"
+                                        disabled
+                                        class="flex-1 rounded-xl border border-white/10 px-4 py-2 text-sm text-gray-500 bg-white/5 cursor-not-allowed"
                                     >
-                                        Zawieś na 7 dni
+                                        Odpowiedź
                                     </button>
-                                </form>
-
-                                <form method="POST" action="{{ route('admin.users.ban', $user->id) }}" class="flex-1">
-                                    @csrf
                                     <button
-                                        type="submit"
-                                        @disabled($user->account_status === 'zbanowany')
-                                        onclick="return confirm('Czy na pewno chcesz zbanować to konto bezterminowo?')"
-                                        class="w-full rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-2 text-sm text-red-200 transition enabled:hover:bg-red-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                                        type="button"
+                                        disabled
+                                        class="flex-1 rounded-xl border border-red-400/10 px-4 py-2 text-sm text-red-300/40 bg-red-500/5 cursor-not-allowed"
                                     >
-                                        Ban bezterminowy
+                                        Odrzuć
                                     </button>
-                                </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @empty
-                    <div class="rounded-2xl border border-dashed border-white/10 p-10 text-center text-gray-500">
-                        Brak użytkowników do wyświetlenia.
-                    </div>
-                @endforelse
-            </div>
-
-            @if ($users->hasPages())
-                <div class="pt-2">
-                    {{ $users->onEachSide(1)->links() }}
+                    @empty
+                        <div class="rounded-2xl border border-dashed border-white/10 p-10 text-center text-gray-500">
+                            Brak reklamacji do wyświetlenia.
+                        </div>
+                    @endforelse
                 </div>
-            @endif
-        </section>
+
+                @if ($complaints->hasPages())
+                    <div class="pt-2">
+                        {{ $complaints->onEachSide(1)->links() }}
+                    </div>
+                @endif
+            </section>
+
+            <section id="uzytkownicy" class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                        <h2 class="text-purple-400 text-xl font-bruno">Użytkownicy</h2>
+                        <p class="text-sm text-gray-400">Status kont oraz szybkie akcje zawieszenia i bana.</p>
+                    </div>
+                    <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Stronicowanie włączone</span>
+                </div>
+
+                <div class="space-y-4">
+                    @forelse ($users as $user)
+                        @php
+                            $statusClasses = match ($user->account_status) {
+                                'zawieszony' => 'border-amber-400/20 bg-amber-500/10 text-amber-200',
+                                'zbanowany' => 'border-red-400/20 bg-red-500/10 text-red-200',
+                                default => 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
+                            };
+                        @endphp
+
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                            <div class="flex flex-col lg:flex-row lg:items-center gap-4">
+                                <div class="flex-1 grid gap-4 md:grid-cols-3">
+                                    <div>
+                                        <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">Imię i nazwisko</p>
+                                        <p class="text-white">{{ $user->full_name }}</p>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">E-mail</p>
+                                        <p class="text-gray-200 break-all">{{ $user->email }}</p>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">Status</p>
+                                        <span class="inline-flex rounded-full border px-3 py-1 text-sm capitalize {{ $statusClasses }}">
+                                            {{ $user->account_status }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row gap-3 lg:w-[280px]">
+                                    <form method="POST" action="{{ route('admin.users.suspend', $user->id) }}" class="flex-1">
+                                        @csrf
+                                        <button
+                                            type="submit"
+                                            @disabled($user->account_status !== 'aktywny')
+                                            class="w-full rounded-xl border border-amber-400/20 bg-amber-500/10 px-4 py-2 text-sm text-amber-200 transition enabled:hover:bg-amber-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                                        >
+                                            Zawieś na 7 dni
+                                        </button>
+                                    </form>
+
+                                    <form method="POST" action="{{ route('admin.users.ban', $user->id) }}" class="flex-1">
+                                        @csrf
+                                        <button
+                                            type="submit"
+                                            @disabled($user->account_status === 'zbanowany')
+                                            onclick="return confirm('Czy na pewno chcesz zbanować to konto bezterminowo?')"
+                                            class="w-full rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-2 text-sm text-red-200 transition enabled:hover:bg-red-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                                        >
+                                            Ban bezterminowy
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="rounded-2xl border border-dashed border-white/10 p-10 text-center text-gray-500">
+                            Brak użytkowników do wyświetlenia.
+                        </div>
+                    @endforelse
+                </div>
+
+                @if ($users->hasPages())
+                    <div class="pt-2">
+                        {{ $users->onEachSide(1)->links() }}
+                    </div>
+                @endif
+            </section>
+        @endif
     </div>
 
     <aside class="w-full xl:w-[260px] xl:sticky xl:top-8 self-start bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-xl">
         <h2 class="text-white text-xl mb-6 font-bruno">Menu</h2>
-
         <div class="flex flex-col gap-3 text-sm uppercase tracking-[0.25em] text-purple-300">
             <a href="#sklep" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Sklep</a>
             <a href="#konta" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Konta</a>
@@ -377,6 +394,12 @@
             <a href="#wykresy" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Wykresy</a>
             <a href="#reklamacje" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Reklamacje</a>
             <a href="#uzytkownicy" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Użytkownicy</a>
+            <hr class="border-white/10 my-2">
+           <a href="{{ route('admin', ['action' => 'add-product']) }}"
+                class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 transition">
+                <i class="fa-solid fa-plus text-cyan-400"></i>
+                <span>Dodaj produkt</span>
+            </a>
         </div>
     </aside>
 </div>

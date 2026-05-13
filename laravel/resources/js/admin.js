@@ -19,16 +19,29 @@ const renderBars = (items, maxValue, chartColors) => {
         const value = Number(item.value) || 0;
         const color = chartColors[index % chartColors.length];
 
+        const productId = item.id;
+        const editUrl = `?action=add-product&edit_id=${productId}`;
+
         return `
             <div class="group relative w-[96px] shrink-0 rounded-2xl px-3 pt-2 pb-3 text-center transition hover:bg-white/5">
                 <div class="h-[250px] flex flex-col justify-end items-center">
-                    <div class="pointer-events-none absolute left-1/2 top-2 z-10 hidden -translate-x-1/2 rounded-xl border border-cyan-300/20 bg-slate-950/95 px-3 py-2 text-left shadow-xl group-hover:block">
-                        <p class="text-[11px] leading-4 text-white whitespace-nowrap">${label}</p>
-                        <p class="text-[11px] leading-4 text-cyan-300 whitespace-nowrap">Ilość: ${value}</p>
+
+                    <div class="pointer-events-none group-hover:pointer-events-auto absolute left-1/2 top-2 z-20 hidden -translate-x-1/2 rounded-xl border border-cyan-300/20 bg-slate-950/95 px-3 py-3 text-left shadow-xl group-hover:block min-w-[120px]">
+                        <p class="text-[11px] leading-4 text-white font-bold mb-1">${label}</p>
+                        <p class="text-[10px] leading-4 text-cyan-300 mb-3">Dostępne: ${value} szt.</p>
+
+                        <button
+                            onclick="window.location.href='${editUrl}'"
+                            class="w-full bg-cyan-500 hover:bg-cyan-400 text-black text-[9px] font-bold py-1.5 rounded uppercase tracking-wider transition-colors"
+                        >
+                            Edytuj produkt
+                        </button>
                     </div>
+
                     <span class="mb-2 text-[11px] font-semibold text-gray-200">${value}</span>
+
                     <div
-                        class="w-12 rounded-t-xl border border-white/15 shadow-[0_0_20px_rgba(0,0,0,0.18)]"
+                        class="w-12 rounded-t-xl border border-white/15 shadow-[0_0_20px_rgba(0,0,0,0.18)] transition-all duration-150 group-hover:-translate-y-1 group-hover:brightness-110"
                         style="height: ${height}px; background: linear-gradient(180deg, ${color} 0%, rgba(15, 23, 42, 0.9) 100%);"
                     ></div>
                 </div>

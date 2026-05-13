@@ -4,9 +4,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StartowaController;
 use App\Http\Controllers\ProductPageController;
 use App\Http\Controllers\WyszukajWitrynaController;
+use App\Http\Controllers\KoszykController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AdminController;
+use App\Livewire\Admin\ProductForm;
 
         //Strona startowa
     Route::get('/', [StartowaController::class, 'startowa'])->name('home');
@@ -33,12 +36,13 @@ use App\Http\Controllers\AdminController;
 
 
         // Koszyk
-    Route::get('/koszyk', fn() => view('koszyk'));
+    Route::get('/koszyk', [KoszykController::class, 'index'])->name('koszyk');
 
 
 
      // Admin
      Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+     Route::get('/admin/products/create', ProductForm::class)->name('admin.products.create');
      Route::post('/admin/users/{user}/suspend', [AdminController::class, 'suspend'])->name('admin.users.suspend');
      Route::post('/admin/users/{user}/ban', [AdminController::class, 'ban'])->name('admin.users.ban');
 
@@ -50,3 +54,8 @@ use App\Http\Controllers\AdminController;
     Route::post('/sing_in', [AuthController::class, 'register']);
 
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
+
+    // Profil
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
+    });
