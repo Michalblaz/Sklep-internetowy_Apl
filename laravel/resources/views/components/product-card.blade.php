@@ -1,4 +1,4 @@
-@props(['product', 'discount' => 0])
+@props(['product', 'discount' => 0, 'replaceIndex' => null])
 
 <div class="relative group flex flex-col h-full bg-[#1a202c] border border-gray-700 rounded-2xl p-4 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)]">
 
@@ -43,8 +43,9 @@
             @csrf
             <input type="hidden" name="product_id" value="{{ $product->id }}">
             <input type="hidden" name="category_id" value="{{ $product->category_id }}">
-            <input type="hidden" name="price" value="{{ $product->base_price }}">
+            <input type="hidden" name="price" value="{{ $discount > 0 ? $product->promo_price : $product->base_price }}">
             <input type="hidden" name="name" value="{{ $product->name }}">
+            <input type="hidden" name="replace_index" value="{{ $replaceIndex }}">
 
             <button type="submit"
                 class="w-full py-3 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-full transition-all duration-300 shadow-lg uppercase tracking-tighter">

@@ -20,6 +20,7 @@ use App\Livewire\Admin\ProductForm;
         Route::get('/', [ConfiguratorController::class, 'index'])->name('konfigurator.index');
         Route::post('/select', [ConfiguratorController::class, 'selectProduct'])->name('configurator.select');
         Route::post('/reset', [ConfiguratorController::class, 'resetBuild'])->name('configurator.reset');
+        Route::get('/remove/{category}/{index}', [ConfiguratorController::class, 'removeFromBuild'])->name('konfigurator.remove');
     });
 
         // Logowanie / Rejestracja

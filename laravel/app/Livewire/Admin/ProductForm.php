@@ -18,6 +18,7 @@ class ProductForm extends Component
     public $promo_price;
     public $is_promo = false;
     public $stock_quantity = 0;
+    public $power_draw_w;
     public $file_name_input;
 
     public $availableAttributes = [];
@@ -49,7 +50,8 @@ class ProductForm extends Component
             $this->promo_price = $product->promo_price;
             $this->is_promo = !empty($product->promo_price);
             $this->stock_quantity = $product->stock_quantity;
-            $this->file_name_input = basename($product->image_url, '.jpg');
+            $this->power_draw_w = $product->power_draw_w;
+            $this->file_name_input = pathinfo($product->image_url, PATHINFO_FILENAME);
 
             $this->updatedCategoryId($this->category_id);
 
@@ -92,6 +94,7 @@ class ProductForm extends Component
             'category_id' => 'required',
             'brand_id' => 'required',
             'base_price' => 'required|numeric',
+            'power_draw_w' => 'nullable|integer|min:0',
         ]);
 
         try {
@@ -112,7 +115,7 @@ class ProductForm extends Component
                     'promo_price' => $this->is_promo ? (float) $this->promo_price : null,
                     'stock_quantity' => (int) ($this->stock_quantity ?: 0),
                     'image_url' => $imageUrl,
-                    'power_draw_w' => 0,
+                    'power_draw_w' => $this->power_draw_w,
                 ];
 
                 if ($this->isEditMode) {

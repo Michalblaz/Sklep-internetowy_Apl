@@ -67,6 +67,11 @@
                         <label class="text-[11px] uppercase tracking-[0.2em] text-amber-400/70 ml-1 mb-2 block font-bold">Magazyn</label>
                         <input type="number" wire:model="stock_quantity" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all outline-none font-mono">
                     </div>
+                    <div class="relative">
+                        <label class="text-[11px] uppercase tracking-[0.2em] text-red-400/70 ml-1 mb-2 block font-bold">Pobór mocy (W)</label>
+                        <input type="number" wire:model="power_draw_w" placeholder="np. 125" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all outline-none font-mono">
+                        @error('power_draw_w') <span class="text-[10px] text-red-500 ml-2 uppercase">{{ $message }}</span> @enderror
+                    </div>
                 </div>
             </div>
 

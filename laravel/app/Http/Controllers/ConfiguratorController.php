@@ -29,6 +29,11 @@ class ConfiguratorController extends Controller
         $category = Category::with(['attributes.values' => function($q) {
             $q->orderByRaw('LENGTH(value) ASC')->orderBy('value', 'asc');
         }])->findOrFail($categoryId);
+        $category->attributes->transform(function($attribute) {
+
+            $attribute->display_name = $this->translateKey($attribute->name);
+            return $attribute;
+        });
 
          $query = Product::query()
             ->where('category_id', $categoryId)
@@ -42,7 +47,7 @@ class ConfiguratorController extends Controller
 
         foreach ($build as $builtCategoryId => $builtItem) {
 
-            if ((int)$builtCategoryId === $categoryId) {
+            if ((int)$builtCategoryId == $categoryId) {
                 continue;
             }
 
@@ -238,7 +243,41 @@ class ConfiguratorController extends Controller
             'case_radiator' => $this->getNumericValueFromSession($build[7] ?? null, 50),
         ];
 
-        return view('konfigurator', compact('products', 'category', 'brands', 'availableValueIds', 'buildLimits'));
+
+        
+        
+        $selectedInThisCategory = $build[$category->id] ?? null;
+        
+        $selectedItemData = is_array($selectedInThisCategory) && isset($selectedInThisCategory[0])
+            ? $selectedInThisCategory[0]
+            : $selectedInThisCategory;
+
+        $isChanging = $request->query('change') == '1';
+
+        $selectedProductModel = $selectedItemData
+            ? Product::with(['attributeValues.attribute'])->find($selectedItemData['id'])
+            : null;
+
+        $selectedProductAttributes = $selectedProductModel
+            ? $selectedProductModel->attributeValues
+                ->take(6)
+                ->map(fn ($attrVal) => [
+                    'label' => $this->translateKey($attrVal->attribute?->name ?? ''),
+                    'value' => $attrVal->value,
+                ])
+            : collect();
+
+        return view('konfigurator', compact(
+            'products',
+            'category',
+            'brands',
+            'availableValueIds',
+            'buildLimits',
+            'selectedItemData',
+            'isChanging',
+            'selectedProductModel',
+            'selectedProductAttributes'
+        ));
     }
 
     // Pobiera wartość liczbową konkretnego atrybutu dla produktu z bazy
@@ -274,10 +313,25 @@ class ConfiguratorController extends Controller
 
         return is_numeric($cleanVal) ? (float)$cleanVal : null;
     }
+
+    private function getBooleanAttributeValue(Product $product, int $attrCategoryId): ?bool
+    {
+        $value = $product->attributeValues
+            ->where('pivot.attribute_category_id', $attrCategoryId)
+            ->first()?->value;
+
+        if ($value === null) {
+            return null;
+        }
+
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    }
+
         //Zapisujemy wybrany produkt w sesji
     public function selectProduct(Request $request)
     {
         $categoryId = (int) $request->input('category_id');
+        $replaceIndex = $request->input('replace_index');
 
         $product = Product::with('attributeValues')->findOrFail($request->input('product_id'));
         $category = Category::with(['attributes' => function ($q) {
@@ -286,7 +340,11 @@ class ConfiguratorController extends Controller
 
         $requiredAttributeIds = $category->attributes->pluck('id')->map(fn ($id) => (int) $id)->toArray();
 
-        $finalPrice = ($product->promo_price && $product->promo_price < $product->base_price)
+        $discount = ($product->base_price > 0 && $product->promo_price && $product->promo_price < $product->base_price)
+            ? round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
+            : 0;
+
+        $finalPrice = $discount > 0
             ? $product->promo_price
             : $product->base_price;
 
@@ -309,35 +367,94 @@ class ConfiguratorController extends Controller
             return back()->with('error', $e->getMessage());
         }
 
-        if (in_array($categoryId, $multiSelectCategories)) {
-        $motherboard = $selection[3] ?? null;
 
+        if ($categoryId === 3) {
+            $maxSlots = $this->getNumberFromAttr($product->id, 44);
+            $maxM2 = $this->getNumberFromAttr($product->id, 48);    
+
+            // Walidacja RAM w sesji
+            if (isset($selection[4])) {
+                $usedSlots = 0;
+                foreach ($selection[4] as $ramItem) {
+                    $usedSlots += $this->getNumberFromAttr($ramItem['id'], 45); 
+                }
+                if ($usedSlots > $maxSlots) {
+                    return back()->with('error', "Nowa płyta ma tylko $maxSlots sloty RAM, a Ty masz już $usedSlots w zestawie");
+                }
+            }
+
+            // Walidacja Dysków M.2 w sesji
+            if (isset($selection[5])) {
+                $usedM2InSession = 0;
+                foreach ($selection[5] as $diskItem) {
+                    // Próbujemy sprawdzić z sesji, a jeśli nie ma - sprawdzamy w bazie
+                    $isM2 = false;
+                    if (isset($diskItem['attributes'][17]) && in_array(41, $diskItem['attributes'][17])) {
+                        $isM2 = true;
+                    } else {
+                        // Zabezpieczenie: sprawdź w bazie jeśli sesja jest stara
+                        $dbCheck = \DB::table('product_attributes')
+                            ->where('product_id', $diskItem['id'])
+                            ->where('attribute_category_id', 17)
+                            ->where('attribute_value_id', 41)
+                            ->exists();
+                        if ($dbCheck) $isM2 = true;
+                    }
+
+                    if ($isM2) $usedM2InSession++;
+                }
+
+                if ($usedM2InSession > $maxM2) {
+                    return back()->with('error', "Nowa płyta ma tylko $maxM2 sloty M.2, a Ty masz już $usedM2InSession takie dyski");
+                }
+            }
+        }
+       if (in_array($categoryId, $multiSelectCategories)) {
+            $motherboard = $selection[3] ?? null;
             if ($motherboard) {
-                // 1. Walidacja RAM (Kategoria 4)
+                // Walidacja RAM
                 if ($categoryId == 4) {
                     $maxSlots = $this->getNumberFromAttr($motherboard['id'], 44);
                     $usedSlots = 0;
-
                     if (isset($selection[4])) {
-                        foreach ($selection[4] as $ramItem) {
+                        foreach ($selection[4] as $idx => $ramItem) {
+                            if ($replaceIndex !== null && $idx == $replaceIndex) continue;
                             $usedSlots += $this->getNumberFromAttr($ramItem['id'], 45);
                         }
                     }
-
                     $newProductSlots = $this->getNumberFromAttr($product->id, 45);
-
                     if (($usedSlots + $newProductSlots) > $maxSlots) {
-                        return back()->with('error', "Brak wolnych slotów RAM! (Dostępne: $maxSlots, Zajęte: $usedSlots)");
+                        return back()->with('error', "Brak wolnych slotów RAM !!!");
                     }
                 }
 
-                // 2. Walidacja Dysków (Kategoria 5)
+                // Walidacja Dysków (Tylko M.2)
                 if ($categoryId == 5) {
-                    $maxM2 = $this->getNumberFromAttr($motherboard['id'], 48);
-                    $usedDisks = isset($selection[5]) ? count($selection[5]) : 0;
-
-                    if (($usedDisks + 1) > $maxM2) {
-                        return back()->with('error', "Brak wolnych złącz M.2/SATA na płycie głównej!");
+                    $isNewDiskM2 = isset($attrs[17]) && in_array(41, $attrs[17]);
+                    if ($isNewDiskM2) {
+                        $maxM2 = $this->getNumberFromAttr($motherboard['id'], 48);
+                        $usedM2Slots = 0;
+                        if (isset($selection[5])) {
+                            foreach ($selection[5] as $idx => $diskItem) {
+                                if ($replaceIndex !== null && $idx == $replaceIndex) continue;
+                                
+                                $isM2 = false;
+                                if (isset($diskItem['attributes'][17]) && in_array(41, $diskItem['attributes'][17])) {
+                                    $isM2 = true;
+                                } else {
+                                    $dbCheck = \DB::table('product_attributes')
+                                        ->where('product_id', $diskItem['id'])
+                                        ->where('attribute_category_id', 17)
+                                        ->where('attribute_value_id', 41)
+                                        ->exists();
+                                    if ($dbCheck) $isM2 = true;
+                                }
+                                if ($isM2) $usedM2Slots++;
+                            }
+                        }
+                        if (($usedM2Slots + 1) > $maxM2) {
+                            return back()->with('error', "Brak wolnych złącz M.2 !!!");
+                        }
                     }
                 }
             }
@@ -347,11 +464,27 @@ class ConfiguratorController extends Controller
             'id' => $product->id,
             'name' => $product->name,
             'price' => $finalPrice,
+            'base_price' => $product->base_price,
+            'promo_price' => $discount > 0 ? $product->promo_price : null,
+            'discount' => $discount,
+            'power_draw_w' => (int) ($product->power_draw_w ?? 0),
             'attributes' => $attrs,
         ];
 
+        if ($categoryId === 1) {
+            $hasIntegratedGpu = $this->getBooleanAttributeValue($product, 7);
+            $hasIncludedFan = $this->getBooleanAttributeValue($product, 38);
+
+            $productData['requires_gpu'] = $hasIntegratedGpu === false;
+            $productData['requires_cooler'] = $hasIncludedFan === false;
+        }
+
         if (in_array($categoryId, $multiSelectCategories)) {
-            $selection[$categoryId][] = $productData;
+            if ($replaceIndex !== null && isset($selection[$categoryId][$replaceIndex])) {
+                $selection[$categoryId][$replaceIndex] = $productData;
+            } else {
+                $selection[$categoryId][] = $productData;
+            }
         } else {
             $selection[$categoryId] = $productData;
         }
@@ -448,5 +581,105 @@ class ConfiguratorController extends Controller
             }
         }
         return $query->get();
+    }
+
+    private function translateKey(string $key): string
+    {
+        return match ($key) {
+             'socket' => 'Gniazdo',
+            'cores' => 'Liczba rdzeni',
+            'cpu_type' => 'Typ procesora',
+            'threads' => 'Liczba wątków',
+            'base_clock' => 'Taktowanie bazowe',
+            'boost_clock' => 'Taktowanie Boost',
+
+            'graphics_card_series' => 'Seria karty graficznej',
+
+            'motherboard_chipset' => 'Chipset płyty głównej',
+            'board_standard' => 'Standard płyty głównej',
+
+            'ram_type' => 'Typ pamięci RAM',
+            'ram_capacity_gb' => 'Pojemność RAM',
+            'ram_speed_mhz' => 'Taktowanie RAM',
+            'ram_latency_cl' => 'Opóźnienie CL',
+
+            'storage_type' => 'Typ nośnika',
+            'storage_capacity_gb' => 'Pojemność dysku',
+            'storage_interface' => 'Interfejs',
+
+            'psu_wattage' => 'Moc zasilacza',
+            'psu_efficiency_rating' => 'Certyfikat sprawności',
+            'psu_standard' => 'Standard zasilacza',
+
+            'case_type' => 'Typ obudowy',
+            'max_gpu_length_mm' => 'Maks. długość GPU',
+            'max_cpu_cooler_height_mm' => 'Maks. wysokość chłodzenia CPU',
+
+            'connectivity_type' => 'Typ łączności',
+            'sensor_type' => 'Typ sensora',
+            'switch_type' => 'Typ przełączników',
+
+            'audio_channels' => 'Kanały audio',
+
+            'cooler_type' => 'Typ chłodzenia',
+
+            'network_standard' => 'Standard sieci',
+            'interface_type' => 'Typ interfejsu',
+
+            'monitor_resolution' => 'Rozdzielczość',
+            'refresh_rate_hz' => 'Częstotliwość odświeżania',
+            'panel_type' => 'Typ matrycy',
+            'screen_size_inch' => 'Rozmiar ekranu',
+
+            'integrated_gpu' => 'Zintegrowana grafika',
+
+            'connector_type' => 'Typ złącza',
+            'chipset_manufacturer' => 'Producent chipsetu',
+
+            'fan_included' => 'Chłodzenie w zestawie',
+            'fan_max_tdp' => 'Maks. TDP chłodzenia',
+
+            'GPU_length' => 'Długość karty graficznej',
+            'CPU_cooler_height' => 'Wysokość chłodzenia CPU',
+
+            'cpu_generation' => 'Generacja procesora',
+            'supported_cpu_generations' => 'Obsługiwane generacje CPU',
+
+            'ram_slots' => 'Liczba slotów RAM',
+            'ram_modules' => 'Liczba modułów RAM',
+
+            'gpu_power_connectors' => 'Złącza zasilania GPU',
+            'cpu_power_connector' => 'Złącze zasilania CPU',
+
+            'm2_slots' => 'Liczba slotów M.2',
+
+            'radiator_size' => 'Rozmiar radiatora',
+            'max_radiator' => 'Maks. rozmiar radiatora',
+            default => str_replace('_', ' ', ucfirst($key)),
+        };
+    }
+
+    public function removeFromBuild($categoryId, $index)
+    {
+        $build = session('configurator_build', []);
+
+        if (isset($build[$categoryId])) {
+            if (is_array(reset($build[$categoryId]))) {
+                // Jeśli to kategoria z wieloma elementami, usuwamy po indeksie
+                unset($build[$categoryId][$index]);
+                // Naprawiamy indeksy tablicy (0, 1, 2...)
+                $build[$categoryId] = array_values($build[$categoryId]);
+                
+                if (empty($build[$categoryId])) {
+                    unset($build[$categoryId]);
+                }
+            } else {
+                // Jeśli to kategoria pojedyncza
+                unset($build[$categoryId]);
+            }
+        }
+
+        session(['configurator_build' => $build]);
+        return redirect()->back();
     }
 }
