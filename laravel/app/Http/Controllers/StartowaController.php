@@ -9,36 +9,36 @@ use Illuminate\Http\Request;
 class StartowaController extends Controller
 {
     public function startowa(Request $request)
-{
-    $selectedCategory = $request->query('category');
+    {
+        $selectedCategory = $request->query('category');
 
-    $products = Product::orderByRaw("
+        $products = Product::orderByRaw("
             CASE
                 WHEN promo_price IS NOT NULL AND promo_price < base_price THEN 0
                 ELSE 1
             END
         ")
-        ->take(10)
-        ->get();
+            ->take(10)
+            ->get();
 
-    $promo_products = Product::whereNotNull('promo_price')
-        ->whereColumn('promo_price', '<', 'base_price')
-        ->get();
+        $promo_products = Product::whereNotNull('promo_price')
+            ->whereColumn('promo_price', '<', 'base_price')
+            ->get();
 
-    $categories = Category::all();
+        $categories = Category::all();
 
-    $all_products = Product::when($selectedCategory, function ($query) use ($selectedCategory) {
-        $query->where('category_id', $selectedCategory);
-    })
-    ->paginate(24)
-    ->withQueryString();
+        $all_products = Product::when($selectedCategory, function ($query) use ($selectedCategory) {
+            $query->where('category_id', $selectedCategory);
+        })
+            ->paginate(24)
+            ->withQueryString();
 
-    return view('startowa', compact(
-        'products',
-        'promo_products',
-        'categories',
-        'all_products',
-        'selectedCategory'
-    ));
-}
+        return view('startowa', compact(
+            'products',
+            'promo_products',
+            'categories',
+            'all_products',
+            'selectedCategory'
+        ));
+    }
 }

@@ -116,9 +116,9 @@
     <div class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-[40px] p-8">
         <div class="flex flex-wrap gap-4 items-center">
             @foreach($categories as $category)
-                <a href="{{ url()->current() }}?category={{ $category->id }}#produkty"
+                <a href="{{ route('home', ['category' => $category->id]) }}#produkty"
                    class="px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border
-                   {{ (string)request('category') === (string)$category->id
+                   {{ (string)$selectedCategory === (string)$category->id
                         ? 'bg-purple-600 text-white border-purple-400 shadow-[0_0_12px_rgba(168,85,247,0.8)] scale-105'
                         : 'bg-purple-900/30 border-purple-500/30 text-gray-300 hover:bg-purple-600 hover:text-white hover:scale-105' }}">
                     {{ $category->name }}
@@ -126,7 +126,7 @@
             @endforeach
 
             <div class="ml-auto">
-                <a href="{{ url()->current() }}#produkty"
+                <a href="{{ route('home') }}#produkty"
                    class="px-6 py-2 bg-blue-900/20 border border-blue-500/30 text-blue-300 rounded-full text-sm font-bold uppercase tracking-tighter transition-all duration-300 hover:bg-blue-600 hover:text-white hover:shadow-[0_0_15px_rgba(59,130,246,0.6)] hover:scale-105">
                     Resetuj kategorie
                 </a>

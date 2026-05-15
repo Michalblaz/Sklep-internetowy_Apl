@@ -10,6 +10,34 @@ use Illuminate\Validation\Rule;
 
 class WyszukajWitrynaController extends Controller
 {
+    public function suggestions(Request $request)
+    {
+        $validated = $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        $search = trim($validated['search'] ?? '');
+
+        if ($search === '') {
+            return response()->json([]);
+        }
+
+        $likeOperator = config('database.default') === 'pgsql' ? 'ILIKE' : 'LIKE';
+
+        $suggestions = Product::query()
+            ->where(function ($query) use ($search, $likeOperator) {
+                $query->where('name', $likeOperator, "%{$search}%")
+                    ->orWhereHas('category', function ($categoryQuery) use ($search, $likeOperator) {
+                        $categoryQuery->where('name', $likeOperator, "%{$search}%");
+                    });
+            })
+            ->orderBy('name')
+            ->limit(50)
+            ->pluck('name');
+
+        return response()->json($suggestions);
+    }
+
     public function PrzeniesNaStrone(Request $request)
     {
         $validated = $request->validate([ // validacja ogracznica typy danych  blokuje xss oraz dziwne typy , okreslamy trukre jaki moga byc typy przekzane
