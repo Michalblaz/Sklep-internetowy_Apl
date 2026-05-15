@@ -50,6 +50,8 @@ class WyszukajWitrynaController extends Controller
             ->take(10)
             ->get();
 
+        $products = Product::whereNull('promo_price')->take(10)->get();
+
         $query = Product::with([
             'brand',
             'category',
@@ -90,7 +92,7 @@ class WyszukajWitrynaController extends Controller
             default => $query->orderByDesc('id'),
         };
 
-        $all_products = $query->paginate(20)->withQueryString();
+        $all_products = $query->paginate(8)->withQueryString();
 
         $brands = Brand::whereHas('products', function ($query) use ($filterProductIds) {
                 $query->whereIn('products.id', $filterProductIds);
@@ -118,7 +120,8 @@ class WyszukajWitrynaController extends Controller
             'selectedBrands',
             'selectedAttrs',
             'sort',
-            'recommendedProducts'
+            'recommendedProducts',
+            'products'
         ));
     }
 

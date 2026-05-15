@@ -23,7 +23,58 @@
         {{-- LEWA STRONA --}}
         <main class="col-span-12 lg:col-span-9 space-y-6">
 
-            {{-- INFO + SORT --}}
+
+
+            {{-- kafelki  --}}
+            {{-- polecane --}}
+            <div id="polecane" class="w-full py-6 relative">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="h-px grow bg-linear-to-r from-neon-blue/50 to-transparent"></div>
+                    <h2 class="text-xl font-bruno text-white uppercase italic">Polecane Produkty</h2>
+                    <div class="h-px grow bg-linear-to-l from-neon-blue/50 to-transparent"></div>
+                </div>
+
+            <div <div class="relative bg-black/20 px-16 py-4 rounded-xl border border-white/10"> 
+
+                <div id="recommended-container" class="overflow-hidden">
+
+                    <div id="recommended-track" class="flex transition-transform duration-500 ease-out gap-10 items-stretch">
+
+                        @foreach($products as $product)
+                            <div class="carousel-item flex-none w-[220px] sm:w-[240px] lg:w-[260px]">
+
+                                @php
+                                    $discount = ($product->base_price > 0 && $product->promo_price)
+                                        ? round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
+                                        : 0;
+                                @endphp
+
+                                <x-product-card-home :product="$product" :discount="$discount" />
+
+                            </div>
+                        @endforeach
+
+                    </div>
+
+
+
+                </div>
+
+                <button id="recommended-prev" onclick="moveCarousel('recommended', -1)"
+                        class="absolute left-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
+                        ◀
+                    </button>
+
+                    <button id="recommended-next" onclick="moveCarousel('recommended', 1)"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
+                        ▶
+                    </button>
+
+            </div>
+
+
+            </div>
+
             <div class="flex flex-wrap items-center justify-between gap-3 bg-black/20 p-4 rounded-xl border border-white/10">
 
                 <div class="text-xs text-gray-300">
@@ -42,15 +93,14 @@
                         class="bg-black/30 border border-white/10 text-xs px-3 py-2 rounded-lg text-white"
                     >
                         <option value="newest" {{ $sort === 'newest' ? 'selected' : '' }}>Najnowsze</option>
-                        <option value="price_asc" {{ $sort === 'price_asc' ? 'selected' : '' }}>Cena rosnąco</option>
-                        <option value="price_desc" {{ $sort === 'price_desc' ? 'selected' : '' }}>Cena malejąco</option>
+                        <option value="price_asc" {{ $sort === 'price_asc' ? 'selected' : '' }}>Najniższa Cena</option>
+                        <option value="price_desc" {{ $sort === 'price_desc' ? 'selected' : '' }}>Najwyższa Cena</option>
                         <option value="name_asc" {{ $sort === 'name_asc' ? 'selected' : '' }}>Nazwa A-Z</option>
                     </select>
                 </label>
 
             </div>
 
-            {{-- 🔥 TWOJE KAFELKI --}}
             @if($all_products->count())
 
             <div class="space-y-4 mt-6">
@@ -70,7 +120,7 @@
                         {{-- LEWA --}}
                         <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full">
 
-                            <div class="bg-white rounded-xl p-4 overflow-hidden">
+                            <div class="bg-white rounded-xl p-4 overflow-hidden flex items-center justify-center w-full sm:w-auto">
                                 <x-kafelek-wyszukaj :product="$product" />
                             </div>
 
@@ -93,7 +143,7 @@
                         </div>
 
                         {{-- PRAWA --}}
-                        <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center gap-3 w-full lg:w-[280px]">
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center gap-3 w-full lg:w-[280px] self-stretch">
 
                             <p class="text-lg text-white font-semibold">
                                 {{ $price }} zł
@@ -113,11 +163,11 @@
 
             </div>
 
-            <div class="mt-10">
+            <div class="mt-8 flex justify-end px-4">
                 {{ $all_products->links() }}
             </div>
 
-            
+
 
 
 
@@ -136,55 +186,96 @@
         {{-- PRAWA STRONA - FILTRY --}}
         <aside class="col-span-12 lg:col-span-3">
 
-            <div class="bg-black/40 p-5 rounded-2xl border border-white/10 backdrop-blur-xl sticky top-6">
+            <div class="bg-black/40 p-5 rounded-2xl border border-white/10 backdrop-blur-xl sticky top-6 shadow-2xl shadow-purple-900/10">
 
-                <h2 class="text-purple-300 font-bruno text-sm mb-6 uppercase tracking-widest italic">
-                    Filtry
-                </h2>
+                <div class="flex items-center justify-between gap-3 mb-6">
+                    <h2 class="text-purple-300 font-bruno text-sm uppercase tracking-widest italic">
+                        Filtry
+                    </h2>
+                    <span class="text-[10px] text-white/40 uppercase tracking-widest">
+                        {{ $all_products->total() }}
+                    </span>
+                </div>
 
                 <form id="filter-form" action="{{ route('wyszukaj') }}" method="GET" class="space-y-6">
 
                     <input type="hidden" name="search" value="{{ $search }}">
 
                     {{-- CENA --}}
-                    <div>
-                        <label class="text-[10px] text-gray-400 uppercase mb-3 block font-bold">
+                    <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                        <label class="text-[10px] text-gray-400 uppercase mb-3 block font-bold tracking-widest">
                             Cena
                         </label>
 
                         <div class="flex gap-2">
                             <input type="number" name="min_price" value="{{ request('min_price') }}"
                                    placeholder="Od"
-                                   class="w-full bg-white/5 border border-white/10 px-3 py-2 rounded text-xs text-white">
+                                   class="w-full bg-black/30 border border-white/10 px-3 py-2 rounded-lg text-xs text-white focus:border-purple-400 focus:outline-none transition">
 
                             <input type="number" name="max_price" value="{{ request('max_price') }}"
                                    placeholder="Do"
-                                   class="w-full bg-white/5 border border-white/10 px-3 py-2 rounded text-xs text-white">
+                                   class="w-full bg-black/30 border border-white/10 px-3 py-2 rounded-lg text-xs text-white focus:border-purple-400 focus:outline-none transition">
                         </div>
                     </div>
 
                     {{-- MARKI --}}
                     @if($brands->count())
-                        <div class="border-t border-white/10 pt-4">
-                            <p class="text-[10px] text-gray-400 uppercase mb-3 font-bold">Marka</p>
+                        <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                            <p class="text-[10px] text-gray-400 uppercase mb-3 font-bold tracking-widest">Marka</p>
 
-                            <div class="space-y-2 max-h-48 overflow-y-auto">
+                            <div class="filter-options space-y-2 max-h-56 overflow-y-auto pr-1">
                                 @foreach($brands as $brand)
-                                    <label class="flex items-center gap-2 text-xs text-white/60">
+                                    @php
+                                        $checked = in_array((int)$brand->id, $selectedBrands, true);
+                                    @endphp
+
+                                    <label class="flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-xs transition cursor-pointer
+                                                  {{ $checked ? 'border-purple-400/70 bg-purple-500/15 text-white shadow-[0_0_14px_rgba(168,85,247,0.18)]' : 'border-white/10 bg-black/20 text-white/60 hover:border-purple-400/40 hover:bg-white/10 hover:text-white' }}">
+                                        <span class="truncate">{{ $brand->name }}</span>
                                         <input type="checkbox"
                                                name="brands[]"
                                                value="{{ $brand->id }}"
-                                               {{ in_array((int)$brand->id, $selectedBrands, true) ? 'checked' : '' }}>
-                                        {{ $brand->name }}
+                                               {{ $checked ? 'checked' : '' }}
+                                               class="h-4 w-4 rounded border-white/20 bg-black/40 text-purple-500 focus:ring-purple-500 focus:ring-offset-0">
                                     </label>
                                 @endforeach
                             </div>
                         </div>
                     @endif
 
+                    {{-- ATRYBUTY --}}
+                    @foreach($attributes as $attribute)
+                        @if($attribute->values->count())
+                            <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                                <p class="text-[10px] text-gray-400 uppercase mb-3 font-bold tracking-widest">
+                                    {{ $attribute->name }}
+                                </p>
+
+                                <div class="filter-options space-y-2 max-h-56 overflow-y-auto pr-1">
+                                    @foreach($attribute->values as $value)
+                                        @php
+                                            $selectedAttributeValues = collect($selectedAttrs[$attribute->id] ?? [])->map(fn ($id) => (int) $id)->all();
+                                            $checked = in_array((int)$value->id, $selectedAttributeValues, true);
+                                        @endphp
+
+                                        <label class="flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-xs transition cursor-pointer
+                                                      {{ $checked ? 'border-cyan-400/70 bg-cyan-500/15 text-white shadow-[0_0_14px_rgba(34,211,238,0.14)]' : 'border-white/10 bg-black/20 text-white/60 hover:border-cyan-400/40 hover:bg-white/10 hover:text-white' }}">
+                                            <span class="truncate">{{ $value->value }}</span>
+                                            <input type="checkbox"
+                                                   name="attrs[{{ $attribute->id }}][]"
+                                                   value="{{ $value->id }}"
+                                                   {{ $checked ? 'checked' : '' }}
+                                                   class="h-4 w-4 rounded border-white/20 bg-black/40 text-cyan-500 focus:ring-cyan-500 focus:ring-offset-0">
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+
                     {{-- RESET --}}
                     <a href="{{ route('wyszukaj', ['search' => $search]) }}"
-                       class="block text-center bg-white/10 hover:bg-white/20 py-2 rounded text-xs uppercase">
+                       class="block text-center border border-purple-400/30 bg-purple-500/10 hover:bg-purple-500/20 py-3 rounded-xl text-xs uppercase tracking-widest transition">
                         Reset
                     </a>
 
@@ -197,14 +288,70 @@
     </div>
 </div>
 
+<style>
+.carousel-item { display:flex }
+.filter-options {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(168, 85, 247, 0.65) rgba(255, 255, 255, 0.08);
+}
+
+.filter-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.filter-options::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+}
+
+.filter-options::-webkit-scrollbar-thumb {
+    background: rgba(168, 85, 247, 0.65);
+    border-radius: 999px;
+}
+</style>
+
 <script>
+const carouselPositions = { recommended: 0 };
+
+function moveCarousel(id, direction) {
+    const track = document.getElementById(`${id}-track`);
+    const container = document.getElementById(`${id}-container`);
+    const items = track.querySelectorAll('.carousel-item');
+
+    if (!items.length) return;
+
+    const itemWidth = items[0].offsetWidth + 40;
+    const maxScroll = track.scrollWidth - container.offsetWidth;
+
+    carouselPositions[id] += direction * itemWidth;
+
+    if (carouselPositions[id] < 0) carouselPositions[id] = 0;
+    if (carouselPositions[id] > maxScroll) carouselPositions[id] = maxScroll;
+
+    track.style.transform = `translateX(-${carouselPositions[id]}px)`;
+
+    updateArrows(id, maxScroll);
+}
+
+function updateArrows(id, maxScroll) {
+    const prevBtn = document.getElementById(`${id}-prev`);
+    const nextBtn = document.getElementById(`${id}-next`);
+    const current = carouselPositions[id];
+
+    prevBtn.style.opacity = current <= 0 ? "0" : "0.4";
+    prevBtn.style.pointerEvents = current <= 0 ? "none" : "auto";
+
+    nextBtn.style.opacity = current >= maxScroll ? "0" : "0.4";
+    nextBtn.style.pointerEvents = current >= maxScroll ? "none" : "auto";
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 
     const form = document.getElementById('filter-form');
 
     if (!form) return;
 
-    form.querySelectorAll('input[type="checkbox"], select').forEach(el => {
+    document.querySelectorAll('#filter-form input[type="checkbox"], select[form="filter-form"]').forEach(el => {
         el.addEventListener('change', () => form.submit());
     });
 
@@ -215,6 +362,13 @@ document.addEventListener('DOMContentLoaded', function () {
             t = setTimeout(() => form.submit(), 600);
         });
     });
+
+    const track = document.getElementById('recommended-track');
+    const container = document.getElementById('recommended-container');
+    if (track && container) {
+        const maxScroll = track.scrollWidth - container.offsetWidth;
+        updateArrows('recommended', maxScroll);
+    }
 
 });
 </script>
