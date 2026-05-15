@@ -10,6 +10,12 @@ class AttributeValue extends Model
 
     public function attribute()
     {
-        return $this->belongsTo(Attribute::class, 'attribute_category_id');
+        return $this->belongsTo(Attribute::class, Attribute::valuesForeignKey());
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_attributes', 'attribute_value_id', 'product_id')
+            ->withPivot(Product::attributeCategoryPivotColumn());
     }
 }

@@ -7,6 +7,7 @@
     </div>
 @endif
 <!-- POLECANE -->
+
 <div id="polecane" class="w-full px-4 lg:px-8 py-6">
     <div class="flex items-center gap-4 mb-8">
         <div class="h-px grow bg-linear-to-r from-neon-blue/50 to-transparent"></div>
@@ -40,12 +41,19 @@
 
             </div>
         </div>
+    </div>
+
+    </div>
 
         <button id="recommended-prev"
             onclick="moveCarousel('recommended', -1)"
             class="absolute left-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
             ◀
         </button>
+    <button id="recommended-prev" onclick="moveCarousel('recommended', -1)"
+    class="absolute left-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
+        ◀
+    </button>
 
         <button id="recommended-next"
             onclick="moveCarousel('recommended', 1)"
@@ -54,6 +62,11 @@
         </button>
 
     </div>
+    <button id="recommended-next" onclick="moveCarousel('recommended', 1)"
+    class="absolute right-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
+        ▶
+    </button>
+        </div>
 </div>
 
 
