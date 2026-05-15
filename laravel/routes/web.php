@@ -36,8 +36,11 @@ use App\Livewire\Admin\ProductForm;
     Route::get('/wyszukiwanie', [WyszukajWitrynaController::class, 'PrzeniesNaStrone'])
     ->name('wyszukaj');
 
+
+
         // Koszyk
     Route::get('/koszyk', [KoszykController::class, 'index'])->name('koszyk');
+    Route::view('/Transakcje', 'Transakcje')->name('transakcje');
 
 
 
