@@ -244,10 +244,10 @@ class ConfiguratorController extends Controller
         ];
 
 
-        
-        
+
+
         $selectedInThisCategory = $build[$category->id] ?? null;
-        
+
         $selectedItemData = is_array($selectedInThisCategory) && isset($selectedInThisCategory[0])
             ? $selectedInThisCategory[0]
             : $selectedInThisCategory;
@@ -370,13 +370,13 @@ class ConfiguratorController extends Controller
 
         if ($categoryId === 3) {
             $maxSlots = $this->getNumberFromAttr($product->id, 44);
-            $maxM2 = $this->getNumberFromAttr($product->id, 48);    
+            $maxM2 = $this->getNumberFromAttr($product->id, 48);
 
             // Walidacja RAM w sesji
             if (isset($selection[4])) {
                 $usedSlots = 0;
                 foreach ($selection[4] as $ramItem) {
-                    $usedSlots += $this->getNumberFromAttr($ramItem['id'], 45); 
+                    $usedSlots += $this->getNumberFromAttr($ramItem['id'], 45);
                 }
                 if ($usedSlots > $maxSlots) {
                     return back()->with('error', "Nowa płyta ma tylko $maxSlots sloty RAM, a Ty masz już $usedSlots w zestawie");
@@ -437,7 +437,7 @@ class ConfiguratorController extends Controller
                         if (isset($selection[5])) {
                             foreach ($selection[5] as $idx => $diskItem) {
                                 if ($replaceIndex !== null && $idx == $replaceIndex) continue;
-                                
+
                                 $isM2 = false;
                                 if (isset($diskItem['attributes'][17]) && in_array(41, $diskItem['attributes'][17])) {
                                     $isM2 = true;
@@ -669,7 +669,7 @@ class ConfiguratorController extends Controller
                 unset($build[$categoryId][$index]);
                 // Naprawiamy indeksy tablicy (0, 1, 2...)
                 $build[$categoryId] = array_values($build[$categoryId]);
-                
+
                 if (empty($build[$categoryId])) {
                     unset($build[$categoryId]);
                 }
