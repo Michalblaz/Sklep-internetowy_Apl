@@ -34,7 +34,7 @@
                     <div class="h-px grow bg-linear-to-l from-neon-blue/50 to-transparent"></div>
                 </div>
 
-            <div <div class="relative bg-black/20 px-16 py-4 rounded-xl border border-white/10"> 
+            <div class="relative bg-black/20 px-16 py-4 rounded-xl border border-white/10"> 
 
                 <div id="recommended-container" class="overflow-hidden">
 
@@ -103,7 +103,7 @@
 
             @if($all_products->count())
 
-            <div class="space-y-4 mt-6">
+            <div id="search-results-list" class="space-y-4 mt-6">
 
                 @foreach($all_products as $product)
 
@@ -186,7 +186,7 @@
         {{-- PRAWA STRONA - FILTRY --}}
         <aside class="col-span-12 lg:col-span-3">
 
-            <div class="bg-black/40 p-5 rounded-2xl border border-white/10 backdrop-blur-xl sticky top-6 shadow-2xl shadow-purple-900/10">
+            <div id="filter-panel" class="bg-black/40 p-5 rounded-2xl border border-white/10 backdrop-blur-xl sticky top-6 overflow-y-auto shadow-2xl shadow-purple-900/10">
 
                 <div class="flex items-center justify-between gap-3 mb-6">
                     <h2 class="text-purple-300 font-bruno text-sm uppercase tracking-widest italic">
@@ -295,7 +295,16 @@
     scrollbar-color: rgba(168, 85, 247, 0.65) rgba(255, 255, 255, 0.08);
 }
 
+#filter-panel {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(168, 85, 247, 0.65) rgba(255, 255, 255, 0.08);
+}
+
 .filter-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+#filter-panel::-webkit-scrollbar {
     width: 6px;
 }
 
@@ -304,7 +313,17 @@
     border-radius: 999px;
 }
 
+#filter-panel::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+}
+
 .filter-options::-webkit-scrollbar-thumb {
+    background: rgba(168, 85, 247, 0.65);
+    border-radius: 999px;
+}
+
+#filter-panel::-webkit-scrollbar-thumb {
     background: rgba(168, 85, 247, 0.65);
     border-radius: 999px;
 }
@@ -369,6 +388,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const maxScroll = track.scrollWidth - container.offsetWidth;
         updateArrows('recommended', maxScroll);
     }
+
+    const filterPanel = document.getElementById('filter-panel');
+    const resultsList = document.getElementById('search-results-list');
+
+    function syncFilterPanelHeight() {
+        if (!filterPanel || !resultsList || window.innerWidth < 1024) {
+            if (filterPanel) {
+                filterPanel.style.maxHeight = '';
+            }
+
+            return;
+        }
+
+        filterPanel.style.maxHeight = `${resultsList.offsetHeight}px`;
+    }
+
+    syncFilterPanelHeight();
+    window.addEventListener('resize', syncFilterPanelHeight);
 
 });
 </script>
