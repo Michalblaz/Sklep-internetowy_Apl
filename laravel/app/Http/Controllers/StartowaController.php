@@ -12,7 +12,8 @@ class StartowaController extends Controller
     {
         $selectedCategory = $request->query('category');
 
-        $products = Product::orderByRaw("
+        $products = Product::withAvg('reviews', 'rating')
+            ->orderByRaw("
             CASE
                 WHEN promo_price IS NOT NULL AND promo_price < base_price THEN 0
                 ELSE 1
@@ -21,15 +22,17 @@ class StartowaController extends Controller
             ->take(10)
             ->get();
 
-        $promo_products = Product::whereNotNull('promo_price')
+        $promo_products = Product::withAvg('reviews', 'rating')
+            ->whereNotNull('promo_price')
             ->whereColumn('promo_price', '<', 'base_price')
             ->get();
 
         $categories = Category::all();
 
-        $all_products = Product::when($selectedCategory, function ($query) use ($selectedCategory) {
-            $query->where('category_id', $selectedCategory);
-        })
+        $all_products = Product::withAvg('reviews', 'rating')
+            ->when($selectedCategory, function ($query) use ($selectedCategory) {
+                $query->where('category_id', $selectedCategory);
+            })
             ->paginate(24)
             ->withQueryString();
 

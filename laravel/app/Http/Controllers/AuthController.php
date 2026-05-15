@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
@@ -38,6 +39,14 @@ class AuthController extends Controller
             return back()
                 ->withErrors(['email' => 'Nieprawidłowy email lub hasło'])
                 ->withInput();
+        }
+
+        $blockedAccountMessage = $this->blockedAccountMessage($user);
+
+        if ($blockedAccountMessage !== null) {
+            return back()
+                ->withErrors(['account' => $blockedAccountMessage])
+                ->withInput($request->only('email'));
         }
 
         Auth::login($user);
@@ -96,5 +105,36 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/log_in');
+    }
+
+    private function blockedAccountMessage(User $user): ?string
+    {
+        $latestBan = DB::table('bans')
+            ->where('id_users', $user->id)
+            ->orderByDesc('id')
+            ->first(['end_time']);
+
+        if (!$latestBan) {
+            return null;
+        }
+
+        $endTime = $latestBan->end_time;
+
+        if ($endTime === null || (
+            is_string($endTime)
+            && in_array(strtolower(trim($endTime)), ['infinity', 'infinite'], true)
+        )) {
+            return 'Konto jest zbanowane.';
+        }
+
+        try {
+            if (now()->lt(\Carbon\Carbon::parse($endTime))) {
+                return 'Konto jest zawieszone.';
+            }
+        } catch (\Throwable $exception) {
+            return null;
+        }
+
+        return null;
     }
 }

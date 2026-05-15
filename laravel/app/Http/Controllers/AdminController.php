@@ -208,18 +208,14 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
     public function suspend(User $user)
     {
         if ($this->isAdminUser($user)) {
-            return back()->with('admin_error', 'Nie można zawiesić konta administratora.');
+            return $this->usersPanelRedirect()->with('admin_error', 'Nie można zawiesić konta administratora.');
         }
 
         if (Auth::check() && Auth::id() === $user->id) {
-            return back()->with('admin_error', 'Nie możesz zawiesić własnego konta.');
+            return $this->usersPanelRedirect()->with('admin_error', 'Nie możesz zawiesić własnego konta.');
         }
 
         $latestBan = $this->latestBanForUser($user->id);
-
-        if ($this->resolveAccountStatus($latestBan?->end_time, $latestBan !== null) === 'zbanowany') {
-            return back()->with('admin_error', 'To konto jest już zbanowane.');
-        }
 
         Ban::create([
             'id_users' => $user->id,
@@ -227,23 +223,30 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             'reason' => 'Zawieszenie nadane z panelu administratora',
         ]);
 
-        return back()->with('admin_status', "Konto {$user->email} zostało zawieszone na 7 dni.");
+        $previousStatus = $this->resolveAccountStatus($latestBan?->end_time, $latestBan !== null);
+
+        return $this->usersPanelRedirect()->with(
+            'admin_status',
+            $previousStatus === 'zbanowany'
+                ? "Ban konta {$user->email} został zmieniony na zawieszenie na 7 dni."
+                : "Konto {$user->email} zostało zawieszone na 7 dni."
+        );
     }
 
     public function ban(User $user)
     {
         if ($this->isAdminUser($user)) {
-            return back()->with('admin_error', 'Nie można zbanować konta administratora.');
+            return $this->usersPanelRedirect()->with('admin_error', 'Nie można zbanować konta administratora.');
         }
 
         if (Auth::check() && Auth::id() === $user->id) {
-            return back()->with('admin_error', 'Nie możesz zbanować własnego konta.');
+            return $this->usersPanelRedirect()->with('admin_error', 'Nie możesz zbanować własnego konta.');
         }
 
         $latestBan = $this->latestBanForUser($user->id);
 
         if ($this->resolveAccountStatus($latestBan?->end_time, $latestBan !== null) === 'zbanowany') {
-            return back()->with('admin_error', 'To konto jest już zbanowane.');
+            return $this->usersPanelRedirect()->with('admin_error', 'To konto jest już zbanowane.');
         }
 
         DB::table('bans')->insert([
@@ -252,7 +255,33 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             'reason' => 'Ban stały nadany z panelu administratora',
         ]);
 
-        return back()->with('admin_status', "Konto {$user->email} zostało zbanowane.");
+        return $this->usersPanelRedirect()->with('admin_status', "Konto {$user->email} zostało zbanowane.");
+    }
+
+    public function unban(User $user)
+    {
+        if ($this->isAdminUser($user)) {
+            return $this->usersPanelRedirect()->with('admin_error', 'Nie można zmienić blokady konta administratora.');
+        }
+
+        $latestBan = $this->latestBanForUser($user->id);
+
+        if ($this->resolveAccountStatus($latestBan?->end_time, $latestBan !== null) === 'aktywny') {
+            return $this->usersPanelRedirect()->with('admin_error', 'To konto jest już aktywne.');
+        }
+
+        Ban::create([
+            'id_users' => $user->id,
+            'end_time' => now(),
+            'reason' => 'Odblokowanie konta z panelu administratora',
+        ]);
+
+        return $this->usersPanelRedirect()->with('admin_status', "Konto {$user->email} zostało odblokowane.");
+    }
+
+    private function usersPanelRedirect()
+    {
+        return redirect(route('admin') . '#uzytkownicy');
     }
 
     private function latestBanForUser(int $userId): ?Ban

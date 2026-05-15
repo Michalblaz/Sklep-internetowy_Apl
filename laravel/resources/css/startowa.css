@@ -20,3 +20,11 @@
 .home-product-cell > * {
     width: 100%;
 }
+
+.home-rating-star__arm {
+    fill: rgb(calc(243 * var(--arm-fill)), calc(255 * var(--arm-fill)), 0);
+    stroke: rgba(6, 8, 14, 1);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}

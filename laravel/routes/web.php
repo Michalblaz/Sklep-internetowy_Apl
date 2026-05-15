@@ -49,6 +49,7 @@ use App\Livewire\Admin\ProductForm;
      Route::get('/admin/products/create', ProductForm::class)->name('admin.products.create');
      Route::post('/admin/users/{user}/suspend', [AdminController::class, 'suspend'])->name('admin.users.suspend');
      Route::post('/admin/users/{user}/ban', [AdminController::class, 'ban'])->name('admin.users.ban');
+     Route::post('/admin/users/{user}/unban', [AdminController::class, 'unban'])->name('admin.users.unban');
 
      // Logowanie / Rejestracja
     Route::get('/log_in', [AuthController::class, 'showLoginForm'])->name('log_in');

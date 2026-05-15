@@ -55,11 +55,11 @@ const renderChartFrame = (items, maxValue, chartColors) => {
     const scaleTicks = buildScaleTicks(maxValue);
 
     return `
-        <div class="mb-4 flex items-center justify-between gap-4">
+        <div class="mb-8 flex items-start justify-between gap-4">
             <p class="text-xs uppercase tracking-[0.28em] text-gray-400">Ilość produktów</p>
             <p class="text-[11px] text-gray-500">Najedź na słupek, aby zobaczyć szczegóły</p>
         </div>
-        <div class="relative min-w-max pb-36">
+        <div class="relative min-w-max pb-36 pt-3">
             <div class="absolute left-0 top-0 bottom-28 w-14">
                 ${scaleTicks.map((tick, index) => {
                     const position = scaleTicks.length > 1 ? (index / (scaleTicks.length - 1)) * 100 : 0;
