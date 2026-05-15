@@ -33,8 +33,8 @@ use App\Livewire\Admin\ProductForm;
     Route::post('/produkt/{id}/opinie', [ProductPageController::class, 'storeReview'])->whereNumber('id')->middleware('auth')->name('products.reviews.store');
 
         //Wyszukiwarka
-    Route::get('/wyszukaj', [WyszukajWitrynaController::class, 'PrzeniesNaStrone']) ->name('wyszukaj');
-
+    Route::get('/wyszukiwanie', [WyszukajWitrynaController::class, 'PrzeniesNaStrone'])
+    ->name('wyszukaj');
 
         // Koszyk
     Route::get('/koszyk', [KoszykController::class, 'index'])->name('koszyk');

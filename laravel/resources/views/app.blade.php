@@ -33,15 +33,22 @@
             </a>
         </div>
 
-        <div class="flex-[3] flex justify-center px-4">
+        <form action="{{ route('wyszukaj') }}" method="GET" class="w-1/2 flex items-center gap-2">
             <input
                 type="text"
-                placeholder="WYSZUKIWARKA"
-                data-route="wyszukaj"
-                onkeydown="if(event.key === 'Enter') handleSearch(this)"
-                class="w-full max-w-4xl px-8 py-2 rounded-full bg-purple-900/30 border border-purple-500/30 text-white outline-none focus:border-cyan-400 focus:bg-purple-900/50 transition-all text-center text-lg tracking-[0.2em] shadow-[0_0_15px_rgba(168,85,247,0.15)]""
+                name="search"
+                value="{{ request('search') }}"
+                placeholder="Szukaj produktu, marki lub kategorii"
+                maxlength="100"
+                class="w-full px-4 py-2 rounded-full bg-purple-900/40 border border-purple-500/40 text-white placeholder:text-white/40 focus:border-purple-400 outline-none"
             >
-        </div>
+            <button
+                type="submit"
+                class="px-4 py-2 rounded-full bg-purple-600 hover:bg-purple-500 text-sm font-bold transition"
+            >
+                Szukaj
+            </button>
+        </form>
 
         <div class="flex-1 flex items-center justify-end gap-6">
 
