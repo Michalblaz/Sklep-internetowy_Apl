@@ -6,69 +6,55 @@
         {{ session('success') }}
     </div>
 @endif
-<!-- POLECANE -->
 
+<!-- POLECANE -->
 <div id="polecane" class="w-full px-4 lg:px-8 py-6">
     <div class="flex items-center gap-4 mb-8">
         <div class="h-px grow bg-linear-to-r from-neon-blue/50 to-transparent"></div>
-        <h2 class="text-xl font-bruno text-white uppercase italic">
-            Polecane Produkty
-        </h2>
+        <h2 class="text-xl font-bruno text-white uppercase italic">Polecane Produkty</h2>
         <div class="h-px grow bg-linear-to-l from-neon-blue/50 to-transparent"></div>
     </div>
 
-    <div class="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-12 px-20 shadow-2xl shadow-cyan-900/20 overflow-hidden">
-
+    <div class="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-8 md:p-12 md:px-20 shadow-2xl shadow-cyan-900/20 overflow-hidden">
         <div id="recommended-container" class="overflow-hidden">
-            <div id="recommended-track"
-                class="flex transition-transform duration-500 ease-out gap-10 items-stretch">
-
+            <div id="recommended-track" class="flex transition-transform duration-500 ease-out gap-10 items-stretch">
                 @foreach($products as $product)
-                    <div class="carousel-item flex-none w-[260px]">
+                    @php
+                        $discount = ($product->base_price > 0 && $product->promo_price)
+                            ? round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
+                            : 0;
+                    @endphp
 
-                        @php
-                            $discount = ($product->base_price > 0 && $product->promo_price)
-                                ? round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
-                                : 0;
-                        @endphp
-
-                        <x-product-card-home
-                            :product="$product"
-                            :discount="$discount" />
-
+                    <div class="home-carousel-item carousel-item flex-none w-[260px]">
+                        <x-product-card-home :product="$product" :discount="$discount" />
                     </div>
                 @endforeach
-
             </div>
         </div>
-    </div>
 
-    </div>
-
-        <button id="recommended-prev"
-            onclick="moveCarousel('recommended', -1)"
-            class="absolute left-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
-            ◀
-        </button>
-    <button id="recommended-prev" onclick="moveCarousel('recommended', -1)"
-    class="absolute left-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
-        ◀
-    </button>
-
-        <button id="recommended-next"
-            onclick="moveCarousel('recommended', 1)"
-            class="absolute right-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
-            ▶
+        <button
+            id="recommended-prev"
+            type="button"
+            data-carousel="recommended"
+            data-carousel-direction="-1"
+            class="absolute left-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90"
+            aria-label="Poprzednie polecane produkty"
+        >
+            &#9664;
         </button>
 
+        <button
+            id="recommended-next"
+            type="button"
+            data-carousel="recommended"
+            data-carousel-direction="1"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90"
+            aria-label="Następne polecane produkty"
+        >
+            &#9654;
+        </button>
     </div>
-    <button id="recommended-next" onclick="moveCarousel('recommended', 1)"
-    class="absolute right-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
-        ▶
-    </button>
-        </div>
 </div>
-
 
 <!-- PROMOCJE -->
 <div id="promocje" class="w-full px-4 lg:px-8 py-6">
@@ -78,30 +64,46 @@
         <div class="h-px grow bg-linear-to-l from-red-500/50 to-transparent"></div>
     </div>
 
-    <div class="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-12 px-20 shadow-2xl shadow-red-900/20 overflow-hidden">
+    <div class="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-8 md:p-12 md:px-20 shadow-2xl shadow-red-900/20 overflow-hidden">
         <div id="promo-container" class="overflow-hidden">
             <div id="promo-track" class="flex transition-transform duration-500 ease-out gap-10 items-stretch">
                 @foreach($promo_products as $product)
-                    <div class="flex-none w-[260px] carousel-item">
-                        @php
-                            $discount = ($product->base_price > 0 && $product->promo_price)
-                                ? round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
-                                : 0;
-                        @endphp
+                    @php
+                        $discount = ($product->base_price > 0 && $product->promo_price)
+                            ? round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
+                            : 0;
+                    @endphp
+
+                    <div class="home-carousel-item carousel-item flex-none w-[260px]">
                         <x-product-card-home :product="$product" :discount="$discount" />
                     </div>
                 @endforeach
             </div>
         </div>
 
-        <button id="promo-prev" onclick="moveCarousel('promo', -1)"
-        class="absolute left-4 top-1/2 -translate-y-1/2 text-red-500 text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#ef4444] active:scale-90">◀</button>
+        <button
+            id="promo-prev"
+            type="button"
+            data-carousel="promo"
+            data-carousel-direction="-1"
+            class="absolute left-4 top-1/2 -translate-y-1/2 text-red-500 text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#ef4444] active:scale-90"
+            aria-label="Poprzednie promocje"
+        >
+            &#9664;
+        </button>
 
-        <button id="promo-next" onclick="moveCarousel('promo', 1)"
-        class="absolute right-4 top-1/2 -translate-y-1/2 text-red-500 text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#ef4444] active:scale-90">▶</button>
+        <button
+            id="promo-next"
+            type="button"
+            data-carousel="promo"
+            data-carousel-direction="1"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-red-500 text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#ef4444] active:scale-90"
+            aria-label="Następne promocje"
+        >
+            &#9654;
+        </button>
     </div>
 </div>
-
 
 <!-- KATEGORIE -->
 <div id="kategorie" class="w-full px-4 lg:px-8 py-10">
@@ -113,7 +115,6 @@
 
     <div class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-[40px] p-8">
         <div class="flex flex-wrap gap-4 items-center">
-
             @foreach($categories as $category)
                 <a href="{{ url()->current() }}?category={{ $category->id }}#produkty"
                    class="px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border
@@ -130,11 +131,9 @@
                     Resetuj kategorie
                 </a>
             </div>
-
         </div>
     </div>
 </div>
-
 
 <!-- PRODUKTY -->
 <div id="produkty" class="w-full px-4 lg:px-8 py-10">
@@ -145,26 +144,25 @@
     </div>
 
     <div class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-[40px] p-8">
-
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+        <div class="home-products-grid">
             @foreach($all_products as $product)
-                <div class="flex h-full">
-                    @php
-                        $discount = ($product->base_price > 0 && $product->promo_price)
-                            ? round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
-                            : 0;
-                    @endphp
+                @php
+                    $discount = ($product->base_price > 0 && $product->promo_price)
+                        ? round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
+                        : 0;
+                @endphp
+
+                <div class="home-product-cell">
                     <x-product-card-home :product="$product" :discount="$discount" />
                 </div>
             @endforeach
         </div>
 
         <div class="mt-12 flex justify-center items-center gap-3 font-bruno">
-
             @if (!$all_products->onFirstPage())
                 <a href="{{ $all_products->previousPageUrl() }}#produkty"
                    class="text-purple-500 text-2xl hover:scale-110 transition hover:drop-shadow-[0_0_10px_rgba(168,85,247,0.7)]">
-                    ◀
+                    &#9664;
                 </a>
             @endif
 
@@ -173,7 +171,6 @@
                     max(1, $all_products->currentPage() - 2),
                     min($all_products->lastPage(), $all_products->currentPage() + 2)
                 ) as $page => $url)
-
                     <a href="{{ $url }}#produkty"
                        class="w-10 h-10 flex items-center justify-center rounded-full border text-sm transition-all duration-300
                        {{ $page == $all_products->currentPage()
@@ -181,130 +178,16 @@
                             : 'border-white/10 text-gray-400 hover:bg-purple-600 hover:text-white hover:scale-110 hover:shadow-[0_0_10px_rgba(168,85,247,0.6)]' }}">
                         {{ $page }}
                     </a>
-
                 @endforeach
             </div>
 
             @if ($all_products->hasMorePages())
                 <a href="{{ $all_products->nextPageUrl() }}#produkty"
                    class="text-purple-500 text-2xl hover:scale-110 transition hover:drop-shadow-[0_0_10px_rgba(168,85,247,0.7)]">
-                    ▶
+                    &#9654;
                 </a>
             @endif
-
         </div>
-
     </div>
 </div>
-
-
-<style>
-.carousel-item { display:flex }
-.grid > * { height:100% }
-
-html {
-    scroll-behavior: smooth;
-}
-</style>
-
-
-<script>
-const carouselPositions = {
-    recommended: 0,
-    promo: 0
-};
-
-function moveCarousel(id, direction) {
-    const track = document.getElementById(`${id}-track`);
-    const container = document.getElementById(`${id}-container`);
-    const items = track?.querySelectorAll('.carousel-item');
-
-    if (!track || !container || !items.length) return;
-
-    const gap = 40; // gap-10 = 40px
-    const itemWidth = items[0].offsetWidth + gap;
-    const maxScroll = Math.max(
-        0,
-        track.scrollWidth - container.offsetWidth
-    );
-
-    carouselPositions[id] += direction * itemWidth;
-
-    if (carouselPositions[id] < 0) {
-        carouselPositions[id] = 0;
-    }
-
-    if (carouselPositions[id] > maxScroll) {
-        carouselPositions[id] = maxScroll;
-    }
-
-    track.style.transform =
-        `translateX(-${carouselPositions[id]}px)`;
-
-    updateArrows(id, maxScroll);
-}
-
-function updateArrows(id, maxScroll) {
-    const prevBtn = document.getElementById(`${id}-prev`);
-    const nextBtn = document.getElementById(`${id}-next`);
-
-    if (!prevBtn || !nextBtn) return;
-
-    const current = carouselPositions[id];
-
-    prevBtn.style.opacity = current <= 0 ? "0" : "0.4";
-    prevBtn.style.pointerEvents =
-        current <= 0 ? "none" : "auto";
-
-    nextBtn.style.opacity =
-        current >= maxScroll ? "0" : "0.4";
-
-    nextBtn.style.pointerEvents =
-        current >= maxScroll ? "none" : "auto";
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-
-    ['recommended', 'promo'].forEach(id => {
-
-        const track = document.getElementById(`${id}-track`);
-        const container = document.getElementById(`${id}-container`);
-
-        if (!track || !container) return;
-
-        const maxScroll = Math.max(
-            0,
-            track.scrollWidth - container.offsetWidth
-        );
-
-        updateArrows(id, maxScroll);
-    });
-
-    window.addEventListener('resize', () => {
-        ['recommended', 'promo'].forEach(id => {
-
-            const track = document.getElementById(`${id}-track`);
-            const container = document.getElementById(`${id}-container`);
-
-            if (!track || !container) return;
-
-            const maxScroll = Math.max(
-                0,
-                track.scrollWidth - container.offsetWidth
-            );
-
-            if (carouselPositions[id] > maxScroll) {
-                carouselPositions[id] = maxScroll;
-            }
-
-            track.style.transform =
-                `translateX(-${carouselPositions[id]}px)`;
-
-            updateArrows(id, maxScroll);
-        });
-    });
-
-});
-</script>
-
 @endsection

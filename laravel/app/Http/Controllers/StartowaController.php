@@ -12,7 +12,14 @@ class StartowaController extends Controller
 {
     $selectedCategory = $request->query('category');
 
-    $products = Product::whereNull('promo_price')->take(10)->get();
+    $products = Product::orderByRaw("
+            CASE
+                WHEN promo_price IS NOT NULL AND promo_price < base_price THEN 0
+                ELSE 1
+            END
+        ")
+        ->take(10)
+        ->get();
 
     $promo_products = Product::whereNotNull('promo_price')
         ->whereColumn('promo_price', '<', 'base_price')
@@ -23,7 +30,7 @@ class StartowaController extends Controller
     $all_products = Product::when($selectedCategory, function ($query) use ($selectedCategory) {
         $query->where('category_id', $selectedCategory);
     })
-    ->paginate(80)
+    ->paginate(24)
     ->withQueryString();
 
     return view('startowa', compact(
