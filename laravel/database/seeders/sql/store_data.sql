@@ -2650,7 +2650,7 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 INSERT INTO public.users VALUES (1, 'mb131406@stud.ur.edu.pl', '$2y$12$jp7RO2jXONMyriETrE7xxeNl9ziH4gDRxzyzAy2yga0ubsESR4eeS', 'Michał', 'Błaż', '123456789', false);
 INSERT INTO public.users VALUES (2, 'admin@admin', '$2y$12$pMYi.0BbkodP8g.JGJaiBOfwauCl5lUXaUN07rLHWdGWyBjHOqnPK', 'admin', 'admin', '111111111', true);
 INSERT INTO public.users VALUES (3, 'kb134890@stud.ur.edu.pl', '$2y$12$woyRsZFWJYOMIu6Wqd25m.VMtB6Q7v8z7eKK57zjulKJPINPLlRoO', 'Kornel', 'Barć', '123456789', false);
-INSERT INTO public.users VALUES (4, 'jc124896@stud.ur.edu.pl', '$2y$12$gorFwPdOo64n5f/QuujkruZCpWe/0fxNYKSgjnwq0/jEToMb9o7ba', 'Jakub', 'Chmiel', '531485472', false);
+INSERT INTO public.users VALUES (4, 'jc134896@stud.ur.edu.pl', '$2y$12$gorFwPdOo64n5f/QuujkruZCpWe/0fxNYKSgjnwq0/jEToMb9o7ba', 'Jakub', 'Chmiel', '531485472', false);
 
 -- Synchronizacja licznika ID dla tabeli użytkowników
 SELECT pg_catalog.setval('public.users_id_seq', (SELECT MAX(id) FROM public.users), true);
