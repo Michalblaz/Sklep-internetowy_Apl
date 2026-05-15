@@ -33,15 +33,6 @@
             </a>
         </div>
 
-        <div class="flex-[3] flex justify-center px-4">
-            <input
-                type="text"
-                placeholder="WYSZUKIWARKA"
-                data-route="wyszukaj"
-                onkeydown="if(event.key === 'Enter') handleSearch(this)"
-                class="w-full max-w-4xl px-8 py-2 rounded-full bg-purple-900/30 border border-purple-500/30 text-white outline-none focus:border-cyan-400 focus:bg-purple-900/50 transition-all text-center text-lg tracking-[0.2em] shadow-[0_0_15px_rgba(168,85,247,0.15)]""
-            >
-        </div>
         <form action="{{ route('wyszukaj') }}" method="GET" class="w-1/2 flex items-center gap-2">
             <input
                 type="text"
