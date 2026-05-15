@@ -36,52 +36,56 @@
 -- Data for Name: attribute_category; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.attribute_category (id, name) VALUES (1, 'socket');
-INSERT INTO public.attribute_category (id, name) VALUES (3, 'cores');
-INSERT INTO public.attribute_category (id, name) VALUES (2, 'cpu_type');
-INSERT INTO public.attribute_category (id, name) VALUES (4, 'threads');
-INSERT INTO public.attribute_category (id, name) VALUES (5, 'base_clock');
-INSERT INTO public.attribute_category (id, name) VALUES (6, 'boost_clock');
-INSERT INTO public.attribute_category (id, name) VALUES (10, 'graphics_card_series');
-INSERT INTO public.attribute_category (id, name) VALUES (11, 'motherboard_chipset');
-INSERT INTO public.attribute_category (id, name) VALUES (12, 'board_standard');
-INSERT INTO public.attribute_category (id, name) VALUES (13, 'ram_type');
-INSERT INTO public.attribute_category (id, name) VALUES (14, 'ram_capacity_gb');
-INSERT INTO public.attribute_category (id, name) VALUES (15, 'ram_speed_mhz');
-INSERT INTO public.attribute_category (id, name) VALUES (16, 'ram_latency_cl');
-INSERT INTO public.attribute_category (id, name) VALUES (17, 'storage_type');
-INSERT INTO public.attribute_category (id, name) VALUES (18, 'storage_capacity_gb');
-INSERT INTO public.attribute_category (id, name) VALUES (19, 'storage_interface');
-INSERT INTO public.attribute_category (id, name) VALUES (20, 'psu_wattage');
-INSERT INTO public.attribute_category (id, name) VALUES (21, 'psu_efficiency_rating');
-INSERT INTO public.attribute_category (id, name) VALUES (22, 'psu_standard');
-INSERT INTO public.attribute_category (id, name) VALUES (23, 'case_type');
-INSERT INTO public.attribute_category (id, name) VALUES (24, 'max_gpu_length_mm');
-INSERT INTO public.attribute_category (id, name) VALUES (25, 'max_cpu_cooler_height_mm');
-INSERT INTO public.attribute_category (id, name) VALUES (26, 'connectivity_type');
-INSERT INTO public.attribute_category (id, name) VALUES (27, 'sensor_type');
-INSERT INTO public.attribute_category (id, name) VALUES (28, 'switch_type');
-INSERT INTO public.attribute_category (id, name) VALUES (29, 'audio_channels');
-INSERT INTO public.attribute_category (id, name) VALUES (30, 'cooler_type');
-INSERT INTO public.attribute_category (id, name) VALUES (32, 'network_standard');
-INSERT INTO public.attribute_category (id, name) VALUES (33, 'interface_type');
-INSERT INTO public.attribute_category (id, name) VALUES (34, 'monitor_resolution');
-INSERT INTO public.attribute_category (id, name) VALUES (35, 'refresh_rate_hz');
-INSERT INTO public.attribute_category (id, name) VALUES (36, 'panel_type');
-INSERT INTO public.attribute_category (id, name) VALUES (37, 'screen_size_inch');
-INSERT INTO public.attribute_category (id, name) VALUES (7, 'integrated_gpu');
-INSERT INTO public.attribute_category (id, name) VALUES (8, 'connector_type');
-INSERT INTO public.attribute_category (id, name) VALUES (9, 'chipset_manufacturer');
-INSERT INTO public.attribute_category (id, name) VALUES (38, 'fan_included');
-INSERT INTO public.attribute_category (id, name) VALUES (39, 'fan_max_tdp');
-INSERT INTO public.attribute_category (id, name) VALUES (40, 'GPU_length');
-INSERT INTO public.attribute_category (id, name) VALUES (41, 'CPU_cooler_height');
-INSERT INTO public.attribute_category (id, name) VALUES (42, 'cpu_generation');
-INSERT INTO public.attribute_category (id, name) VALUES (43, 'supported_cpu_generations');
-INSERT INTO public.attribute_category (id, name) VALUES (44, 'ram_slots');
-INSERT INTO public.attribute_category (id, name) VALUES (45, 'ram_modules');
-INSERT INTO public.attribute_category (id, name) VALUES (46, 'gpu_power_connectors');
-INSERT INTO public.attribute_category (id, name) VALUES (47, 'cpu_power_connector');
+INSERT INTO public.attribute_category (id, name) VALUES (1, 'socket') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (3, 'cores') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (2, 'cpu_type') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (4, 'threads') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (5, 'base_clock') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (6, 'boost_clock') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (10, 'graphics_card_series') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (11, 'motherboard_chipset') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (12, 'board_standard') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (13, 'ram_type') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (14, 'ram_capacity_gb') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (15, 'ram_speed_mhz') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (16, 'ram_latency_cl') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (17, 'storage_type') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (18, 'storage_capacity_gb') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (19, 'storage_interface') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (20, 'psu_wattage') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (21, 'psu_efficiency_rating') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (22, 'psu_standard') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (23, 'case_type') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (24, 'max_gpu_length_mm') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (25, 'max_cpu_cooler_height_mm') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (26, 'connectivity_type') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (27, 'sensor_type') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (28, 'switch_type') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (29, 'audio_channels') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (30, 'cooler_type') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (32, 'network_standard') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (33, 'interface_type') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (34, 'monitor_resolution') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (35, 'refresh_rate_hz') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (36, 'panel_type') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (37, 'screen_size_inch') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (7, 'integrated_gpu') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (8, 'connector_type') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (9, 'chipset_manufacturer') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (38, 'fan_included') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (39, 'fan_max_tdp') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (40, 'GPU_length') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (41, 'CPU_cooler_height') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (42, 'cpu_generation') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (43, 'supported_cpu_generations') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (44, 'ram_slots') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (45, 'ram_modules') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (46, 'gpu_power_connectors') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (47, 'cpu_power_connector') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (48, 'm2_slots') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (49, 'radiator_size') ON CONFLICT (name) DO NOTHING;
+INSERT INTO public.attribute_category (id, name) VALUES (50, 'max_radiator') ON CONFLICT (name) DO NOTHING;
+
 
 
 --
@@ -337,21 +341,32 @@ INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (3
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (320, 40, '269');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (321, 40, '282');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (322, 40, '225');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (323, 40, '267'); 
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (324, 40, '337'); 
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (323, 40, '267');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (324, 40, '337');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (325, 40, '300');
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (326, 40, '297'); 
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (327, 40, '182'); 
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (328, 40, '320'); 
--- Dodawanie wartości (kategoria 41: Wymiary chłodzenia)
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (400, 41, '240'); -- AiO 240
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (401, 41, '360'); -- AiO 360
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (326, 40, '297');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (327, 40, '182');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (328, 40, '320');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (329, 40, '167'); -- Intel Arc Pro B50
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (330, 40, '304'); -- ASUS Prime / Zotac Solid SFF
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (331, 40, '288'); -- Gigabyte RX 9070 XT Gaming OC
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (332, 40, '250'); -- INNO3D RTX 5060 Ti Twin X2
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (333, 40, '244'); -- Sapphire Pulse RX 9060 XT
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (334, 40, '271'); -- ASRock AI PRO R9700
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (335, 40, '312'); -- ASUS Prime RX 9070 XT
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (336, 40, '241'); -- PowerColor Fighter RX 7600
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (337, 40, '145'); -- Gigabyte RTX 5050 D6
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (338, 40, '332'); -- Zotac RTX 5080 AMP Extreme
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (339, 40, '292'); -- Palit RTX 5070 Infinity 3
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (340, 40, '221'); -- Zotac RTX 5050 Twin Edge
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (341, 40, '252'); -- Zotac RTX 5090 ArcticStorm AIO
+-- Dodawanie wartości (kategoria 41: Wysokość chłodzenia powietrznego)
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (402, 41, '159'); -- Fortis 5 / Dark Rock 5
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (403, 41, '155'); -- Fera 5 / Assassin X
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (404, 41, '154'); -- Phantom Spirit 120 SE
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (405, 41, '161'); -- Pure Rock 3
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (406, 41, '165'); -- Noctua NH-D15
-INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (407, 41, '280'); -- AiO 280
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (408, 41, '157'); -- Savio Vortex X2 ARGB
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (600, 43, 'Intel 12th Gen');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (601, 43, 'Intel 13th Gen');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (602, 43, 'Intel 14th Gen');
@@ -383,10 +398,28 @@ INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (7
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (800, 46, '6-pin PCIe');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (801, 46, '8-pin (6+2) PCIe');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (802, 46, '12VHPWR (16-pin)');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (803, 46, 'Brak dodatkowego zasilania');
 
 -- Kategoria 47: cpu_power_connector
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (810, 47, '4-pin CPU');
 INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (811, 47, '8-pin (4+4) CPU');
+
+-- Kategoria 48: m.2_slots
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (900, 48, '1 x M.2 PCIe');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (901, 48, '2 x M.2 PCIe');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (902, 48, '3 x M.2 PCIe');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (903, 48, '4 x M.2 PCIe');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (904, 48, '5 x M.2 PCIe');
+
+-- Kategoria 49: radiator_size
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (910, 49, '240');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (911, 49, '280');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (912, 49, '360');
+
+-- Kategoria 50: max_radiator
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (920, 50, '240');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (921, 50, '280');
+INSERT INTO public.attribute_values (id, attribute_category_id, value) VALUES (922, 50, '360');
 --
 -- TOC entry 3982 (class 0 OID 17574)
 -- Dependencies: 395
@@ -472,8 +505,7 @@ INSERT INTO public.categories (id, name) VALUES (4, 'Ram');
 INSERT INTO public.categories (id, name) VALUES (1, 'Procesor');
 INSERT INTO public.categories (id, name) VALUES (2, 'Karta Graficzna');
 INSERT INTO public.categories (id, name) VALUES (5, 'Dysk');
-INSERT INTO public.categories (id, name) VALUES (6, 'Zasilacz
-');
+INSERT INTO public.categories (id, name) VALUES (6, 'Zasilacz');
 INSERT INTO public.categories (id, name) VALUES (7, 'Obudowa');
 INSERT INTO public.categories (id, name) VALUES (8, 'Myszka');
 INSERT INTO public.categories (id, name) VALUES (9, 'Klawiatura');
@@ -490,20 +522,20 @@ INSERT INTO public.categories (id, name) VALUES (14, 'Monitor');
 -- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (24, 5, 21, 'Crucial 2TB M.2 PCIe Gen5 NVMe P510', 1099.00, 899.00, 13, 0, 'products/storage/crucial_PCIe5.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (25, 5, 21, 'Crucial 1TB M.2 PCIe Gen5 NVMe P510', 699.00, 569.00, 24, 0, 'products/storage/crucial_PCIe5.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (23, 4, 35, 'Patriot 32GB (2x16GB) 6000MT/s CL30 Venom', 1599.00, NULL, 3, 0, 'products/ram/Patriot_32GB_(2x16GB)_6000MTs_CL30_Venom.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (24, 5, 21, 'Crucial 2TB M.2 PCIe Gen5 NVMe P510', 1099.00, 899.00, 13, 10, 'products/storage/crucial_PCIe5.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (25, 5, 21, 'Crucial 1TB M.2 PCIe Gen5 NVMe P510', 699.00, 569.00, 24, 10, 'products/storage/crucial_PCIe5.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (23, 4, 35, 'Patriot 32GB (2x16GB) 6000MT/s CL30 Venom', 1599.00, NULL, 3, 8, 'products/ram/Patriot_32GB_(2x16GB)_6000MTs_CL30_Venom.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (26, 1, 2, 'Intel Core Ultra 5 245KF', 749.99, 650.00, 10, 125, 'products/cpu/Intel_Core_Ultra_5_245KF.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (27, 1, 2, 'Intel Core Ultra 5 225F', 685.00, NULL, 10, 65, 'products/cpu/Intel_Core_Ultra_5_225F.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (29, 1, 1, 'AMD Ryzen 5 7600X', 760.00, NULL, 13, 105, 'products/cpu/AMD_Ryzen_5_7600X.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (30, 1, 1, 'AMD Ryzen 5 7600', 730.00, 630.00, 13, 65, 'products/cpu/AMD_Ryzen_5_7600X.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (28, 4, 27, 'GOODRAM 32GB (2x16GB) 6400MHz CL32 IRDM BLACK V SILVER', 1649.00, NULL, 4, 0, 'products/ram/GOODRAM_32GB_(2x16GB)_6400MHz_CL32_IRDM_BLACK_V_SILVER.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (31, 4, 18, 'Kingston FURY 16GB (2x8GB) 3200MHz CL16 Beast Black', 699.00, NULL, 8, 0, 'products/ram/Kingston_FURY_16GB_(2x8GB)_3200MHz_CL16_Beast_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (32, 4, 27, 'GOODRAM 32GB (2x16GB) 6000MHz CL30 IRDM BLACK V SILVER', 1799.00, 1645.00, 3, 0, 'products/ram/GOODRAM_32GB_(2x16GB)_6000MHz_CL30_IRDM_BLACK_V_SILVER.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (33, 4, 18, 'Kingston FURY 32GB (2x16GB) 5600MHz CL36 Beast Black EXPO AMD', 1849.00, NULL, 2, 0, 'products/ram/Kingston_FURY_32GB_(2x16GB)_5600MHz_CL36_Beast_Black_EXPO_AMD.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (34, 4, 35, 'Patriot 32GB (2x16GB) 6000MHz CL36 VIPER VENOM', 1769.00, NULL, 4, 0, 'products/ram/Patriot_32GB_(2x16GB)_6000MHz_CL36_VIPER_VENOM.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (28, 4, 27, 'GOODRAM 32GB (2x16GB) 6400MHz CL32 IRDM BLACK V SILVER', 1649.00, NULL, 4, 8, 'products/ram/GOODRAM_32GB_(2x16GB)_6400MHz_CL32_IRDM_BLACK_V_SILVER.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (31, 4, 18, 'Kingston FURY 16GB (2x8GB) 3200MHz CL16 Beast Black', 699.00, NULL, 8, 6, 'products/ram/Kingston_FURY_16GB_(2x8GB)_3200MHz_CL16_Beast_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (32, 4, 27, 'GOODRAM 32GB (2x16GB) 6000MHz CL30 IRDM BLACK V SILVER', 1799.00, 1645.00, 3, 8, 'products/ram/GOODRAM_32GB_(2x16GB)_6000MHz_CL30_IRDM_BLACK_V_SILVER.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (33, 4, 18, 'Kingston FURY 32GB (2x16GB) 5600MHz CL36 Beast Black EXPO AMD', 1849.00, NULL, 2, 8, 'products/ram/Kingston_FURY_32GB_(2x16GB)_5600MHz_CL36_Beast_Black_EXPO_AMD.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (34, 4, 35, 'Patriot 32GB (2x16GB) 6000MHz CL36 VIPER VENOM', 1769.00, NULL, 4, 8, 'products/ram/Patriot_32GB_(2x16GB)_6000MHz_CL36_VIPER_VENOM.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (35, 1, 1, 'AMD Ryzen 7 7800X3D Tray', 1230.00, 1100.00, 13, 65, 'products/cpu/AMD_Ryzen_7_7800X3D_Tray.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (36, 4, 18, 'Kingston FURY 32GB (2x16GB) 6000MT/s CL30 Beast Black EXPO', 1859.00, 1719.00, 4, 0, 'products/ram/Kingston_FURY_32GB_(2x16GB)_6000MTs_CL30_Beast_Black_EXPO.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (36, 4, 18, 'Kingston FURY 32GB (2x16GB) 6000MT/s CL30 Beast Black EXPO', 1859.00, 1719.00, 4, 8, 'products/ram/Kingston_FURY_32GB_(2x16GB)_6000MTs_CL30_Beast_Black_EXPO.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (37, 2, 6, 'Gigabyte Radeon RX 9060 XT Gaming OC 16GB GDDR6', 2099.00, 1839.00, 15, 150, 'products/gpu/Gigabyte_Radeon_RX_9060_XT_Gaming_OC_16GB_GDDR6.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (38, 1, 1, 'AMD Ryzen 7 9800X3D', 1959.00, 1849.00, 7, 120, 'products/cpu/AMD_Ryzen 7_9800X3D.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (1, 1, 1, 'AMD Ryzen 5 5600', 580.00, NULL, 5, 65, 'products/cpu/Ryzen5_5600.jpg');
@@ -513,18 +545,18 @@ INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (4, 1, 1, 'AMD Ryzen 7 5700X', 780.00, NULL, 5, 65, 'products/cpu/Ryzen7_5800X.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (53, 2, 2, 'Intel Arc Pro B50 16GB GDDR6', 1799.00, NULL, 10, 135, 'products/gpu/Intel_Arc_Pro_B50_16GB_GDDR6.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (48, 2, 5, 'MSI GeForce RTX 5070 Ti Gaming Trio OC 16GB GDDR7', 4800.00, NULL, 10, 130, 'products/gpu/MSI_GeForce_RTX_5070_Ti_Gaming_Trio_OC_16GB_GDDR7.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (39, 4, 20, 'G.SKILL 32GB (2x16GB) 3200MHz CL16 Aegis', 1199.00, NULL, 5, 0, 'products/ram/G.SKILL_32GB_(2x16GB)_3200MHz_CL16_Aegis.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (40, 4, 22, 'Lexar 32GB (2x16GB) 6000 CL30 Ares RGB', 1859.00, NULL, 3, 0, 'products/ram/Lexar_32GB_(2x16GB)_6000_CL30_Ares_RGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (16, 5, 27, 'GOODRAM 512GB M.2 PCIe NVMe PX500 G3', 449.00, NULL, 5, 0, 'GOODRAM_512GB_M.2.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (17, 5, 22, 'Lexar 4TB M.2 PCIe Gen5 NVMe NM990', 2399.00, NULL, 4, 0, 'products/storage/lexar_m.2_gen5.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (18, 5, 22, 'Lexar 2TB M.2 PCIe Gen5 NVMe NM990', 1299.00, NULL, 11, 0, 'products/storage/lexar_m.2_gen5.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (19, 5, 22, 'Lexar 1TB M.2 PCIe Gen5 NVMe NM990', 839.00, NULL, 19, 0, 'products/storage/lexar_m.2_gen5.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (20, 5, 18, 'Kingston 4TB M.2 PCIe Gen5 NVMe Fury Renegade G5', 2799.00, NULL, 5, 0, 'products/storage/kingston_fury_PCIe5.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (21, 5, 18, 'Kingston 2TB M.2 PCIe Gen5 NVMe Fury Renegade G5', 1599.00, NULL, 10, 0, 'products/storage/kingston_fury_PCIe5.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (22, 5, 18, 'Kingston 1TB M.2 PCIe Gen5 NVMe Fury Renegade G5', 1049.00, NULL, 14, 0, 'products/storage/kingston_fury_PCIe5.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (39, 4, 20, 'G.SKILL 32GB (2x16GB) 3200MHz CL16 Aegis', 1199.00, NULL, 5, 8, 'products/ram/G.SKILL_32GB_(2x16GB)_3200MHz_CL16_Aegis.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (40, 4, 22, 'Lexar 32GB (2x16GB) 6000 CL30 Ares RGB', 1859.00, NULL, 3, 10, 'products/ram/Lexar_32GB_(2x16GB)_6000_CL30_Ares_RGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (16, 5, 27, 'GOODRAM 512GB M.2 PCIe NVMe PX500 G3', 449.00, NULL, 5, 5, 'GOODRAM_512GB_M.2.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (17, 5, 22, 'Lexar 4TB M.2 PCIe Gen5 NVMe NM990', 2399.00, NULL, 4, 12, 'products/storage/lexar_m.2_gen5.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (18, 5, 22, 'Lexar 2TB M.2 PCIe Gen5 NVMe NM990', 1299.00, NULL, 11, 10, 'products/storage/lexar_m.2_gen5.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (19, 5, 22, 'Lexar 1TB M.2 PCIe Gen5 NVMe NM990', 839.00, NULL, 19, 10, 'products/storage/lexar_m.2_gen5.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (20, 5, 18, 'Kingston 4TB M.2 PCIe Gen5 NVMe Fury Renegade G5', 2799.00, NULL, 5, 12, 'products/storage/kingston_fury_PCIe5.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (21, 5, 18, 'Kingston 2TB M.2 PCIe Gen5 NVMe Fury Renegade G5', 1599.00, NULL, 10, 10, 'products/storage/kingston_fury_PCIe5.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (22, 5, 18, 'Kingston 1TB M.2 PCIe Gen5 NVMe Fury Renegade G5', 1049.00, NULL, 14, 10, 'products/storage/kingston_fury_PCIe5.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (41, 1, 2, 'Intel Core i7-14700KF', 1460.00, NULL, 5, 125, 'products/cpu/IntelCorei7-14700KF.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (42, 4, 27, 'GOODRAM 32GB (2x16GB) 6000 CL36 IRDM BLACK V SILVER', 1675.00, NULL, 4, 0, 'products/ram/GOODRAM_32GB_(2x16GB)_6000_CL36_IRDM_BLACK_V_SILVER.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (43, 4, 18, 'Kingston FURY 32GB (2x16GB) 3200MHz CL16 Beast Black', 1149.00, 1099.00, 5, 0, 'products/ram/Kingston_FURY_32GB_(2x16GB)_3200MHz_CL16_Beast_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (42, 4, 27, 'GOODRAM 32GB (2x16GB) 6000 CL36 IRDM BLACK V SILVER', 1675.00, NULL, 4, 8, 'products/ram/GOODRAM_32GB_(2x16GB)_6000_CL36_IRDM_BLACK_V_SILVER.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (43, 4, 18, 'Kingston FURY 32GB (2x16GB) 3200MHz CL16 Beast Black', 1149.00, 1099.00, 5, 8, 'products/ram/Kingston_FURY_32GB_(2x16GB)_3200MHz_CL16_Beast_Black.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (49, 2, 5, 'Gigabyte GeForce RTX 5080 Windforce OC 16GB GDDR7 DLSS4', 5999.00, NULL, 10, 135, 'products/gpu/Gigabyte_GeForce_RTX_5080_Windforce_OC_16GB_GDDR7_DLSS4.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (50, 2, 4, 'ASUS GeForce RTX 5080 Prime OC 16GB GDDR7 DLSS4', 6499.00, NULL, 10, 145, 'products/gpu/Gigabyte_GeForce_RTX_5080_Windforce_OC_16GB_GDDR7_DLSS4.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (14, 2, 14, 'Karta graficzna ASRock RX 6700 XT Challenger D 12 GB', 1600.00, NULL, 3, 230, 'products/gpu/RX6700_XT.jpg');
@@ -546,20 +578,20 @@ INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (67, 2, 4, 'Zotac GeForce RTX 5080 AMP Extreme Infinity 16GB GDDR7 DLSS4', 6300.00, NULL, 10, 145, 'products/gpu/Zotac_GeForce_RTX_5080_AMP_Extreme_Infinity_16GB_GDDR7_DLSS4.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (68, 2, 7, 'Palit GeForce RTX 5070 Infinity 3 12GB GDDR7 DLSS4', 2900.00, NULL, 10, 145, 'products/gpu/Palit_GeForce_RTX_5070_Infinity_3_12GB_GDDR7_DLSS4.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (69, 2, 6, 'Gigabyte GeForce RTX 5060 Aero OC 8GB GDDR7 DLSS4', 1800.00, NULL, 10, 145, 'products/gpu/Gigabyte_GeForce_RTX_5060_Aero_OC_8GB_GDDR7_DLSS4.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (71, 4, 18, 'Kingston FURY 32GB (2x16GB) 6000MTs CL30 Beast Black RGB', 2073.00, NULL, 2, 0, 'products/ram/Kingston_FURY_32GB_(2x16GB)_6000MTs_CL30_Beast_Black_RGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (72, 4, 23, 'ADATA 32GB (2x16GB) 6000MHz CL30 Lancer Blade', 1963.00, NULL, 3, 0, 'products/ram/ADATA_32GB_(2x16GB)_6000MHz_CL30_Lancer_Blade.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (74, 4, 18, 'Kingston FURY 16GB (2x8GB) 5600MHz CL36 Beast Black EXPO', 1259.00, NULL, 5, 0, 'products/ram/Kingston_FURY_16GB_(2x8GB)_5600MHz_CL36_Beast_Black_EXPO.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (75, 4, 27, 'GOODRAM 64GB (2x32GB) 6000MHz CL30 IRDM BLACK V SILVER', 2558.00, 2519.00, 2, 0, 'products/ram/GOODRAM_64GB_(2x32GB)_6000MHz_CL30_IRDM_BLACK_V_SILVER.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (76, 4, 27, 'GOODRAM 32GB (2x16GB) 3600MHz CL18 IRDM PRO Deep Black', 1099.00, 959.00, 8, 0, 'products/ram/GOODRAM_32GB_(2x16GB)_3600MHz_CL18_IRDM_PRO_Deep_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (77, 4, 35, 'Patriot 32GB (2x16GB) 6000MHz CL36 VIPER VENOM RGB', 1999.00, NULL, 4, 0, 'products/ram/Patriot_32GB_(2x16GB)_6000MHz_CL36_VIPER_VENOM_RGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (78, 4, 21, 'Crucial 32GB (2x16GB) 6000MHz CL36 Pro Overclocking', 1999.00, NULL, 5, 0, 'products/ram/Crucial_32GB_(2x16GB)_6000MHz_CL36_Pro_Overclocking.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (80, 4, 35, 'Patriot 32GB(2x16GB) 6000MTs CL30 Venom RGB', 1870.00, NULL, 6, 0, 'products/ram/Patriot_32GB(2x16GB)_6000MTs_CL30_Venom_RGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (71, 4, 18, 'Kingston FURY 32GB (2x16GB) 6000MTs CL30 Beast Black RGB', 2073.00, NULL, 2, 10, 'products/ram/Kingston_FURY_32GB_(2x16GB)_6000MTs_CL30_Beast_Black_RGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (72, 4, 23, 'ADATA 32GB (2x16GB) 6000MHz CL30 Lancer Blade', 1963.00, NULL, 3, 8, 'products/ram/ADATA_32GB_(2x16GB)_6000MHz_CL30_Lancer_Blade.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (74, 4, 18, 'Kingston FURY 16GB (2x8GB) 5600MHz CL36 Beast Black EXPO', 1259.00, NULL, 5, 6, 'products/ram/Kingston_FURY_16GB_(2x8GB)_5600MHz_CL36_Beast_Black_EXPO.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (75, 4, 27, 'GOODRAM 64GB (2x32GB) 6000MHz CL30 IRDM BLACK V SILVER', 2558.00, 2519.00, 2, 12, 'products/ram/GOODRAM_64GB_(2x32GB)_6000MHz_CL30_IRDM_BLACK_V_SILVER.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (76, 4, 27, 'GOODRAM 32GB (2x16GB) 3600MHz CL18 IRDM PRO Deep Black', 1099.00, 959.00, 8, 8, 'products/ram/GOODRAM_32GB_(2x16GB)_3600MHz_CL18_IRDM_PRO_Deep_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (77, 4, 35, 'Patriot 32GB (2x16GB) 6000MHz CL36 VIPER VENOM RGB', 1999.00, NULL, 4, 10, 'products/ram/Patriot_32GB_(2x16GB)_6000MHz_CL36_VIPER_VENOM_RGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (78, 4, 21, 'Crucial 32GB (2x16GB) 6000MHz CL36 Pro Overclocking', 1999.00, NULL, 5, 8, 'products/ram/Crucial_32GB_(2x16GB)_6000MHz_CL36_Pro_Overclocking.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (80, 4, 35, 'Patriot 32GB(2x16GB) 6000MTs CL30 Venom RGB', 1870.00, NULL, 6, 10, 'products/ram/Patriot_32GB(2x16GB)_6000MTs_CL30_Venom_RGB.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (81, 14, 36, 'iiyama G-Master GCB3486WQSCP-B1 Gold Phoenix', 1700.00, NULL, 12, 45, 'products/monitor/iiyama_G-Master_GCB3486WQSCP-B1_Gold_Phoenix.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (82, 4, 18, 'Kingston FURY 64GB (2x32GB) 6000MTs CL30 Beast Black RGB', 3699.00, NULL, 1, 0, 'products/ram/Kingston_FURY_64GB_(2x32GB)_6000MTs_CL30_Beast_Black_RGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (83, 4, 18, 'Kingston FURY 32GB (2x16GB) 3200MHz CL20 Impact', 1019.00, NULL, 7, 0, 'products/ram/Kingston_FURY_32GB_(2x16GB)_3200MHz_CL20_Impact.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (84, 4, 18, 'Kingston FURY 16GB (2x8GB) 3600MHz CL16 Renegade Black', 709.00, 699.00, 11, 0, 'products/ram/Kingston_FURY_16GB_(2x8GB)_3600MHz_CL16_Renegade_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (85, 4, 18, 'Kingston FURY 32GB (2x16GB) 3600MHz CL16 Renegade Black', 1329.00, NULL, 4, 0, 'products/ram/Kingston_FURY_32GB_(2x16GB)_3600MHz_CL16_Renegade_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (86, 4, 18, 'Kingston FURY 32GB (2x16GB) 6000 CL36 FURY Beast White', 2019.00, NULL, 2, 0, 'products/ram/Kingston_FURY_32GB_(2x16GB)_6000_CL36_FURY_Beast_White.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (82, 4, 18, 'Kingston FURY 64GB (2x32GB) 6000MTs CL30 Beast Black RGB', 3699.00, NULL, 1, 14, 'products/ram/Kingston_FURY_64GB_(2x32GB)_6000MTs_CL30_Beast_Black_RGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (83, 4, 18, 'Kingston FURY 32GB (2x16GB) 3200MHz CL20 Impact', 1019.00, NULL, 7, 8, 'products/ram/Kingston_FURY_32GB_(2x16GB)_3200MHz_CL20_Impact.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (84, 4, 18, 'Kingston FURY 16GB (2x8GB) 3600MHz CL16 Renegade Black', 709.00, 699.00, 11, 6, 'products/ram/Kingston_FURY_16GB_(2x8GB)_3600MHz_CL16_Renegade_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (85, 4, 18, 'Kingston FURY 32GB (2x16GB) 3600MHz CL16 Renegade Black', 1329.00, NULL, 4, 8, 'products/ram/Kingston_FURY_32GB_(2x16GB)_3600MHz_CL16_Renegade_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (86, 4, 18, 'Kingston FURY 32GB (2x16GB) 6000 CL36 FURY Beast White', 2019.00, NULL, 2, 8, 'products/ram/Kingston_FURY_32GB_(2x16GB)_6000_CL36_FURY_Beast_White.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (45, 2, 5, 'Zotac GeForce RTX 5070 Ti Solid SFF 16GB GDDR7 DLSS4', 4249.00, NULL, 12, 135, 'products/gpu/Zotac_GeForce_RTX_5070_Ti_Solid_SFF_16GB_GDDR7_DLSS4.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (52, 2, 5, 'Zotac GeForce RTX 5060 Twin Edge OC White 8GB GDDR7 DLSS4', 1599.00, NULL, 10, 135, 'products/gpu/Zotac_GeForce_RTX_5060_Twin_Edge_OC_White_8GB_GDDR7_DLSS4.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (59, 2, 5, 'Zotac GeForce RTX 5090 ArcticStorm AIO 32GB GDDR7 DLSS4', 18999.00, NULL, 10, 125, 'products/gpu/Zotac_GeForce_RTX_5090_ArcticStorm_AIO_32GB_GDDR7_DLSS4.jpg');
@@ -567,13 +599,13 @@ INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (65, 2, 5, 'Zotac GeForce RTX 5060 Ti Twin Edge OC White 16GB GDDR7 DLSS4', 2500.00, NULL, 10, 135, 'products/gpu/Zotac_GeForce_RTX_5060_Ti_Twin_Edge_OC_White_16GB_GDDR7_DLSS4.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (70, 2, 5, 'Zotac GeForce RTX 5050 Twin Edge OC 8GB GDDR6 DLSS4', 1400.00, NULL, 10, 145, 'products/gpu/Zotac_GeForce_RTX_5050_Twin_Edge_OC_8GB_GDDR6_DLSS4.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (73, 14, 5, 'MSI MPG 321URX QD-OLED', 2700.00, NULL, 12, 45, 'products/monitor/MSI_MPG_321URX_QD-OLED.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (87, 4, 19, 'Corsair 32GB (2x16GB) 6000 CL36 Vengeance RGB AMD EXPO', 2129.00, NULL, 3, 0, 'products/ram/Corsair_32GB_(2x16GB)_6000_CL36_Vengeance_RGB_AMD_EXPO.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (88, 4, 21, 'Crucial 16GB (1x16GB) 5600MHz CL46', 999.00, NULL, 6, 0, 'products/ram/Crucial_16GB_(1x16GB)_5600MHz_CL46.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (89, 4, 18, 'Kingston FURY 16GB (2x8GB) 3600MHz CL17 Beast Black', 799.00, NULL, 15, 0, 'products/ram/Kingston_FURY_16GB_(2x8GB)_3600MHz_CL17_Beast_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (90, 4, 27, 'GOODRAM 32GB (2x16GB) 5600 CL36 IRDM', 1669.00, NULL, 7, 0, 'products/ram/GOODRAM_32GB_(2x16GB)_5600_CL36_IRDM.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (91, 4, 18, 'Kingston FURY 32GB (2x16GB) 6000MHz CL36 Beast Black', 2169.00, NULL, 4, 0, 'products/ram/Kingston_FURY_32GB_(2x16GB)_6000MHz_CL36_Beast_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (87, 4, 19, 'Corsair 32GB (2x16GB) 6000 CL36 Vengeance RGB AMD EXPO', 2129.00, NULL, 3, 10, 'products/ram/Corsair_32GB_(2x16GB)_6000_CL36_Vengeance_RGB_AMD_EXPO.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (88, 4, 21, 'Crucial 16GB (1x16GB) 5600MHz CL46', 999.00, NULL, 6, 6, 'products/ram/Crucial_16GB_(1x16GB)_5600MHz_CL46.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (89, 4, 18, 'Kingston FURY 16GB (2x8GB) 3600MHz CL17 Beast Black', 799.00, NULL, 15, 6, 'products/ram/Kingston_FURY_16GB_(2x8GB)_3600MHz_CL17_Beast_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (90, 4, 27, 'GOODRAM 32GB (2x16GB) 5600 CL36 IRDM', 1669.00, NULL, 7, 8, 'products/ram/GOODRAM_32GB_(2x16GB)_5600_CL36_IRDM.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (91, 4, 18, 'Kingston FURY 32GB (2x16GB) 6000MHz CL36 Beast Black', 2169.00, NULL, 4, 8, 'products/ram/Kingston_FURY_32GB_(2x16GB)_6000MHz_CL36_Beast_Black.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (92, 14, 37, 'Acer SA242YH1', 270.00, NULL, 12, 45, 'products/monitor/Acer_SA242YH1.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (93, 4, 35, 'Patriot 64GB (2x32GB) 6000MTs CL30 Venom', 2999.00, 2579.00, 4, 0, 'products/ram/Patriot_64GB_(2x32GB)_6000MTs_CL30_Venom.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (93, 4, 35, 'Patriot 64GB (2x32GB) 6000MTs CL30 Venom', 2999.00, 2579.00, 4, 12, 'products/ram/Patriot_64GB_(2x32GB)_6000MTs_CL30_Venom.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (94, 14, 17, 'Samsung Odyssey  G5 S27FG502EUX G50F', 600.00, NULL, 10, 21, 'products/monitor/Samsung_Odyssey__G5_S27FG502EUX_G50F.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (95, 14, 38, 'Dell Alienware AW2725DM', 900.00, 800.00, 12, 21, 'products/monitor/Dell_Alienware_AW2725DM.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (96, 14, 6, 'Gigabyte G25F2A', 480.00, NULL, 11, 21, 'products/monitor/Gigabyte_G25F2A.jpg');
@@ -653,170 +685,170 @@ INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (157, 13, 43, 'TP-Link TL-WN781ND (802.11b/g/n 150Mb/s)', 48.00, 45.00, 21, 2, 'products/network/TP-Link_TL-WN781ND_(802.11b_g_n_150Mb_s).jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (158, 13, 43, 'TP-Link Archer TBE400E (6500Mb/s a/b/g/n/ac/ax/be) BT 5.4', 259.00, NULL, 21, 2, 'products/network/TP-Link_Archer_TBE400E_(6500Mb_s_a_b_g_n_ac_ax_be)_BT_5.4.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (159, 13, 43, 'TP-Link TX201 (2,5Gb/s) Low Profle', 93.00, NULL, 21, 2, 'products/network/TP-Link_TX201_(2,5Gb_s)_Low_Profle.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (188, 3, 4, 'ASUS PRIME Z790-P WIFI', 794.00, NULL, 11, 0, 'products/motherboard/ASUS_PRIME_Z790-P_WIFI.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (188, 3, 4, 'ASUS PRIME Z790-P WIFI', 794.00, NULL, 11, 55, 'products/motherboard/ASUS_PRIME_Z790-P_WIFI.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (176, 1, 2, 'Intel Core Ultra 5 225', 729.00, NULL, 10, 65, 'products/cpu/Intel_Core_Ultra_5_225F.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (177, 1, 2, 'Intel Core Ultra 5 250KF Plus', 899.00, NULL, 14, 125, 'products/cpu/Intel_Core_Ultra_5_250KF_Plus.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (178, 1, 2, 'Intel Core i5-14600KF', 969.00, 930.00, 14, 125, 'products/cpu/Intel_Core_i5-14600KF.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (179, 1, 2, 'Intel Core i5-12600KF', 799.00, NULL, 12, 125, 'products/cpu/Intel_Core_i5-12600KF.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (180, 1, 2, 'Intel Core i7-12700KF', 1119.00, 1070.00, 10, 125, 'products/cpu/Intel_Core_i7-12700KF.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (181, 1, 2, 'Intel Core Ultra 9 285', 2511.00, 2300.00, 7, 65, 'products/cpu/Intel_Core_Ultra_9_285.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (182, 3, 4, 'ASUS TUF GAMING B860-PLUS WIFI', 760.99, NULL, 23, 0, 'products/motherboard/ASUS_TUF_GAMING_B860-PLUS_WIFI.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (184, 3, 4, 'ASUS B850M MAX GAMING WIFI', 869.00, 790.00, 15, 0, 'products/motherboard/ASUS_B850M_MAX_GAMING_WIFI.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (185, 3, 4, 'ASUS PRIME B760M-A WIFI D4', 519.99, NULL, 15, 0, 'products/motherboard/ASUS_PRIME_B760M-A_WIFI_D4.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (183, 3, 4, 'ASUS TUF GAMING B850-PLUS WIFI', 830.00, NULL, 21, 0, 'products/motherboard/ASUS_TUF_GAMING_B850-PLUS_WIFI.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (186, 3, 4, 'ASUS PRIME B550M-A', 339.00, NULL, 13, 0, 'products/motherboard/ASUS_PRIME_B550M-A.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (187, 3, 4, 'ASUS TUF GAMING B650E-E WIFI', 639.00, NULL, 13, 0, 'products/motherboard/ASUS_TUF_GAMING_B650E-E_WIFI.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (189, 3, 6, 'Gigabyte B650 EAGLE AX', 565.00, 530.00, 17, 0, 'products/motherboard/Gigabyte_B650_EAGLE_AX.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (190, 3, 6, 'Gigabyte B550 GAMING X V2', 396.00, NULL, 17, 0, 'products/motherboard/Gigabyte_B550_GAMING_X_V2.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (191, 3, 6, 'Gigabyte B760M DS3H DDR4', 387.00, NULL, 13, 0, 'products/motherboard/Gigabyte_B760M_DS3H_DDR4.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (192, 3, 6, 'Gigabyte B650 GAMING X AX V2', 616.00, 580.00, 11, 0, 'products/motherboard/Gigabyte_B650_GAMING_X_AX_V2.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (193, 3, 6, 'Gigabyte B650M S2H', 395.00, NULL, 9, 0, 'products/motherboard/Gigabyte_B650M_S2H.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (194, 3, 6, 'Gigabyte B760M DS3H WF6E GEN5', 599.00, NULL, 9, 0, 'products/motherboard/Gigabyte_B760M_DS3H_WF6E_GEN5.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (195, 3, 6, 'Gigabyte B860M A ELT WF6E ICE', 589.00, NULL, 12, 0, 'products/motherboard/Gigabyte_B860M_A_ELT_WF6E_ICE.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (196, 3, 6, 'Gigabyte B850 EAGLE WIFI6E', 739.00, 700.00, 12, 0, 'products/motherboard/Gigabyte_B850_EAGLE_WIFI6E.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (197, 3, 6, 'Gigabyte B550 EAGLE', 399.00, NULL, 18, 0, 'products/motherboard/Gigabyte_B550_EAGLE.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (198, 3, 14, 'ASRock B760M-HDV/M.2 D4', 324.00, NULL, 15, 0, 'products/motherboard/ASRock_B760M-HDV_M.2_D4.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (199, 3, 14, 'ASRock Z790 Pro RS', 809.00, NULL, 12, 0, 'products/motherboard/ASRock_Z790_Pro_RS.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (200, 3, 14, 'ASRock Z790 Steel Legend WiFi', 999.00, NULL, 12, 0, 'products/motherboard/ASRock_Z790_Steel_Legend_WiFi.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (201, 3, 14, 'ASRock B550M-HDV', 288.00, NULL, 12, 0, 'products/motherboard/ASRock_B550M-HDV.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (202, 3, 14, 'ASRock B550M PRO4', 410.00, NULL, 12, 0, 'products/motherboard/ASRock_B550M_PRO4.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (203, 3, 14, 'ASRock B860M-H2', 399.00, NULL, 12, 0, 'products/motherboard/ASRock_B860M-H2.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (204, 3, 14, 'ASRock B860 Pro-A WiFi', 599.00, NULL, 16, 0, 'products/motherboard/ASRock_B860_Pro-A_WiFi.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (205, 3, 14, 'ASRock B860 LiveMixer WiFi', 799.00, 750.00, 12, 0, 'products/motherboard/ASRock_B860_LiveMixer_WiFi.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (206, 3, 5, 'MSI MAG B860 TOMAHAWK WIFI', 899.00, NULL, 11, 0, 'products/motherboard/MSI_MAG_B860_TOMAHAWK_WIFI.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (207, 3, 5, 'MSI B860 GAMING PLUS WIFI', 795.00, NULL, 11, 0, 'products/motherboard/MSI_B860_GAMING_PLUS_WIFI.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (208, 3, 5, 'MSI MAG B850M MORTAR WIFI', 939.00, NULL, 11, 0, 'products/motherboard/MSI_MAG_B850M_MORTAR_WIFI.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (209, 3, 5, 'MSI PRO B850M-P WIFI', 599.00, 550.00, 11, 0, 'products/motherboard/MSI_PRO_B850M-P_WIFI.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (210, 3, 5, 'MSI Z790 GAMING PLUS WIFI', 829.00, 800.00, 17, 0, 'products/motherboard/MSI_Z790_GAMING_PLUS_WIFI.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (211, 3, 5, 'MSI MPG B550 GAMING PLUS', 500.00, NULL, 17, 0, 'products/motherboard/MSI_MPG_B550_GAMING_PLUS.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (212, 12, 28, 'ENDORFY Navis F240 ARGB', 319.00, NULL, 7, 0, 'products/cooler/ENDORFY_Navis_F240_ARGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (213, 12, 28, 'ENDORFY Fortis 5 ARGB', 250.00, 229.00, 11, 0, 'products/cooler/ENDORFY_Fortis_5_ARGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (214, 12, 28, 'ENDORFY Fera 5', 129.00, NULL, 11, 0, 'products/cooler/ENDORFY_Fera_5.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (215, 12, 28, 'ENDORFY Navis F360 ARGB', 399.00, NULL, 13, 0, 'products/cooler/ENDORFY_Navis_F360_ARGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (216, 12, 28, 'ENDORFY Navis F240', 279.00, NULL, 9, 0, 'products/cooler/ENDORFY_Navis_F240.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (217, 12, 45, 'Thermalright Peerless Vision 360 UB Argb White', 599.00, NULL, 13, 0, 'products/cooler/Thermalright_Peerless_Vision_360_UB_Argb_White.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (218, 12, 45, 'Thermalright Phantom Spirit 120 SE ARGB', 199.90, NULL, 13, 0, 'products/cooler/Thermalright_Phantom_Spirit_120_SE_ARGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (219, 12, 45, 'Thermalright Assassin X 120 Refined SE ARGB', 99.00, NULL, 13, 0, 'products/cooler/Thermalright_Assassin_X_120_Refined_SE_ARGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (220, 12, 45, 'Thermalright Aqua Elite 360 Black Argb V3', 370.00, NULL, 13, 0, 'products/cooler/Thermalright_Aqua_Elite_360_Black_Argb_V3.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (221, 12, 45, 'Thermalright Peerless Vision 240 Argb Black', 439.00, NULL, 11, 0, 'products/cooler/Thermalright_Peerless_Vision_240_Argb_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (222, 12, 29, 'be quiet! Dark Rock 5', 329.00, NULL, 9, 0, 'products/cooler/be_quiet!_Dark_Rock_5.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (223, 12, 29, 'be quiet! Pure Rock Pro 3 LX, czarny', 259.00, NULL, 13, 0, 'products/cooler/be_quiet!_Pure_Rock_Pro_3_LX,_czarny.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (224, 12, 4, 'ASUS ROG STRIX LC III 240 ARGB', 859.00, NULL, 4, 0, 'products/cooler/ASUS_ROG_STRIX_LC_III_240_ARGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (225, 12, 29, 'be quiet! Light Loop 360mm', 649.00, NULL, 13, 0, 'products/cooler/be_quiet!_Light_Loop_360mm.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (226, 12, 29, 'be quiet! Light Loop 240mm', 539.00, NULL, 13, 0, 'products/cooler/be_quiet!_Light_Loop_240mm.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (227, 12, 29, 'be quiet! Pure Rock 3 LX, czarny', 154.99, NULL, 13, 0, 'products/cooler/be_quiet!_Pure_Rock_3_LX,_czarny.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (228, 12, 4, 'ASUS ROG RYUO IV SLC 360 ARGB', 1799.00, NULL, 6, 0, 'products/cooler/ASUS_ROG_RYUO_IV_SLC_360_ARGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (229, 12, 46, 'Krux HydroGlance 360 ARGB LCD', 549.00, NULL, 6, 0, 'products/cooler/Krux_HydroGlance_360_ARGB_LCD.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (230, 12, 47, 'Genesis Hydria 240 ARGB czarne', 287.00, NULL, 6, 0, 'products/cooler/Genesis_Hydria_240_ARGB_czarne.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (231, 12, 47, 'Genesis Hydria 360 ARGB czarne', 368.00, 350.00, 6, 0, 'products/cooler/Genesis_Hydria_360_ARGB_czarne.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (232, 12, 47, 'Genesis Hydria 360 czarne', 315.00, NULL, 6, 0, 'products/cooler/Genesis_Hydria_360_czarne.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (233, 12, 33, 'Cooler Master MasterLiquid 360 Core II ARGB', 339.00, NULL, 12, 0, 'products/cooler/Cooler_Master_MasterLiquid_360_Core_II_ARGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (234, 12, 33, 'Cooler Master MasterLiquid 240 Core II ARGB white', 249.00, NULL, 12, 0, 'products/cooler/Cooler_Master_MasterLiquid_240_Core_II_ARGB_white.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (235, 12, 48, 'Savio Vortex X2 ARGB', 109.90, NULL, 12, 0, 'products/cooler/Savio_Vortex_X2_ARGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (236, 12, 48, 'Noctua NH-D15 chromax.black', 519.00, NULL, 12, 0, 'products/cooler/Noctua_NH-D15_chromax.black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (237, 12, 5, 'MSI MAG CORELIQUID A13 360', 379.00, NULL, 12, 0, 'products/cooler/MSI_MAG_CORELIQUID_A13_360.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (238, 12, 5, 'MSI MAG CORELIQUID A13 240', 289.00, NULL, 12, 0, 'products/cooler/MSI_MAG_CORELIQUID_A13_240.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (239, 12, 5, 'MSI MAG CORELIQUID E240 WHITE', 289.00, NULL, 12, 0, 'products/cooler/MSI_MAG_CORELIQUID_E240_WHITE.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (240, 12, 16, 'NZXT Kraken Plus 360 RGB LCD czarne', 919.00, NULL, 9, 0, 'products/cooler/NZXT_Kraken_Plus_360_RGB_LCD_czarne.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (241, 12, 16, 'NZXT Kraken Elite 280 RGB V2 LCD białe', 829.00, NULL, 9, 0, 'products/cooler/NZXT_Kraken_Elite_280_RGB_V2_LCD_białe.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (242, 7, 28, 'ENDORFY Aquarius 8000 Corona', 599.00, NULL, 7, 0, 'products/case/ENDORFY_Aquarius_8000_Corona.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (243, 7, 49, 'SMX Cassette', 249.00, 149.00, 11, 0, 'products/case/SMX_Cassette.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (244, 7, 49, 'SMX Coffer', 179.00, 129.00, 12, 0, 'products/case/SMX_Coffer.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (245, 7, 49, 'SMX Chest TG', 219.00, NULL, 10, 0, 'products/case/SMX_Chest_TG.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (246, 7, 47, 'Genesis DIAXID 605F Czarna', 328.00, 269.00, 9, 0, 'products/case/Genesis_DIAXID_605F_Czarna.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (247, 7, 49, 'SMX Croft', 259.00, NULL, 13, 0, 'products/case/SMX_Croft.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (248, 7, 31, 'Lian Li DAN A3 Wood Black', 369.00, NULL, 7, 0, 'products/case/Lian_Li_DAN_A3_Wood_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (249, 7, 34, 'Fractal Design Meshify 3 Ambience Pro RGB Black TG Light Tint', 889.00, NULL, 5, 0, 'products/case/Fractal_Design_Meshify_3_Ambience_Pro_RGB_Black_TG_Light_Tint.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (250, 7, 28, 'ENDORFY Arx 700 Air', 449.00, NULL, 6, 0, 'products/case/ENDORFY_Arx_700_Air.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (251, 7, 31, 'Lian Li O11D EVO RGB Black', 739.00, NULL, 4, 0, 'products/case/Lian_Li_O11D_EVO_RGB_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (252, 7, 5, 'MSI MAG PANO 100R PZ', 469.00, 419.00, 8, 0, 'products/case/MSI_MAG_PANO_100R_PZ.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (253, 7, 50, 'Deepcool CC560 ARGB', 239.00, 189.00, 13, 0, 'products/case/Deepcool_CC560_ARGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (254, 7, 49, 'SMX Capsule', 299.00, NULL, 8, 0, 'products/case/SMX_Capsule.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (255, 7, 16, 'NZXT H7 FLOW (2024) White', 459.00, NULL, 5, 0, 'products/case/NZXT_H7_FLOW_(2024)_White.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (256, 7, 49, 'SMX Pyxis', 329.00, NULL, 6, 0, 'products/case/SMX_Pyxis.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (257, 7, 31, 'Lian Li Lancool 217 Black', 499.00, NULL, 5, 0, 'products/case/Lian_Li_Lancool_217_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (258, 7, 46, 'KRUX Helio', 219.00, 179.00, 14, 0, 'products/case/KRUX_Helio.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (259, 7, 29, 'be quiet! Pure Base 500DX Black', 389.00, NULL, 8, 0, 'products/case/be_quiet!_Pure_Base_500DX_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (260, 7, 46, 'KRUX Vako', 169.00, 139.00, 11, 0, 'products/case/KRUX_Vako.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (261, 7, 28, 'ENDORFY Ventum 200 ARGB', 299.00, NULL, 15, 0, 'products/case/ENDORFY_Ventum_200_ARGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (262, 7, 4, 'ASUS TUF GAMING GT502 HORIZON TG ARGB White', 779.00, NULL, 7, 0, 'products/case/ASUS_TUF_GAMING_GT502_HORIZON_TG_ARGB_White.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (263, 7, 51, 'DarkFlash DS900W Black', 199.00, NULL, 16, 0, 'products/case/DarkFlash_DS900W_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (264, 7, 51, 'DarkFlash DB330M Mesh White', 139.00, NULL, 15, 0, 'products/case/DarkFlash_DB330M_Mesh_White.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (265, 7, 51, 'DarkFlash DS900 Mesh Black', 199.00, NULL, 14, 0, 'products/case/DarkFlash_DS900_Mesh_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (266, 7, 51, 'DarkFlash DB330M Mesh Black', 139.00, NULL, 13, 0, 'products/case/DarkFlash_DB330M_Mesh_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (267, 7, 28, 'ENDORFY Regnum 400 ARGB', 449.00, 359.00, 9, 0, 'products/case/ENDORFY_Regnum_400_ARGB.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (269, 7, 51, 'DarkFlash DS900WS + 4 Fans Black', 239.00, NULL, 8, 0, 'products/case/DarkFlash_DS900WS_+_4_Fans_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (270, 7, 16, 'NZXT H9 FLOW (2025) Black', 749.00, NULL, 6, 0, 'products/case/NZXT_H9_FLOW_(2025)_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (271, 7, 29, 'be quiet! Light Base 500', 509.00, NULL, 7, 0, 'products/case/be_quiet!_Light_Base_500.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (272, 7, 29, 'be quiet! PURE BASE 501', 389.00, NULL, 8, 0, 'products/case/be_quiet!_PURE_BASE_501.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (276, 9, 52, 'SteelSeries Apex 3', 264.00, NULL, 10, 0, 'products/keyboard/SteelSeries_Apex_3.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (277, 9, 53, 'Redragon K617 Fizz RGB white/grey', 136.00, NULL, 10, 0, 'products/keyboard/Redragon_K617_Fizz_RGB_white_grey.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (278, 9, 54, 'Dark Project ALU87A Onionite Wired - G3MS Mech. RGB (ENG)', 249.00, 230.00, 8, 0, 'products/keyboard/Dark_Project_ALU87A_Onionite_Wired_-_G3MS_Mech._RGB_(ENG).jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (279, 9, 53, 'Redragon K617 Fizz RGB czarna', 130.00, NULL, 6, 0, 'products/keyboard/Redragon_K617_Fizz_RGB_czarna.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (280, 9, 54, 'Dark Project ALU87B Gamma - G3MS Mech. RGB (ENG)', 499.00, 450.00, 12, 0, 'products/keyboard/Dark_Project_ALU87B_Gamma_-_G3MS_Mech._RGB_(ENG).jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (281, 9, 52, 'SteelSeries Apex 3 TKL US', 169.00, NULL, 11, 0, 'products/keyboard/SteelSeries_Apex_3_TKL_US.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (282, 9, 55, 'Logitech G213 Prodigy', 189.00, NULL, 13, 0, 'products/keyboard/Logitech_G213_Prodigy.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (283, 9, 56, 'California Access Korero TKL CA1424', 169.00, NULL, 13, 0, 'products/keyboard/California_Access_Korero_TKL_CA1424.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (284, 9, 55, 'Logitech G413 TKL SE', 239.00, NULL, 17, 0, 'products/keyboard/Logitech_G413_TKL_SE.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (285, 9, 55, 'Logitech MK270', 119.00, NULL, 15, 0, 'products/keyboard/Logitech_MK270.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (286, 9, 53, 'Redragon K707WBP-RGB-PRO StarBlade', 169.00, NULL, 15, 0, 'products/keyboard/Redragon_K707WBP-RGB-PRO_StarBlade.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (287, 9, 53, 'Redragon AZURE K652GG-RGB-PRO', 238.00, NULL, 13, 0, 'products/keyboard/Redragon_AZURE_K652GG-RGB-PRO.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (288, 9, 57, 'Tracer GameZone Blade 87', 119.00, NULL, 6, 0, 'products/keyboard/Tracer_GameZone_Blade_87.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (289, 9, 58, 'Accura Artesia ACC-K1408 podświetlana', 69.00, NULL, 13, 0, 'products/keyboard/Accura_Artesia_ACC-K1408_podświetlana.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (290, 9, 58, 'Accura Vista ACC-K1411', 49.00, NULL, 3, 0, 'products/keyboard/Accura_Vista_ACC-K1411.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (291, 9, 58, 'Accura Delano ACC-K1306', 99.00, NULL, 3, 0, 'products/keyboard/Accura_Delano_ACC-K1306.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (292, 9, 46, 'KRUX ATAX 65% Pro RGB Outemu Red', 199.00, 170.00, 16, 0, 'products/keyboard/KRUX_ATAX_65%_Pro_RGB_Outemu_Red.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (293, 9, 46, 'Logitech K400 Plus Czarna', 149.00, NULL, 16, 0, 'products/keyboard/Logitech_K400_Plus_Czarna.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (294, 9, 53, 'Redragon K515-RGB SHIVA 98', 129.00, NULL, 13, 0, 'products/keyboard/Redragon_K515-RGB_SHIVA_98.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (295, 9, 53, 'Redragon K515-RGB SHIVA 98', 129.00, NULL, 13, 0, 'products/keyboard/Redragon_K515-RGB_SHIVA_98.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (296, 9, 47, 'Genesis Thor 230 TKL Anchor Gray Positive RGB Outemu Red', 179.00, NULL, 20, 0, 'products/keyboard/Genesis_Thor_230_TKL_Anchor_Gray_Positive_RGB_Outemu_Red.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (297, 9, 53, 'Redragon K709-RGB NOVA', 149.00, NULL, 20, 0, 'products/keyboard/Redragon_K709-RGB_NOVA.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (298, 9, 59, 'A4Tech Bloody MS76 USB Magnetic Iron Grey', 249.00, 220.00, 20, 0, 'products/keyboard/A4Tech_Bloody_MS76_USB_Magnetic_Iron_Grey.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (299, 9, 52, 'SteelSeries Apex Pro Gen 3 US', 999.00, NULL, 13, 0, 'products/keyboard/SteelSeries_Apex_Pro_Gen_3_US.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (300, 9, 55, 'Logitech MX Keys S Grafitowy', 399.00, 350.00, 13, 0, 'products/keyboard/Logitech_MX_Keys_S_Grafitowy.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (301, 9, 52, 'SteelSeries Apex 3 TKL US Lavender', 169.00, NULL, 13, 0, 'products/keyboard/SteelSeries_Apex_3_TKL_US_Lavender.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (302, 9, 52, 'SteelSeries Apex 9 TKL', 499.00, NULL, 12, 0, 'products/keyboard/SteelSeries_Apex_9_TKL.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (304, 9, 60, 'Razer Huntsman Mini - Mercury Ed. Purple Switch US', 249.00, NULL, 12, 0, 'products/keyboard/Razer_Huntsman_Mini_-_Mercury_Ed._Purple_Switch_US.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (305, 9, 55, 'Logitech G Pro X 60 Lightspeed Biała', 650.00, 600.00, 12, 0, 'products/keyboard/Logitech_G_Pro_X_60_Lightspeed_Biała.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (306, 9, 60, 'Razer Ornata V3 X US', 199.00, NULL, 15, 0, 'products/keyboard/Razer_Ornata_V3_X_US.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (307, 10, 61, 'Glorious GHS Eternal White', 259.00, 250.00, 10, 0, 'products/headphones/Glorious_GHS_Eternal_White.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (308, 10, 62, 'Sony Inzone H6 AIR Czarny', 799.00, NULL, 20, 0, 'products/headphones/Sony_Inzone_H6_AIR_Czarny.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (309, 10, 63, 'Apple AirPods Max 2 północ', 2500.00, NULL, 12, 0, 'products/headphones/Apple_AirPods_Max_2_północ.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (310, 10, 64, 'HyperX Cloud Jet Wireless Black', 220.00, NULL, 5, 0, 'products/headphones/HyperX_Cloud_Jet_Wireless_Black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (311, 10, 63, 'Apple AirPods Max 2 fioletowy', 2500.00, NULL, 15, 0, 'products/headphones/Apple_AirPods_Max_2_fioletowy.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (313, 10, 55, 'Logitech G PRO X', 369.00, NULL, 13, 0, 'products/headphones/Logitech_G_PRO_X.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (314, 10, 62, 'Sony WH-1000XM5SA', 891.00, NULL, 7, 0, 'products/headphones/Sony_WH-1000XM5SA.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (316, 10, 52, 'SteelSeries Arctis Nova 5', 500.00, NULL, 17, 0, 'products/headphones/SteelSeries_Arctis_Nova_5.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (317, 10, 62, 'Sony WH-CH720N Czarne', 320.00, NULL, 11, 0, 'products/headphones/Sony_WH-CH720N_Czarne.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (318, 10, 62, 'Glorious GHS Eternal RGB White', 389.00, NULL, 13, 0, 'products/headphones/Glorious_GHS_Eternal_RGB_White.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (319, 10, 63, 'Apple AirPods Max północ', 2209.00, NULL, 3, 0, 'products/headphones/Apple_AirPods_Max_północ.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (320, 10, 63, 'Redragon VibeCore 600X', 150.00, NULL, 6, 0, 'products/headphones/Redragon_VibeCore_600X.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (321, 10, 53, 'Redragon VibeCore 605X', 150.00, NULL, 8, 0, 'products/headphones/Redragon_VibeCore_605X.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (322, 10, 60, 'Razer_Barracuda_X_Chroma_Phantom_Green.jpg', 500.00, NULL, 18, 0, 'products/headphones/Razer_Barracuda_X_Chroma_Phantom_Green.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (323, 10, 60, 'Sony WH-CH520 Czarne', 120.00, NULL, 4, 0, 'products/headphones/Sony_WH-CH520_Czarne.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (324, 10, 65, 'JBL Tune 520C USB-C fioletowe', 110.00, NULL, 10, 0, 'products/headphones/JBL_Tune_520C_USB-C_fioletowe.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (325, 10, 65, 'JBL Tune 520C USB-C niebieskie', 110.00, NULL, 10, 0, 'products/headphones/JBL_Tune_520C_USB-C_niebieskie.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (326, 10, 65, 'JBL Tune 520C USB-C białe', 110.00, NULL, 10, 0, 'products/headphones/JBL_Tune_520C_USB-C_białe.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (327, 10, 65, 'JBL Tour One M3 ANC Czarne', 1099.00, NULL, 13, 0, 'products/headphones/JBL_Tour_One_M3_ANC_Czarne.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (329, 10, 64, 'HyperX CloudX Stinger Core Wireless', 400.00, NULL, 5, 0, 'products/headphones/HyperX_CloudX_Stinger_Core_Wireless.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (330, 10, 63, 'Apple AirPods Max księżycowa poświata', 2220.00, NULL, 15, 0, 'products/headphones/Apple_AirPods_Max_księżycowa_poświata.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (331, 8, 64, 'HyperX Pulsefire Haste 2 (czarny)', 140.00, NULL, 10, 0, 'products/mouse/HyperX_Pulsefire_Haste_2_(czarny).jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (332, 8, 55, 'Logitech LIFT Grafitowa', 220.00, NULL, 15, 0, 'products/mouse/Logitech_LIFT_Grafitowa.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (333, 8, 64, 'HyperX Pulsefire Fuse Wireless', 150.00, NULL, 17, 0, 'products/mouse/HyperX_Pulsefire_Fuse_Wireless.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (334, 8, 64, 'HyperX Pulsefire Haste 2 Wireless (biały)', 200.00, NULL, 20, 0, 'products/mouse/HyperX_Pulsefire_Haste_2_Wireless_(biały).jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (335, 8, 55, 'Logitech G102 LIGHTSYNC czarna', 110.00, NULL, 4, 0, 'products/mouse/Logitech_G102_LIGHTSYNC_czarna.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (336, 8, 55, 'Logitech M705 Marathon', 140.01, NULL, 14, 0, 'products/mouse/Logitech_M705_Marathon.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (337, 8, 55, 'Logitech M705 Marathon', 140.01, NULL, 9, 0, 'products/mouse/Logitech_M705_Marathon.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (338, 8, 60, 'Razer Basilisk V3', 190.00, NULL, 19, 0, 'products/mouse/Razer_Basilisk_V3.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (339, 8, 60, 'Razer DeathAdder V3', 230.00, NULL, 9, 0, 'products/mouse/Razer_DeathAdder_V3.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (340, 8, 55, 'Logitech G305 Lightspeed czarna', 230.00, NULL, 6, 0, 'products/mouse/Logitech_G305_Lightspeed_czarna.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (341, 8, 55, 'Logitech MX Anywhere 3S Grafit', 330.00, NULL, 16, 0, 'products/mouse/Logitech_MX_Anywhere_3S_Grafit.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (342, 8, 66, 'Silver Monkey M40 Wireless Comfort Mouse Black Silent', 65.00, NULL, 10, 0, 'products/mouse/Silver_Monkey_M40_Wireless_Comfort_Mouse_Black_Silent.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (343, 8, 55, 'Logitech G PRO X Superlight 2 czarny', 560.00, NULL, 14, 0, 'products/mouse/Logitech_G_PRO_X_Superlight_2_czarny.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (344, 8, 22, 'SMX Mysz gamingowa Bonobo black', 378.00, NULL, 7, 0, 'products/mouse/SMX_Mysz_gamingowa_Bonobo_black.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (345, 8, 28, 'ENDORFY Lix Plus', 200.00, NULL, 17, 0, 'products/mouse/ENDORFY_Lix_Plus.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (346, 8, 60, 'Razer Basilisk V3 X HyperSpeed', 220.00, NULL, 16, 0, 'products/mouse/Razer_Basilisk_V3_X_HyperSpeed.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (347, 8, 60, 'Razer Basilisk V3 X HyperSpeed', 220.00, NULL, 16, 0, 'products/mouse/Razer_Basilisk_V3_X_HyperSpeed.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (182, 3, 4, 'ASUS TUF GAMING B860-PLUS WIFI', 760.99, NULL, 23, 55, 'products/motherboard/ASUS_TUF_GAMING_B860-PLUS_WIFI.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (184, 3, 4, 'ASUS B850M MAX GAMING WIFI', 869.00, 790.00, 15, 42, 'products/motherboard/ASUS_B850M_MAX_GAMING_WIFI.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (185, 3, 4, 'ASUS PRIME B760M-A WIFI D4', 519.99, NULL, 15, 42, 'products/motherboard/ASUS_PRIME_B760M-A_WIFI_D4.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (183, 3, 4, 'ASUS TUF GAMING B850-PLUS WIFI', 830.00, NULL, 21, 55, 'products/motherboard/ASUS_TUF_GAMING_B850-PLUS_WIFI.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (186, 3, 4, 'ASUS PRIME B550M-A', 339.00, NULL, 13, 42, 'products/motherboard/ASUS_PRIME_B550M-A.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (187, 3, 4, 'ASUS TUF GAMING B650E-E WIFI', 639.00, NULL, 13, 55, 'products/motherboard/ASUS_TUF_GAMING_B650E-E_WIFI.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (189, 3, 6, 'Gigabyte B650 EAGLE AX', 565.00, 530.00, 17, 45, 'products/motherboard/Gigabyte_B650_EAGLE_AX.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (190, 3, 6, 'Gigabyte B550 GAMING X V2', 396.00, NULL, 17, 55, 'products/motherboard/Gigabyte_B550_GAMING_X_V2.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (191, 3, 6, 'Gigabyte B760M DS3H DDR4', 387.00, NULL, 13, 42, 'products/motherboard/Gigabyte_B760M_DS3H_DDR4.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (192, 3, 6, 'Gigabyte B650 GAMING X AX V2', 616.00, 580.00, 11, 55, 'products/motherboard/Gigabyte_B650_GAMING_X_AX_V2.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (193, 3, 6, 'Gigabyte B650M S2H', 395.00, NULL, 9, 42, 'products/motherboard/Gigabyte_B650M_S2H.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (194, 3, 6, 'Gigabyte B760M DS3H WF6E GEN5', 599.00, NULL, 9, 42, 'products/motherboard/Gigabyte_B760M_DS3H_WF6E_GEN5.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (195, 3, 6, 'Gigabyte B860M A ELT WF6E ICE', 589.00, NULL, 12, 42, 'products/motherboard/Gigabyte_B860M_A_ELT_WF6E_ICE.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (196, 3, 6, 'Gigabyte B850 EAGLE WIFI6E', 739.00, 700.00, 12, 45, 'products/motherboard/Gigabyte_B850_EAGLE_WIFI6E.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (197, 3, 6, 'Gigabyte B550 EAGLE', 399.00, NULL, 18, 45, 'products/motherboard/Gigabyte_B550_EAGLE.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (198, 3, 14, 'ASRock B760M-HDV/M.2 D4', 324.00, NULL, 15, 42, 'products/motherboard/ASRock_B760M-HDV_M.2_D4.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (199, 3, 14, 'ASRock Z790 Pro RS', 809.00, NULL, 12, 55, 'products/motherboard/ASRock_Z790_Pro_RS.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (200, 3, 14, 'ASRock Z790 Steel Legend WiFi', 999.00, NULL, 12, 55, 'products/motherboard/ASRock_Z790_Steel_Legend_WiFi.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (201, 3, 14, 'ASRock B550M-HDV', 288.00, NULL, 12, 42, 'products/motherboard/ASRock_B550M-HDV.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (202, 3, 14, 'ASRock B550M PRO4', 410.00, NULL, 12, 42, 'products/motherboard/ASRock_B550M_PRO4.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (203, 3, 14, 'ASRock B860M-H2', 399.00, NULL, 12, 42, 'products/motherboard/ASRock_B860M-H2.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (204, 3, 14, 'ASRock B860 Pro-A WiFi', 599.00, NULL, 16, 45, 'products/motherboard/ASRock_B860_Pro-A_WiFi.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (205, 3, 14, 'ASRock B860 LiveMixer WiFi', 799.00, 750.00, 12, 45, 'products/motherboard/ASRock_B860_LiveMixer_WiFi.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (206, 3, 5, 'MSI MAG B860 TOMAHAWK WIFI', 899.00, NULL, 11, 55, 'products/motherboard/MSI_MAG_B860_TOMAHAWK_WIFI.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (207, 3, 5, 'MSI B860 GAMING PLUS WIFI', 795.00, NULL, 11, 55, 'products/motherboard/MSI_B860_GAMING_PLUS_WIFI.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (208, 3, 5, 'MSI MAG B850M MORTAR WIFI', 939.00, NULL, 11, 42, 'products/motherboard/MSI_MAG_B850M_MORTAR_WIFI.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (209, 3, 5, 'MSI PRO B850M-P WIFI', 599.00, 550.00, 11, 42, 'products/motherboard/MSI_PRO_B850M-P_WIFI.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (210, 3, 5, 'MSI Z790 GAMING PLUS WIFI', 829.00, 800.00, 17, 55, 'products/motherboard/MSI_Z790_GAMING_PLUS_WIFI.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (211, 3, 5, 'MSI MPG B550 GAMING PLUS', 500.00, NULL, 17, 55, 'products/motherboard/MSI_MPG_B550_GAMING_PLUS.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (212, 12, 28, 'ENDORFY Navis F240 ARGB', 319.00, NULL, 7, 12, 'products/cooler/ENDORFY_Navis_F240_ARGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (213, 12, 28, 'ENDORFY Fortis 5 ARGB', 250.00, 229.00, 11, 6, 'products/cooler/ENDORFY_Fortis_5_ARGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (214, 12, 28, 'ENDORFY Fera 5', 129.00, NULL, 11, 4, 'products/cooler/ENDORFY_Fera_5.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (215, 12, 28, 'ENDORFY Navis F360 ARGB', 399.00, NULL, 13, 12, 'products/cooler/ENDORFY_Navis_F360_ARGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (216, 12, 28, 'ENDORFY Navis F240', 279.00, NULL, 9, 12, 'products/cooler/ENDORFY_Navis_F240.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (217, 12, 45, 'Thermalright Peerless Vision 360 UB Argb White', 599.00, NULL, 13, 12, 'products/cooler/Thermalright_Peerless_Vision_360_UB_Argb_White.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (218, 12, 45, 'Thermalright Phantom Spirit 120 SE ARGB', 199.90, NULL, 13, 6, 'products/cooler/Thermalright_Phantom_Spirit_120_SE_ARGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (219, 12, 45, 'Thermalright Assassin X 120 Refined SE ARGB', 99.00, NULL, 13, 6, 'products/cooler/Thermalright_Assassin_X_120_Refined_SE_ARGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (220, 12, 45, 'Thermalright Aqua Elite 360 Black Argb V3', 370.00, NULL, 13, 12, 'products/cooler/Thermalright_Aqua_Elite_360_Black_Argb_V3.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (221, 12, 45, 'Thermalright Peerless Vision 240 Argb Black', 439.00, NULL, 11, 12, 'products/cooler/Thermalright_Peerless_Vision_240_Argb_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (222, 12, 29, 'be quiet! Dark Rock 5', 329.00, NULL, 9, 4, 'products/cooler/be_quiet!_Dark_Rock_5.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (223, 12, 29, 'be quiet! Pure Rock Pro 3 LX, czarny', 259.00, NULL, 13, 4, 'products/cooler/be_quiet!_Pure_Rock_Pro_3_LX,_czarny.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (224, 12, 4, 'ASUS ROG STRIX LC III 240 ARGB', 859.00, NULL, 4, 12, 'products/cooler/ASUS_ROG_STRIX_LC_III_240_ARGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (225, 12, 29, 'be quiet! Light Loop 360mm', 649.00, NULL, 13, 12, 'products/cooler/be_quiet!_Light_Loop_360mm.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (226, 12, 29, 'be quiet! Light Loop 240mm', 539.00, NULL, 13, 12, 'products/cooler/be_quiet!_Light_Loop_240mm.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (227, 12, 29, 'be quiet! Pure Rock 3 LX, czarny', 154.99, NULL, 13, 4, 'products/cooler/be_quiet!_Pure_Rock_3_LX,_czarny.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (228, 12, 4, 'ASUS ROG RYUO IV SLC 360 ARGB', 1799.00, NULL, 6, 12, 'products/cooler/ASUS_ROG_RYUO_IV_SLC_360_ARGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (229, 12, 46, 'Krux HydroGlance 360 ARGB LCD', 549.00, NULL, 6, 12, 'products/cooler/Krux_HydroGlance_360_ARGB_LCD.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (230, 12, 47, 'Genesis Hydria 240 ARGB czarne', 287.00, NULL, 6, 12, 'products/cooler/Genesis_Hydria_240_ARGB_czarne.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (231, 12, 47, 'Genesis Hydria 360 ARGB czarne', 368.00, 350.00, 6, 12, 'products/cooler/Genesis_Hydria_360_ARGB_czarne.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (232, 12, 47, 'Genesis Hydria 360 czarne', 315.00, NULL, 6, 12, 'products/cooler/Genesis_Hydria_360_czarne.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (233, 12, 33, 'Cooler Master MasterLiquid 360 Core II ARGB', 339.00, NULL, 12, 12, 'products/cooler/Cooler_Master_MasterLiquid_360_Core_II_ARGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (234, 12, 33, 'Cooler Master MasterLiquid 240 Core II ARGB white', 249.00, NULL, 12, 12, 'products/cooler/Cooler_Master_MasterLiquid_240_Core_II_ARGB_white.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (235, 12, 48, 'Savio Vortex X2 ARGB', 109.90, NULL, 12, 6, 'products/cooler/Savio_Vortex_X2_ARGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (236, 12, 48, 'Noctua NH-D15 chromax.black', 519.00, NULL, 12, 4, 'products/cooler/Noctua_NH-D15_chromax.black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (237, 12, 5, 'MSI MAG CORELIQUID A13 360', 379.00, NULL, 12, 12, 'products/cooler/MSI_MAG_CORELIQUID_A13_360.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (238, 12, 5, 'MSI MAG CORELIQUID A13 240', 289.00, NULL, 12, 12, 'products/cooler/MSI_MAG_CORELIQUID_A13_240.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (239, 12, 5, 'MSI MAG CORELIQUID E240 WHITE', 289.00, NULL, 12, 12, 'products/cooler/MSI_MAG_CORELIQUID_E240_WHITE.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (240, 12, 16, 'NZXT Kraken Plus 360 RGB LCD czarne', 919.00, NULL, 9, 12, 'products/cooler/NZXT_Kraken_Plus_360_RGB_LCD_czarne.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (241, 12, 16, 'NZXT Kraken Elite 280 RGB V2 LCD białe', 829.00, NULL, 9, 12, 'products/cooler/NZXT_Kraken_Elite_280_RGB_V2_LCD_białe.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (242, 7, 28, 'ENDORFY Aquarius 8000 Corona', 599.00, NULL, 7, 5, 'products/case/ENDORFY_Aquarius_8000_Corona.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (243, 7, 49, 'SMX Cassette', 249.00, 149.00, 11, 5, 'products/case/SMX_Cassette.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (244, 7, 49, 'SMX Coffer', 179.00, 129.00, 12, 5, 'products/case/SMX_Coffer.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (245, 7, 49, 'SMX Chest TG', 219.00, NULL, 10, 5, 'products/case/SMX_Chest_TG.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (246, 7, 47, 'Genesis DIAXID 605F Czarna', 328.00, 269.00, 9, 5, 'products/case/Genesis_DIAXID_605F_Czarna.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (247, 7, 49, 'SMX Croft', 259.00, NULL, 13, 5, 'products/case/SMX_Croft.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (248, 7, 31, 'Lian Li DAN A3 Wood Black', 369.00, NULL, 7, 5, 'products/case/Lian_Li_DAN_A3_Wood_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (249, 7, 34, 'Fractal Design Meshify 3 Ambience Pro RGB Black TG Light Tint', 889.00, NULL, 5, 12, 'products/case/Fractal_Design_Meshify_3_Ambience_Pro_RGB_Black_TG_Light_Tint.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (250, 7, 28, 'ENDORFY Arx 700 Air', 449.00, NULL, 6, 8, 'products/case/ENDORFY_Arx_700_Air.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (251, 7, 31, 'Lian Li O11D EVO RGB Black', 739.00, NULL, 4, 12, 'products/case/Lian_Li_O11D_EVO_RGB_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (252, 7, 5, 'MSI MAG PANO 100R PZ', 469.00, 419.00, 8, 5, 'products/case/MSI_MAG_PANO_100R_PZ.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (253, 7, 50, 'Deepcool CC560 ARGB', 239.00, 189.00, 13, 12, 'products/case/Deepcool_CC560_ARGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (254, 7, 49, 'SMX Capsule', 299.00, NULL, 8, 5, 'products/case/SMX_Capsule.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (255, 7, 16, 'NZXT H7 FLOW (2024) White', 459.00, NULL, 5, 8, 'products/case/NZXT_H7_FLOW_(2024)_White.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (256, 7, 49, 'SMX Pyxis', 329.00, NULL, 6, 5, 'products/case/SMX_Pyxis.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (257, 7, 31, 'Lian Li Lancool 217 Black', 499.00, NULL, 5, 5, 'products/case/Lian_Li_Lancool_217_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (258, 7, 46, 'KRUX Helio', 219.00, 179.00, 14, 5, 'products/case/KRUX_Helio.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (259, 7, 29, 'be quiet! Pure Base 500DX Black', 389.00, NULL, 8, 4, 'products/case/be_quiet!_Pure_Base_500DX_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (260, 7, 46, 'KRUX Vako', 169.00, 139.00, 11, 5, 'products/case/KRUX_Vako.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (261, 7, 28, 'ENDORFY Ventum 200 ARGB', 299.00, NULL, 15, 12, 'products/case/ENDORFY_Ventum_200_ARGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (262, 7, 4, 'ASUS TUF GAMING GT502 HORIZON TG ARGB White', 779.00, NULL, 7, 12, 'products/case/ASUS_TUF_GAMING_GT502_HORIZON_TG_ARGB_White.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (263, 7, 51, 'DarkFlash DS900W Black', 199.00, NULL, 16, 4, 'products/case/DarkFlash_DS900W_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (264, 7, 51, 'DarkFlash DB330M Mesh White', 139.00, NULL, 15, 8, 'products/case/DarkFlash_DB330M_Mesh_White.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (265, 7, 51, 'DarkFlash DS900 Mesh Black', 199.00, NULL, 14, 8, 'products/case/DarkFlash_DS900_Mesh_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (266, 7, 51, 'DarkFlash DB330M Mesh Black', 139.00, NULL, 13, 8, 'products/case/DarkFlash_DB330M_Mesh_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (267, 7, 28, 'ENDORFY Regnum 400 ARGB', 449.00, 359.00, 9, 12, 'products/case/ENDORFY_Regnum_400_ARGB.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (269, 7, 51, 'DarkFlash DS900WS + 4 Fans Black', 239.00, NULL, 8, 12, 'products/case/DarkFlash_DS900WS_+_4_Fans_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (270, 7, 16, 'NZXT H9 FLOW (2025) Black', 749.00, NULL, 6, 8, 'products/case/NZXT_H9_FLOW_(2025)_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (271, 7, 29, 'be quiet! Light Base 500', 509.00, NULL, 7, 12, 'products/case/be_quiet!_Light_Base_500.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (272, 7, 29, 'be quiet! PURE BASE 501', 389.00, NULL, 8, 4, 'products/case/be_quiet!_PURE_BASE_501.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (276, 9, 52, 'SteelSeries Apex 3', 264.00, NULL, 10, 5, 'products/keyboard/SteelSeries_Apex_3.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (277, 9, 53, 'Redragon K617 Fizz RGB white/grey', 136.00, NULL, 10, 5, 'products/keyboard/Redragon_K617_Fizz_RGB_white_grey.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (278, 9, 54, 'Dark Project ALU87A Onionite Wired - G3MS Mech. RGB (ENG)', 249.00, 230.00, 8, 5, 'products/keyboard/Dark_Project_ALU87A_Onionite_Wired_-_G3MS_Mech._RGB_(ENG).jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (279, 9, 53, 'Redragon K617 Fizz RGB czarna', 130.00, NULL, 6, 5, 'products/keyboard/Redragon_K617_Fizz_RGB_czarna.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (280, 9, 54, 'Dark Project ALU87B Gamma - G3MS Mech. RGB (ENG)', 499.00, 450.00, 12, 5, 'products/keyboard/Dark_Project_ALU87B_Gamma_-_G3MS_Mech._RGB_(ENG).jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (281, 9, 52, 'SteelSeries Apex 3 TKL US', 169.00, NULL, 11, 5, 'products/keyboard/SteelSeries_Apex_3_TKL_US.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (282, 9, 55, 'Logitech G213 Prodigy', 189.00, NULL, 13, 3, 'products/keyboard/Logitech_G213_Prodigy.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (283, 9, 56, 'California Access Korero TKL CA1424', 169.00, NULL, 13, 3, 'products/keyboard/California_Access_Korero_TKL_CA1424.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (284, 9, 55, 'Logitech G413 TKL SE', 239.00, NULL, 17, 3, 'products/keyboard/Logitech_G413_TKL_SE.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (285, 9, 55, 'Logitech MK270', 119.00, NULL, 15, 2, 'products/keyboard/Logitech_MK270.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (286, 9, 53, 'Redragon K707WBP-RGB-PRO StarBlade', 169.00, NULL, 15, 5, 'products/keyboard/Redragon_K707WBP-RGB-PRO_StarBlade.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (287, 9, 53, 'Redragon AZURE K652GG-RGB-PRO', 238.00, NULL, 13, 5, 'products/keyboard/Redragon_AZURE_K652GG-RGB-PRO.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (288, 9, 57, 'Tracer GameZone Blade 87', 119.00, NULL, 6, 3, 'products/keyboard/Tracer_GameZone_Blade_87.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (289, 9, 58, 'Accura Artesia ACC-K1408 podświetlana', 69.00, NULL, 13, 3, 'products/keyboard/Accura_Artesia_ACC-K1408_podświetlana.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (290, 9, 58, 'Accura Vista ACC-K1411', 49.00, NULL, 3, 3, 'products/keyboard/Accura_Vista_ACC-K1411.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (291, 9, 58, 'Accura Delano ACC-K1306', 99.00, NULL, 3, 3, 'products/keyboard/Accura_Delano_ACC-K1306.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (292, 9, 46, 'KRUX ATAX 65% Pro RGB Outemu Red', 199.00, 170.00, 16, 5, 'products/keyboard/KRUX_ATAX_65%_Pro_RGB_Outemu_Red.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (293, 9, 46, 'Logitech K400 Plus Czarna', 149.00, NULL, 16, 2, 'products/keyboard/Logitech_K400_Plus_Czarna.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (294, 9, 53, 'Redragon K515-RGB SHIVA 98', 129.00, NULL, 13, 5, 'products/keyboard/Redragon_K515-RGB_SHIVA_98.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (295, 9, 53, 'Redragon K515-RGB SHIVA 98', 129.00, NULL, 13, 5, 'products/keyboard/Redragon_K515-RGB_SHIVA_98.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (296, 9, 47, 'Genesis Thor 230 TKL Anchor Gray Positive RGB Outemu Red', 179.00, NULL, 20, 5, 'products/keyboard/Genesis_Thor_230_TKL_Anchor_Gray_Positive_RGB_Outemu_Red.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (297, 9, 53, 'Redragon K709-RGB NOVA', 149.00, NULL, 20, 5, 'products/keyboard/Redragon_K709-RGB_NOVA.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (298, 9, 59, 'A4Tech Bloody MS76 USB Magnetic Iron Grey', 249.00, 220.00, 20, 5, 'products/keyboard/A4Tech_Bloody_MS76_USB_Magnetic_Iron_Grey.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (299, 9, 52, 'SteelSeries Apex Pro Gen 3 US', 999.00, NULL, 13, 5, 'products/keyboard/SteelSeries_Apex_Pro_Gen_3_US.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (300, 9, 55, 'Logitech MX Keys S Grafitowy', 399.00, 350.00, 13, 2, 'products/keyboard/Logitech_MX_Keys_S_Grafitowy.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (301, 9, 52, 'SteelSeries Apex 3 TKL US Lavender', 169.00, NULL, 13, 5, 'products/keyboard/SteelSeries_Apex_3_TKL_US_Lavender.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (302, 9, 52, 'SteelSeries Apex 9 TKL', 499.00, NULL, 12, 5, 'products/keyboard/SteelSeries_Apex_9_TKL.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (304, 9, 60, 'Razer Huntsman Mini - Mercury Ed. Purple Switch US', 249.00, NULL, 12, 5, 'products/keyboard/Razer_Huntsman_Mini_-_Mercury_Ed._Purple_Switch_US.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (305, 9, 55, 'Logitech G Pro X 60 Lightspeed Biała', 650.00, 600.00, 12, 3, 'products/keyboard/Logitech_G_Pro_X_60_Lightspeed_Biała.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (306, 9, 60, 'Razer Ornata V3 X US', 199.00, NULL, 15, 5, 'products/keyboard/Razer_Ornata_V3_X_US.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (307, 10, 61, 'Glorious GHS Eternal White', 259.00, 250.00, 10, 2, 'products/headphones/Glorious_GHS_Eternal_White.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (308, 10, 62, 'Sony Inzone H6 AIR Czarny', 799.00, NULL, 20, 3, 'products/headphones/Sony_Inzone_H6_AIR_Czarny.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (309, 10, 63, 'Apple AirPods Max 2 północ', 2500.00, NULL, 12, 3, 'products/headphones/Apple_AirPods_Max_2_północ.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (310, 10, 64, 'HyperX Cloud Jet Wireless Black', 220.00, NULL, 5, 3, 'products/headphones/HyperX_Cloud_Jet_Wireless_Black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (311, 10, 63, 'Apple AirPods Max 2 fioletowy', 2500.00, NULL, 15, 3, 'products/headphones/Apple_AirPods_Max_2_fioletowy.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (313, 10, 55, 'Logitech G PRO X', 369.00, NULL, 13, 2, 'products/headphones/Logitech_G_PRO_X.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (314, 10, 62, 'Sony WH-1000XM5SA', 891.00, NULL, 7, 3, 'products/headphones/Sony_WH-1000XM5SA.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (316, 10, 52, 'SteelSeries Arctis Nova 5', 500.00, NULL, 17, 3, 'products/headphones/SteelSeries_Arctis_Nova_5.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (317, 10, 62, 'Sony WH-CH720N Czarne', 320.00, NULL, 11, 3, 'products/headphones/Sony_WH-CH720N_Czarne.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (318, 10, 62, 'Glorious GHS Eternal RGB White', 389.00, NULL, 13, 4, 'products/headphones/Glorious_GHS_Eternal_RGB_White.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (319, 10, 63, 'Apple AirPods Max północ', 2209.00, NULL, 3, 3, 'products/headphones/Apple_AirPods_Max_północ.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (320, 10, 63, 'Redragon VibeCore 600X', 150.00, NULL, 6, 2, 'products/headphones/Redragon_VibeCore_600X.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (321, 10, 53, 'Redragon VibeCore 605X', 150.00, NULL, 8, 2, 'products/headphones/Redragon_VibeCore_605X.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (322, 10, 60, 'Razer Barracuda X Chroma Phantom Green', 500.00, NULL, 18, 4, 'products/headphones/Razer_Barracuda_X_Chroma_Phantom_Green.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (323, 10, 60, 'Sony WH-CH520 Czarne', 120.00, NULL, 4, 3, 'products/headphones/Sony_WH-CH520_Czarne.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (324, 10, 65, 'JBL Tune 520C USB-C fioletowe', 110.00, NULL, 10, 2, 'products/headphones/JBL_Tune_520C_USB-C_fioletowe.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (325, 10, 65, 'JBL Tune 520C USB-C niebieskie', 110.00, NULL, 10, 2, 'products/headphones/JBL_Tune_520C_USB-C_niebieskie.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (326, 10, 65, 'JBL Tune 520C USB-C białe', 110.00, NULL, 10, 2, 'products/headphones/JBL_Tune_520C_USB-C_białe.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (327, 10, 65, 'JBL Tour One M3 ANC Czarne', 1099.00, NULL, 13, 3, 'products/headphones/JBL_Tour_One_M3_ANC_Czarne.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (329, 10, 64, 'HyperX CloudX Stinger Core Wireless', 400.00, NULL, 5, 3, 'products/headphones/HyperX_CloudX_Stinger_Core_Wireless.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (330, 10, 63, 'Apple AirPods Max księżycowa poświata', 2220.00, NULL, 15, 3, 'products/headphones/Apple_AirPods_Max_księżycowa_poświata.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (331, 8, 64, 'HyperX Pulsefire Haste 2 (czarny)', 140.00, NULL, 10, 2, 'products/mouse/HyperX_Pulsefire_Haste_2_(czarny).jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (332, 8, 55, 'Logitech LIFT Grafitowa', 220.00, NULL, 15, 2, 'products/mouse/Logitech_LIFT_Grafitowa.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (333, 8, 64, 'HyperX Pulsefire Fuse Wireless', 150.00, NULL, 17, 2, 'products/mouse/HyperX_Pulsefire_Fuse_Wireless.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (334, 8, 64, 'HyperX Pulsefire Haste 2 Wireless (biały)', 200.00, NULL, 20, 2, 'products/mouse/HyperX_Pulsefire_Haste_2_Wireless_(biały).jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (335, 8, 55, 'Logitech G102 LIGHTSYNC czarna', 110.00, NULL, 4, 3, 'products/mouse/Logitech_G102_LIGHTSYNC_czarna.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (336, 8, 55, 'Logitech M705 Marathon', 140.01, NULL, 14, 2, 'products/mouse/Logitech_M705_Marathon.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (337, 8, 55, 'Logitech M705 Marathon', 140.01, NULL, 9, 2, 'products/mouse/Logitech_M705_Marathon.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (338, 8, 60, 'Razer Basilisk V3', 190.00, NULL, 19, 3, 'products/mouse/Razer_Basilisk_V3.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (339, 8, 60, 'Razer DeathAdder V3', 230.00, NULL, 9, 3, 'products/mouse/Razer_DeathAdder_V3.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (340, 8, 55, 'Logitech G305 Lightspeed czarna', 230.00, NULL, 6, 2, 'products/mouse/Logitech_G305_Lightspeed_czarna.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (341, 8, 55, 'Logitech MX Anywhere 3S Grafit', 330.00, NULL, 16, 2, 'products/mouse/Logitech_MX_Anywhere_3S_Grafit.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (342, 8, 66, 'Silver Monkey M40 Wireless Comfort Mouse Black Silent', 65.00, NULL, 10, 2, 'products/mouse/Silver_Monkey_M40_Wireless_Comfort_Mouse_Black_Silent.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (343, 8, 55, 'Logitech G PRO X Superlight 2 czarny', 560.00, NULL, 14, 3, 'products/mouse/Logitech_G_PRO_X_Superlight_2_czarny.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (344, 8, 22, 'SMX Mysz gamingowa Bonobo black', 378.00, NULL, 7, 3, 'products/mouse/SMX_Mysz_gamingowa_Bonobo_black.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (345, 8, 28, 'ENDORFY Lix Plus', 200.00, NULL, 17, 2, 'products/mouse/ENDORFY_Lix_Plus.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (346, 8, 60, 'Razer Basilisk V3 X HyperSpeed', 220.00, NULL, 16, 3, 'products/mouse/Razer_Basilisk_V3_X_HyperSpeed.jpg');
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (347, 8, 60, 'Razer Basilisk V3 X HyperSpeed', 220.00, NULL, 16, 3, 'products/mouse/Razer_Basilisk_V3_X_HyperSpeed.jpg');
 
 
 --
@@ -848,15 +880,15 @@ INSERT INTO public.category_attributes (id, category_id, attribute_id, is_requir
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (15, 4, 14, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (16, 4, 15, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (17, 4, 16, false);
-INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (18, 5, 17, false);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (18, 5, 17, true);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (19, 5, 18, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (20, 5, 19, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (21, 6, 20, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (22, 6, 21, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (23, 6, 22, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (24, 7, 23, false);
-INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (25, 7, 24, false);
-INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (26, 7, 25, false);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (25, 7, 24, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (26, 7, 25, true);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (27, 7, 12, true);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (28, 8, 26, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (29, 8, 27, false);
@@ -865,7 +897,7 @@ INSERT INTO public.category_attributes (id, category_id, attribute_id, is_requir
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (32, 10, 26, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (33, 10, 29, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (34, 11, 29, false);
-INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (36, 12, 30, false);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (36, 12, 30, true);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (38, 13, 32, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (39, 13, 33, false);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (40, 14, 34, false);
@@ -887,6 +919,12 @@ INSERT INTO public.category_attributes (id, category_id, attribute_id, is_requir
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (51, 6, 47, true);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (52, 2, 46, true);
 INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (53, 3, 47, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (57, 3, 48, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (58, 12, 49, true);
+INSERT INTO public.category_attributes (id, category_id, attribute_id, is_required) VALUES (59, 7, 50, true);
+
+
+
 
 --
 -- TOC entry 3991 (class 0 OID 17649)
@@ -931,7 +969,7 @@ INSERT INTO public.product_attributes (id, product_id, attribute_category_id, at
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (37, 14, 8, 213);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (40, 15, 8, 213);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (133, 37, 8, 232);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (166, 44, 8, 242);
+INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (166, 44, 8, 232);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (9, 2, 1, 1);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (10, 2, 2, 9);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (488, 142, 33, 230);
@@ -1071,9 +1109,9 @@ INSERT INTO public.product_attributes (id, product_id, attribute_category_id, at
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (245, 70, 9, 55);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (246, 70, 10, 21);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (247, 71, 13, 38);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (169, 45, 8, 242);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (172, 46, 8, 242);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (175, 47, 8, 242);
+INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (169, 45, 8, 232);
+INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (172, 46, 8, 232);
+INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (175, 47, 8, 232);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (251, 72, 13, 38);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (178, 48, 8, 232);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (181, 49, 8, 232);
@@ -1624,7 +1662,7 @@ INSERT INTO public.product_attributes (id, product_id, attribute_category_id, at
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (314, 88, 16, 198);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (316, 89, 14, 193);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (318, 89, 16, 161);
-INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (321, 90, 15, 139);
+INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (321, 90, 15, 170);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (322, 90, 16, 89);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (325, 91, 15, 78);
 INSERT INTO public.product_attributes (id, product_id, attribute_category_id, attribute_value_id) VALUES (326, 91, 16, 89);
@@ -2145,80 +2183,254 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 
 -- ID 69: Gigabyte RTX 5060 Aero OC (300mm)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (69, 40, 325);
+
+-- ID 45: Zotac RTX 5070 Ti Solid SFF (304mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (45, 40, 330);
+
+-- ID 46: Gigabyte RX 9070 XT Gaming OC (288mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (46, 40, 331);
+
+-- ID 50: ASUS RTX 5080 Prime OC (304mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (50, 40, 330);
+
+-- ID 53: Intel Arc Pro B50 (167mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (53, 40, 329);
+
+-- ID 55: ASUS RTX 5070 Ti Prime OC (304mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (55, 40, 330);
+
+-- ID 56: INNO3D RTX 5060 Ti Twin X2 OC (250mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (56, 40, 332);
+
+-- ID 57: Sapphire RX 9060 XT Pulse OC (244mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (57, 40, 333);
+
+-- ID 58: ASRock AI PRO R9700 Creator (271mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (58, 40, 334);
+
+-- ID 59: Zotac RTX 5090 ArcticStorm AIO (252mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (59, 40, 341);
+
+-- ID 60: ASUS RX 9070 XT Prime OC White (312mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (60, 40, 335);
+
+-- ID 61: PowerColor RX 7600 Fighter (241mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (61, 40, 336);
+
+-- ID 63: ASUS RX 9070 Prime EVO OC (304mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (63, 40, 330);
+
+-- ID 64: Gigabyte RTX 5050 D6 (145mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (64, 40, 337);
+
+-- ID 65: Zotac RTX 5060 Ti Twin Edge OC White (225mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (65, 40, 322);
+
+-- ID 67: Zotac RTX 5080 AMP Extreme Infinity (332mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (67, 40, 338);
+
+-- ID 68: Palit RTX 5070 Infinity 3 (292mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (68, 40, 339);
+
+-- ID 70: Zotac RTX 5050 Twin Edge OC (221mm)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (70, 40, 340);
+
 -- ENDORFY
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (212, 41, 400); -- Navis F240
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (212, 49, 910); -- Navis F240
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (213, 41, 402); -- Fortis 5
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (214, 41, 403); -- Fera 5
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (215, 41, 401); -- Navis F360
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (216, 41, 400); -- Navis F240 (standard)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (215, 49, 912); -- Navis F360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (216, 49, 910); -- Navis F240 (standard)
 
 -- Thermalright
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (217, 41, 401); -- Vision 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (217, 49, 912); -- Vision 360
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (218, 41, 404); -- Phantom Spirit 120
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (219, 41, 403); -- Assassin X 120
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (220, 41, 401); -- Aqua Elite 360
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (221, 41, 400); -- Vision 240
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (220, 49, 912); -- Aqua Elite 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (221, 49, 910); -- Vision 240
 
 -- be quiet!
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (222, 41, 402); -- Dark Rock 5
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (223, 41, 405); -- Pure Rock Pro 3
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (225, 41, 401); -- Light Loop 360
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (226, 41, 400); -- Light Loop 240
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (225, 49, 912); -- Light Loop 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (226, 49, 910); -- Light Loop 240
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (227, 41, 405); -- Pure Rock 3
 
 -- Pozostałe AiO 360mm
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (228, 41, 401); -- ASUS RYUO IV 360
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (229, 41, 401); -- Krux HydroGlance 360
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (231, 41, 401); -- Genesis Hydria 360
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (233, 41, 401); -- MasterLiquid 360
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (237, 41, 401); -- MSI MAG A13 360
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (240, 41, 401); -- Kraken Plus 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (228, 49, 912); -- ASUS RYUO IV 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (229, 49, 912); -- Krux HydroGlance 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (231, 49, 912); -- Genesis Hydria 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (232, 49, 912); -- Genesis Hydria 360 czarne
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (233, 49, 912); -- MasterLiquid 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (237, 49, 912); -- MSI MAG A13 360
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (240, 49, 912); -- Kraken Plus 360
 
 -- Pozostałe AiO 240mm / 280mm
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (230, 41, 400); -- Genesis Hydria 240
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (234, 41, 400); -- MasterLiquid 240
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (238, 41, 400); -- MSI MAG A13 240
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (241, 41, 407); -- Kraken Elite 280
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (224, 49, 910); -- ASUS ROG STRIX LC III 240
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (230, 49, 910); -- Genesis Hydria 240
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (234, 49, 910); -- MasterLiquid 240
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (238, 49, 910); -- MSI MAG A13 240
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (239, 49, 910); -- MSI MAG CORELIQUID E240 WHITE
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (241, 49, 911); -- Kraken Elite 280
 
 -- Powietrzne Premium
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (235, 41, 408); -- Savio Vortex X2 ARGB
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (236, 41, 406); -- Noctua NH-D15
--- ASUS TUF GAMING B760-PLUS (Obsługuje 12, 13 i 14 gen)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (182, 43, 600);
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (182, 43, 601);
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (182, 43, 602);
 
--- Gigabyte B550 GAMING X V2 (Obsługuje Ryzen 3000, 4000 i 5000)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (190, 43, 604);
+-- Obudowy obsługujące radiator 240mm
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+(244, 50, 920), -- SMX Coffer
+(258, 50, 920), -- KRUX Helio
+(260, 50, 920), -- KRUX Vako
+(261, 50, 920), -- ENDORFY Ventum 200
+(264, 50, 920), -- DarkFlash DB330M Mesh White
+(266, 50, 920); -- DarkFlash DB330M Mesh Black
+
+-- Obudowy obsługujące radiator 360mm
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+(242, 50, 922), -- ENDORFY Aquarius 8000 Corona
+(243, 50, 922), -- SMX Cassette
+(245, 50, 922), -- SMX Chest TG
+(246, 50, 922), -- Genesis DIAXID 605F
+(247, 50, 922), -- SMX Croft
+(248, 50, 922), -- Lian Li DAN A3
+(249, 50, 922), -- Fractal Design Meshify 3
+(250, 50, 922), -- ENDORFY Arx 700 Air
+(251, 50, 922), -- Lian Li O11D EVO RGB
+(252, 50, 922), -- MSI MAG PANO 100R PZ
+(253, 50, 922), -- Deepcool CC560 ARGB
+(254, 50, 922), -- SMX Capsule
+(255, 50, 922), -- NZXT H7 FLOW
+(256, 50, 922), -- SMX Pyxis
+(257, 50, 922), -- Lian Li Lancool 217
+(259, 50, 922), -- be quiet! Pure Base 500DX
+(262, 50, 922), -- ASUS TUF GAMING GT502
+(263, 50, 922), -- DarkFlash DS900W
+(265, 50, 922), -- DarkFlash DS900 Mesh
+(267, 50, 922), -- ENDORFY Regnum 400
+(269, 50, 922), -- DarkFlash DS900WS
+(270, 50, 922), -- NZXT H9 FLOW
+(271, 50, 922), -- be quiet! Light Base 500
+(272, 50, 922); -- be quiet! PURE BASE 501
+
+-- Intel B760/Z790 (Obsługuje 12, 13 i 14 gen)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (185, 43, 600); -- ASUS PRIME B760M-A
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (185, 43, 601);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (185, 43, 602);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (188, 43, 600); -- ASUS PRIME Z790-P
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (188, 43, 601);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (188, 43, 602);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (191, 43, 600); -- Gigabyte B760M DS3H DDR4
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (191, 43, 601);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (191, 43, 602);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (194, 43, 600); -- Gigabyte B760M DS3H WF6E GEN5
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (194, 43, 601);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (194, 43, 602);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (198, 43, 600); -- ASRock B760M-HDV/M.2 D4
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (198, 43, 601);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (198, 43, 602);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (199, 43, 600); -- ASRock Z790 Pro RS
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (199, 43, 601);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (199, 43, 602);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (200, 43, 600); -- ASRock Z790 Steel Legend
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (200, 43, 601);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (200, 43, 602);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (210, 43, 600); -- MSI Z790 GAMING PLUS
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (210, 43, 601);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (210, 43, 602);
+
+-- Intel B860 (Obsługuje Intel Core Ultra Gen 2)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (182, 43, 603); -- ASUS TUF GAMING B860-PLUS
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (195, 43, 603); -- Gigabyte B860M A ELT
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (203, 43, 603); -- ASRock B860M-H2
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (204, 43, 603); -- ASRock B860 Pro-A
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (205, 43, 603); -- ASRock B860 LiveMixer
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (206, 43, 603); -- MSI MAG B860 TOMAHAWK
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (207, 43, 603); -- MSI B860 GAMING PLUS
+
+-- AMD B550 (Obsługuje Ryzen 3000, 4000 i 5000)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (186, 43, 604); -- ASUS PRIME B550M-A
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (186, 43, 605);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (186, 43, 606);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (190, 43, 604); -- Gigabyte B550 GAMING X V2
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (190, 43, 605);
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (190, 43, 606);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (197, 43, 604); -- Gigabyte B550 EAGLE
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (197, 43, 605);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (197, 43, 606);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (201, 43, 604); -- ASRock B550M-HDV
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (201, 43, 605);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (201, 43, 606);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (202, 43, 604); -- ASRock B550M PRO4
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (202, 43, 605);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (202, 43, 606);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (211, 43, 604); -- MSI MPG B550 GAMING PLUS
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (211, 43, 605);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (211, 43, 606);
 
--- Gigabyte B650 EAGLE AX (Obsługuje Ryzen 7000, 8000 i 9000)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (189, 43, 607);
+-- AMD B650/B850 (Obsługuje Ryzen 7000, 8000 i 9000)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (183, 43, 607); -- ASUS TUF GAMING B850-PLUS
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (183, 43, 608);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (183, 43, 609);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (184, 43, 607); -- ASUS B850M MAX
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (184, 43, 608);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (184, 43, 609);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (187, 43, 607); -- ASUS TUF GAMING B650E-E
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (187, 43, 608);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (187, 43, 609);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (189, 43, 607); -- Gigabyte B650 EAGLE AX
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (189, 43, 608);
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (189, 43, 609);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (192, 43, 607); -- Gigabyte B650 GAMING X AX V2
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (192, 43, 608);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (192, 43, 609);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (193, 43, 607); -- Gigabyte B650M S2H
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (193, 43, 608);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (193, 43, 609);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (196, 43, 607); -- Gigabyte B850 EAGLE
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (196, 43, 608);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (196, 43, 609);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (208, 43, 607); -- MSI MAG B850M MORTAR
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (208, 43, 608);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (208, 43, 609);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (209, 43, 607); -- MSI PRO B850M-P
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (209, 43, 608);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (209, 43, 609);
 -- ASUS
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (182, 44, 513); -- B860-PLUS (Intel Ultra, 4xDDR5)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (183, 44, 513); -- B850-PLUS (AMD AM5, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (184, 44, 512); -- B850M MAX (AMD AM5, 2xDDR5)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (185, 44, 511); -- B760M-A D4 (Intel, 4xDDR4)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (186, 44, 511); -- B550M-A (AMD AM4, 4xDDR4)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (187, 44, 513); -- B650E-E (AMD AM5, 4xDDR5)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (188, 44, 513); -- Z790-P (Intel, 4xDDR5)
 
 -- Gigabyte
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (189, 44, 513); -- B650 EAGLE (AMD AM5, 4xDDR5)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (190, 44, 511); -- B550 GAMING X (AMD AM4, 4xDDR4)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (191, 44, 511); -- B760M DS3H D4 (Intel, 4xDDR4)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (192, 44, 513); -- B650 GAMING X AX (AMD AM5, 4xDDR5)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (193, 44, 512); -- B650M S2H (AMD AM5, 2xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (194, 44, 513); -- B760M DS3H GEN5 (Intel, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (195, 44, 513); -- B860M A ELT (Intel Ultra, 4xDDR5)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (196, 44, 513); -- B850 EAGLE (AMD AM5, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (197, 44, 511); -- B550 EAGLE (AMD AM4, 4xDDR4)
 
 -- ASRock
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (198, 44, 510); -- B760M-HDV D4 (Intel, 2xDDR4)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (198, 44, 512); -- B760M-HDV D4 (Intel, 2xDDR4)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (199, 44, 513); -- Z790 Pro RS (Intel, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (200, 44, 513); -- Z790 Steel Legend (Intel, 4xDDR5)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (201, 44, 510); -- B550M-HDV (AMD AM4, 2xDDR4)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (202, 44, 511); -- B550M PRO4 (AMD AM4, 4xDDR4)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (203, 44, 512); -- B860M-H2 (Intel Ultra, 2xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (204, 44, 513); -- B860 Pro-A (Intel Ultra, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (205, 44, 513); -- B860 LiveMixer (Intel Ultra, 4xDDR5)
 
 -- MSI
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (206, 44, 513); -- MAG B860 TOMAHAWK (Intel Ultra, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (207, 44, 513); -- B860 GAMING PLUS (Intel Ultra, 4xDDR5)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (208, 44, 513); -- MAG B850M MORTAR (AMD AM5, 4xDDR5)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (209, 44, 512); -- PRO B850M-P (AMD AM5, 2xDDR5)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (210, 44, 513); -- Z790 GAMING PLUS (Intel, 4xDDR5)
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (211, 44, 511);
 
@@ -2300,30 +2512,39 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (88, 45, 700); -- Crucial (1x16GB)
 
 -- Karty z 1x 8-pin PCIe (ID 801)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
-(14, 46, 801), (15, 46, 801), (37, 46, 801), (44, 46, 801), (52, 46, 801), 
-(56, 46, 801), (57, 46, 801), (61, 46, 801), (62, 46, 801), (64, 46, 801), 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+(14, 46, 801), (15, 46, 801), (37, 46, 801), (44, 46, 801), (52, 46, 801),
+(56, 46, 801), (57, 46, 801), (61, 46, 801), (62, 46, 801), (64, 46, 801),
 (65, 46, 801), (68, 46, 801), (69, 46, 801), (70, 46, 801);
 
+-- Karty bez dodatkowego zasilania (ID 803)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+(53, 46, 803); -- Intel Arc Pro B50
+
 -- Karty z 1x 12VHPWR (ID 802) - Nowe serie RTX 5000 i mocne jednostki
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
-(45, 46, 802), (46, 46, 802), (47, 46, 802), (48, 46, 802), (49, 46, 802), 
-(50, 46, 802), (51, 46, 802), (55, 46, 802), (59, 46, 802), (66, 46, 802), (67, 46, 802);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+(45, 46, 802), (47, 46, 802), (48, 46, 802), (49, 46, 802), (50, 46, 802),
+(51, 46, 802), (55, 46, 802), (58, 46, 802), (59, 46, 802), (66, 46, 802), (67, 46, 802);
 
 -- Karty wymagające 2x 8-pin PCIe (Podwójne wpisy dla produktu)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 (54, 46, 801), (54, 46, 801), -- Sapphire Pure
-(58, 46, 801), (58, 46, 801), -- ASRock AI PRO
 (60, 46, 801), (60, 46, 801), -- ASUS RX 9070
 (63, 46, 801), (63, 46, 801); -- ASUS RX 9070 Prime
 
+-- Karty wymagające 3x 8-pin PCIe
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+(46, 46, 801), (46, 46, 801), (46, 46, 801), -- Gigabyte RX 9070 XT
+(60, 46, 801); -- ASUS RX 9070 XT Prime OC White (trzeci 8-pin)
+
 -- Standardowe płyty (1x 8-pin CPU - ID 811)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
-(184, 47, 811), (185, 47, 811), (186, 47, 811), (191, 47, 811), (193, 47, 811), 
-(194, 47, 811), (197, 47, 811), (198, 47, 811), (201, 47, 811), (202, 47, 811), (203, 47, 811);
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+(184, 47, 811), (185, 47, 811), (186, 47, 811), (191, 47, 811), (193, 47, 811),
+(190, 47, 811), (194, 47, 811), (197, 47, 811), (198, 47, 811), (201, 47, 811),
+(202, 47, 811), (203, 47, 811);
 
 -- Płyty dla entuzjastów (2x 8-pin CPU - Podwójne wpisy)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 (182, 47, 811), (182, 47, 811), (183, 47, 811), (183, 47, 811),
 (187, 47, 811), (187, 47, 811), (188, 47, 811), (188, 47, 811),
 (189, 47, 811), (189, 47, 811), (192, 47, 811), (192, 47, 811),
@@ -2335,7 +2556,7 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 (210, 47, 811), (210, 47, 811), (211, 47, 811), (211, 47, 811);
 
 -- Zasilacze High-End (ATX 3.1 / 12VHPWR + 2x CPU)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 -- be quiet! Pure Power 13 M / Dark Power 14
 (112, 46, 802), (112, 47, 811), (112, 47, 811),
 (120, 46, 802), (120, 47, 811), (120, 47, 811),
@@ -2350,8 +2571,21 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 (119, 46, 802), (119, 47, 811), (119, 47, 811),
 (127, 46, 802), (127, 47, 811), (127, 47, 811);
 
+-- Pozostałe zasilacze ATX 3.1 / 12VHPWR
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+(113, 46, 802), (113, 47, 811), (113, 47, 811), -- be quiet! Power Zone 2 1000W
+(116, 46, 802), (116, 47, 811), (116, 47, 811), -- Gigabyte UD750GM PG5 V2
+(132, 46, 802), (132, 47, 811), (132, 47, 811), -- Corsair HXi Shift 1000W
+(134, 46, 802), (134, 47, 811), -- Corsair RM650e ATX 3.1
+(139, 46, 802), (139, 47, 811), (139, 47, 811), -- Fractal Ion 3 Gold 1000W
+(141, 46, 802), (141, 47, 811), (141, 47, 811), -- Fractal Ion 3 Gold 850W
+(144, 46, 802), (144, 47, 811), (144, 47, 811), -- Corsair RM850e ATX 3.1
+(147, 46, 802), (147, 47, 811), (147, 47, 811), -- Corsair RM750e ATX 3.1
+(149, 46, 802), (149, 47, 811), (149, 47, 811), -- Gigabyte Aorus Elite P 850W
+(163, 46, 802), (163, 47, 811); -- Cooler Master MWE Bronze V3 650W
+
 -- Zasilacze Standardowe (Bez 12VHPWR, zazwyczaj 2x 8-pin PCIe i 1x lub 2x CPU)
-INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES 
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
 -- Vero L5 / System Power 11
 (129, 46, 801), (129, 46, 801), (129, 47, 811),
 (117, 46, 801), (117, 46, 801), (117, 47, 811), (117, 47, 811),
@@ -2364,3 +2598,102 @@ INSERT INTO public.product_attributes (product_id, attribute_category_id, attrib
 (151, 46, 801), (151, 46, 801), (151, 47, 811),
 (152, 46, 801), (152, 46, 801), (152, 47, 811),
 (153, 46, 801), (153, 46, 801), (153, 47, 811), (153, 47, 811);
+
+-- Zasilacze obsługujące karty bez dodatkowego zasilania PCIe
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES
+(112, 46, 803), (113, 46, 803), (115, 46, 803), (116, 46, 803), (117, 46, 803),
+(119, 46, 803), (120, 46, 803), (121, 46, 803), (122, 46, 803), (124, 46, 803),
+(125, 46, 803), (127, 46, 803), (129, 46, 803), (130, 46, 803), (131, 46, 803),
+(132, 46, 803), (134, 46, 803), (136, 46, 803), (139, 46, 803), (141, 46, 803),
+(144, 46, 803), (147, 46, 803), (148, 46, 803), (149, 46, 803), (150, 46, 803),
+(151, 46, 803), (152, 46, 803), (153, 46, 803), (163, 46, 803);
+
+-- ASUS
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (188, 48, 902); -- PRIME Z790-P (3 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (182, 48, 902); -- TUF B860-PLUS (3 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (184, 48, 901); -- B850M MAX (2 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (185, 48, 901); -- PRIME B760M-A (2 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (183, 48, 902); -- TUF B850-PLUS (3 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (186, 48, 901); -- PRIME B550M-A (2 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (187, 48, 903); -- TUF B650E-E (4 sloty)
+
+-- Gigabyte
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (189, 48, 902); -- B650 EAGLE AX (3 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (190, 48, 901); -- B550 GAMING X V2 (2 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (191, 48, 901); -- B760M DS3H (2 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (192, 48, 902); -- B650 GAMING X AX (3 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (193, 48, 900); -- B650M S2H (1 slot)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (194, 48, 901); -- B760M DS3H GEN5 (2 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (195, 48, 902); -- B860M A ELT (3 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (196, 48, 902); -- B850 EAGLE (3 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (197, 48, 901); -- B550 EAGLE (2 sloty)
+
+-- ASRock
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (198, 48, 901); -- B760M-HDV (2 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (199, 48, 903); -- Z790 Pro RS (4 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (200, 48, 903); -- Z790 Steel Legend (4 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (201, 48, 900); -- B550M-HDV (1 slot)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (202, 48, 901); -- B550M PRO4 (2 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (203, 48, 901); -- B860M-H2 (2 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (204, 48, 902); -- B860 Pro-A (3 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (205, 48, 902); -- B860 LiveMixer (3 sloty)
+
+-- MSI
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (206, 48, 903); -- B860 TOMAHAWK (4 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (207, 48, 902); -- B860 GAMING PLUS (3 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (208, 48, 902); -- B850M MORTAR (3 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (209, 48, 901); -- PRO B850M-P (2 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (210, 48, 903); -- Z790 GAMING PLUS (4 sloty)
+INSERT INTO public.product_attributes (product_id, attribute_category_id, attribute_value_id) VALUES (211, 48, 901); -- MPG B550 GAMING PLUS (2 sloty)
+
+-- Dodanie użytkownika z nowego backupu
+INSERT INTO public.users VALUES (1, 'mb131406@stud.ur.edu.pl', '$2y$12$jp7RO2jXONMyriETrE7xxeNl9ziH4gDRxzyzAy2yga0ubsESR4eeS', 'Michał', 'Błaż', '123456789', false);
+INSERT INTO public.users VALUES (2, 'admin@admin', '$2y$12$pMYi.0BbkodP8g.JGJaiBOfwauCl5lUXaUN07rLHWdGWyBjHOqnPK', 'admin', 'admin', '111111111', true);
+INSERT INTO public.users VALUES (3, 'kb134890@stud.ur.edu.pl', '$2y$12$woyRsZFWJYOMIu6Wqd25m.VMtB6Q7v8z7eKK57zjulKJPINPLlRoO', 'Kornel', 'Barć', '123456789', false);
+INSERT INTO public.users VALUES (4, 'jc124896@stud.ur.edu.pl', '$2y$12$gorFwPdOo64n5f/QuujkruZCpWe/0fxNYKSgjnwq0/jEToMb9o7ba', 'Jakub', 'Chmiel', '531485472', false);
+
+-- Synchronizacja licznika ID dla tabeli użytkowników
+SELECT pg_catalog.setval('public.users_id_seq', (SELECT MAX(id) FROM public.users), true);
+
+
+-- 1. Produkty
+SELECT setval(pg_get_serial_sequence('public.products', 'id'), COALESCE(MAX(id), 1)) FROM public.products;
+
+-- 2. Atrybuty (Kategorie atrybutów)
+SELECT setval(pg_get_serial_sequence('public.attribute_category', 'id'), COALESCE(MAX(id), 1)) FROM public.attribute_category;
+
+-- 3. Wartości atrybutów
+SELECT setval(pg_get_serial_sequence('public.attribute_values', 'id'), COALESCE(MAX(id), 1)) FROM public.attribute_values;
+
+-- 4. Powiązania atrybutów produktów (EAV)
+SELECT setval(pg_get_serial_sequence('public.product_attributes', 'id'), COALESCE(MAX(id), 1)) FROM public.product_attributes;
+
+-- 5. Marki (Brands)
+SELECT setval(pg_get_serial_sequence('public.brands', 'id'), COALESCE(MAX(id), 1)) FROM public.brands;
+
+-- 6. Kategorie produktów
+SELECT setval(pg_get_serial_sequence('public.categories', 'id'), COALESCE(MAX(id), 1)) FROM public.categories;
+
+-- 7. Relacje Kategoria <-> Atrybut
+SELECT setval(pg_get_serial_sequence('public.category_attributes', 'id'), COALESCE(MAX(id), 1)) FROM public.category_attributes;
+
+-- 8. Użytkownicy
+SELECT setval(pg_get_serial_sequence('public.users', 'id'), COALESCE(MAX(id), 1)) FROM public.users;
+
+-- 9. Reklamacje (Complaints)
+SELECT setval(pg_get_serial_sequence('public.complaints', 'id'), COALESCE(MAX(id), 1)) FROM public.complaints;
+
+-- 10. Zamówienia
+SELECT setval(pg_get_serial_sequence('public.orders', 'id'), COALESCE(MAX(id), 1)) FROM public.orders;
+
+-- 11. Pozycje zamówień
+SELECT setval(pg_get_serial_sequence('public.order_items', 'id'), COALESCE(MAX(id), 1)) FROM public.order_items;
+
+-- 12. Metody wysyłki
+SELECT setval(pg_get_serial_sequence('public.shipping_methods', 'id'), COALESCE(MAX(id), 1)) FROM public.shipping_methods;
+
+-- 13. Adresy
+SELECT setval(pg_get_serial_sequence('public.addresses', 'id'), COALESCE(MAX(id), 1)) FROM public.addresses;
+
+-- 14. Koszyk
+SELECT setval(pg_get_serial_sequence('public.cart_items', 'id'), COALESCE(MAX(id), 1)) FROM public.cart_items;

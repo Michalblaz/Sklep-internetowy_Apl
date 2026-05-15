@@ -204,23 +204,47 @@
 
         <article class="{{ $panelCardClass }} p-4 md:p-5">
             @if (auth()->check())
-                <p class="mb-3 text-lg text-white/90">Dodaj opinię</p>
+                <p class="mb-3 text-lg text-white/90">{{ $currentUserReview ? 'Edytuj opinię' : 'Dodaj opinię' }}</p>
 
-                <form class="grid gap-4" action="#" method="POST">
+                @if (session('success'))
+                    <div class="mb-4 rounded-xl border border-emerald-400/30 bg-emerald-500/15 px-4 py-3 text-sm text-emerald-200">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="mb-4 rounded-xl border border-red-400/30 bg-red-500/15 px-4 py-3 text-sm text-red-200">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+
+                <form class="grid gap-4" action="{{ route('products.reviews.store', $product->id) }}" method="POST" data-review-form>
+                    @csrf
                     <textarea
+                        name="comment"
                         rows="6"
                         placeholder="Treść opinii..."
                         class="w-full rounded-xl border border-white/25 bg-white/4 px-4 py-3 text-white placeholder:text-white/45 focus:outline-none"
-                    ></textarea>
+                    >{{ old('comment', $currentUserReview->comment ?? '') }}</textarea>
+
+                    <input type="hidden" name="rating" value="{{ old('rating', $currentUserReview->rating ?? '') }}" data-rating-input>
 
                     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2" data-rating-stars>
                             @for ($i = 0; $i < 5; $i++)
-                                <span class="text-4xl leading-none text-white/92">&#9734;</span>
+                                <button
+                                    type="button"
+                                    class="text-4xl leading-none text-white/45 transition hover:scale-105"
+                                    data-rating-star
+                                    data-value="{{ $i + 1 }}"
+                                    aria-label="Oceń na {{ $i + 1 }} gwiazdek"
+                                >&#9734;</button>
                             @endfor
                         </div>
 
-                        <button type="submit" class="{{ $buttonClass }} min-w-[11rem] self-end opacity-30" disabled>Opublikuj</button>
+                        <button type="submit" class="{{ $buttonClass }} min-w-[11rem] self-end opacity-30" data-review-submit disabled>
+                            {{ $currentUserReview ? 'Zapisz zmiany' : 'Opublikuj' }}
+                        </button>
                     </div>
                 </form>
             @else

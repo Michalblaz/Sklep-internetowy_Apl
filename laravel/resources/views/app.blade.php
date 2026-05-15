@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+    @livewireStyles
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Techblef</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -25,11 +27,21 @@
 <header>
     <div class="flex items-center justify-between p-4 bg-black/20">
 
-        <a href="{{ route('home') }}">
-            <img src="{{ asset('images/logo.png') }}"
-                 class="w-10 h-10">
-        </a>
+        <div class="flex-1">
+            <a href="{{ route('home') }}">
+                <img src="{{ asset('images/logo.png') }}" class="w-10 h-10">
+            </a>
+        </div>
 
+        <div class="flex-[3] flex justify-center px-4">
+            <input
+                type="text"
+                placeholder="WYSZUKIWARKA"
+                data-route="wyszukaj"
+                onkeydown="if(event.key === 'Enter') handleSearch(this)"
+                class="w-full max-w-4xl px-8 py-2 rounded-full bg-purple-900/30 border border-purple-500/30 text-white outline-none focus:border-cyan-400 focus:bg-purple-900/50 transition-all text-center text-lg tracking-[0.2em] shadow-[0_0_15px_rgba(168,85,247,0.15)]""
+            >
+        </div>
         <form action="{{ route('wyszukaj') }}" method="GET" class="w-1/2 flex items-center gap-2">
             <input
                 type="text"
@@ -47,29 +59,51 @@
             </button>
         </form>
 
-        <div class="flex gap-4 text-2xl items-center">
+        <div class="flex-1 flex items-center justify-end gap-6">
 
-    <a href="/koszyk">🛒</a>
+            {{-- Sekcja narzędziowa (Admin + Koszyk) --}}
+            <div class="flex items-center gap-4 border-r border-white/10 pr-4">
+                @auth
+                    @if(Auth::user()->is_Admin)
+                        <a href="{{ route('admin') }}"
+                           class="text-xl text-gray-400 hover:text-cyan-400 hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.8)] transition-all"
+                           title="Panel Administratora">
+                           <i class="fa-solid fa-gear"></i>
+                        </a>
+                    @endif
+                @endauth
 
-    @auth
-        <span class="text-2xl text-gray-300">
-            👤 {{ Auth::user()->first_name }}
-        </span>
+                <a href="{{ route('koszyk') }}" class="text-xl text-gray-400 hover:text-purple-400 transition-all">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </a>
+            </div>
 
-        <form method="POST" action="/logout">
-            @csrf
-            <button class="text-2xl text-red-400 hover:text-red-300">
-                Wyloguj
-            </button>
-        </form>
+            {{-- Sekcja użytkownika --}}
+            <div class="flex items-center gap-2">
+                @auth
+                    <div class="flex flex-col items-end">
+                        <span class="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold leading-none mb-1">Zalogowany</span>
+                        <a href="{{ route('profil') }}" class="text-sm font-bruno text-white leading-none hover:text-cyan-400 transition-colors">
+                            {{ Auth::user()->first_name }}
+                        </a>
+                    </div>
 
-    @else
-        <a href="/log_in" class="text-2xl hover:text-purple-400 transition">
-            👤 Logowanie
-        </a>
-    @endauth
+                    <form method="POST" action="/logout" class="ml-2">
+                        @csrf
+                        <button class="group flex items-center gap-2 px-3 py-1.5 rounded-lg border border-red-500/20 bg-red-500/5 hover:bg-red-500/20 transition-all">
+                            <span class="text-[11px] uppercase tracking-widest text-red-400 font-bold">Wyloguj</span>
+                            <i class="fa-solid fa-power-off text-xs text-red-500"></i>
+                        </button>
+                    </form>
+                @else
+                    <a href="/log_in" class="flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10 hover:bg-purple-500/20 transition-all group">
+                        <i class="fa-solid fa-user text-xs text-purple-400"></i>
+                        <span class="text-[11px] uppercase tracking-widest text-white font-bold">Logowanie</span>
+                    </a>
+                @endauth
+            </div>
+        </div>
 
-</div>
     </div>
 
     <nav class="flex justify-center gap-10 py-4 text-xs uppercase tracking-widest border-b border-white/5">
@@ -101,7 +135,8 @@
     <h2 class="font-bold text-lg mb-2">Informacje</h2>
     <p class="text-gray-400 font-bruno">E-mail: techblef@gmail.com</p>
     <p class="text-gray-400 font-bruno">Numer kontaktowy: +48 109247685</p>
+    <p class="text-gray-400 font-bruno">Lokalizacja: al. Tadeusza Rejtana 16C, 35-310 Rzeszów</p>
 </footer>
-
+@livewireScripts
 </body>
 </html>

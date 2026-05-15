@@ -124,6 +124,7 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             ->groupBy('category_id')
             ->map(function ($items) {
                 return $items->map(fn ($item) => [
+                    'id'    => $item->id,
                     'label' => $item->name,
                     'value' => (int) $item->stock_quantity,
                 ])->values();
