@@ -63,6 +63,28 @@ const moveCarousel = (id, direction) => {
     updateArrows(id, maxScroll);
 };
 
+const initHomeFilters = () => {
+    const filterForm = document.getElementById('home-filter-form');
+
+    if (!filterForm) {
+        return;
+    }
+
+    filterForm.querySelectorAll('[data-filter-toggle]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const attributeId = button.dataset.filterToggle;
+            const hiddenOptions = filterForm.querySelectorAll(`[data-filter-extra="${attributeId}"]`);
+            const isOpening = Array.from(hiddenOptions).some((option) => option.classList.contains('hidden'));
+
+            hiddenOptions.forEach((option) => {
+                option.classList.toggle('hidden', !isOpening);
+            });
+
+            button.textContent = isOpening ? '- Pokaż mniej' : `+ Pokaż więcej (${hiddenOptions.length})`;
+        });
+    });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-carousel][data-carousel-direction]').forEach((button) => {
         button.addEventListener('click', () => {
@@ -75,4 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', () => {
         ['recommended', 'promo'].forEach(refreshCarousel);
     });
+
+    initHomeFilters();
 });

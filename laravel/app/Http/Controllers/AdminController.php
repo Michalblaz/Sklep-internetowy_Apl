@@ -15,6 +15,8 @@ class AdminController extends Controller
 {
     public function index()
     {
+        $lowStockThreshold = max(0, min(999, (int) request('low_stock_threshold', 5)));
+
         $categoryLabels = [
             1 => 'Procesory',
             2 => 'Karty Graficzne',
@@ -183,6 +185,13 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             ->withQueryString()
             ->fragment('uzytkownicy');
 
+        $lowStockProducts = Product::query()
+            ->with(['brand', 'category'])
+            ->where('stock_quantity', '<=', $lowStockThreshold)
+            ->orderBy('stock_quantity')
+            ->orderBy('name')
+            ->get();
+
         return view('Admin', [
             'storeStats' => [
                 'customers' => $customersCount,
@@ -202,6 +211,8 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             'modelChartDataByCategory' => $modelChartDataByCategory,
             'complaints' => $complaints,
             'users' => $users,
+            'lowStockProducts' => $lowStockProducts,
+            'lowStockThreshold' => $lowStockThreshold,
         ]);
     }
 

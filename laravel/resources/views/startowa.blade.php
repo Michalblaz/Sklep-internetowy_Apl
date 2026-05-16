@@ -105,33 +105,121 @@
     </div>
 </div>
 
-<!-- KATEGORIE -->
-<div id="kategorie" class="w-full px-4 lg:px-8 py-10">
+<!-- FILTROWANIE -->
+<div id="filtrowanie" class="w-full px-4 lg:px-8 py-10">
     <div class="flex items-center gap-4 mb-8">
         <div class="h-px grow bg-linear-to-r from-purple-500/50 to-transparent"></div>
-        <h2 class="text-xl font-bruno text-white uppercase italic">Kategorie Produktów</h2>
+        <h2 class="text-xl font-bruno text-white uppercase italic">Filtrowanie Produktów</h2>
         <div class="h-px grow bg-linear-to-l from-purple-500/50 to-transparent"></div>
     </div>
 
     <div class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-[40px] p-8">
-        <div class="flex flex-wrap gap-4 items-center">
-            @foreach($categories as $category)
-                <a href="{{ route('home', ['category' => $category->id]) }}#produkty"
-                   class="px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border
-                   {{ (string)$selectedCategory === (string)$category->id
-                        ? 'bg-purple-600 text-white border-purple-400 shadow-[0_0_12px_rgba(168,85,247,0.8)] scale-105'
-                        : 'bg-purple-900/30 border-purple-500/30 text-gray-300 hover:bg-purple-600 hover:text-white hover:scale-105' }}">
-                    {{ $category->name }}
-                </a>
-            @endforeach
+        <form id="home-filter-form" action="{{ route('home') }}#filtrowanie" method="GET" class="grid gap-6 lg:grid-cols-2 xl:grid-cols-[0.8fr_0.8fr_1fr]">
+            <div class="space-y-2">
+                <label class="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-bold">Kategoria</label>
+                <select name="category_id" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-purple-400 outline-none">
+                    <option value="">Wszystkie kategorie</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ (string)$selectedCategory === (string)$category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
-            <div class="ml-auto">
-                <a href="{{ route('home') }}#produkty"
-                   class="px-6 py-2 bg-blue-900/20 border border-blue-500/30 text-blue-300 rounded-full text-sm font-bold uppercase tracking-tighter transition-all duration-300 hover:bg-blue-600 hover:text-white hover:shadow-[0_0_15px_rgba(59,130,246,0.6)] hover:scale-105">
-                    Resetuj kategorie
+            <div class="space-y-2">
+                <label class="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-bold">Sortowanie</label>
+                <select name="sort" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-purple-400 outline-none">
+                    <option value="newest" {{ request('sort', 'newest') === 'newest' ? 'selected' : '' }}>Najnowsze</option>
+                    <option value="price_asc" {{ request('sort') === 'price_asc' ? 'selected' : '' }}>Cena rosnąco ↑</option>
+                    <option value="price_desc" {{ request('sort') === 'price_desc' ? 'selected' : '' }}>Cena malejąco ↓</option>
+                    <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Nazwa A-Z</option>
+                </select>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-bold">Cena</label>
+                <div class="flex items-center gap-3">
+                    <input type="number" name="min_price" value="{{ request('min_price') }}" placeholder="Od" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-cyan-400 outline-none">
+                    <div class="h-px w-5 bg-white/20"></div>
+                    <input type="number" name="max_price" value="{{ request('max_price') }}" placeholder="Do" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-cyan-400 outline-none">
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <label class="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-bold">Marka</label>
+                <div class="grid gap-2 sm:grid-cols-2">
+                    @foreach($brands as $brand)
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" name="brands[]" value="{{ $brand->id }}" {{ in_array($brand->id, request('brands', [])) ? 'checked' : '' }} class="w-3 h-3 rounded border-white/20 bg-white/5 text-purple-500 focus:ring-purple-500">
+                            <span class="text-xs text-white/60 group-hover:text-white transition">{{ $brand->name }}</span>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+
+            @if($selectedCategoryModel)
+                <div class="space-y-5 lg:col-span-2 xl:col-span-2">
+                    <p class="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-bold">Atrybuty kategorii</p>
+
+                    <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                        @foreach($selectedCategoryModel->attributes as $attribute)
+                            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <p class="mb-3 text-[10px] text-purple-300 uppercase tracking-[0.2em] font-bold">
+                                    {{ $attribute->display_name }}
+                                </p>
+
+                                <div class="space-y-2">
+                                    @foreach($attribute->values as $index => $value)
+                                        @php
+                                            $selectedValues = request()->input('attrs.' . $attribute->id, []);
+                                            $isSelected = is_array($selectedValues) && in_array($value->id, $selectedValues);
+                                            $isAvailable = in_array($value->id, $availableValueIds ?? []);
+                                            $isDisabled = !$isAvailable && !$isSelected;
+                                            $displayValue = strtolower((string) $value->value);
+                                        @endphp
+
+                                        <label class="home-filter-option flex items-center gap-3 group {{ $isDisabled ? 'opacity-30 cursor-not-allowed grayscale' : 'cursor-pointer' }} {{ $index >= 3 ? 'hidden' : '' }}" @if($index >= 3) data-filter-extra="{{ $attribute->id }}" @endif>
+                                            <input type="checkbox" name="attrs[{{ $attribute->id }}][]" value="{{ $value->id }}" {{ $isSelected ? 'checked' : '' }} {{ $isDisabled ? 'disabled' : '' }} class="w-3 h-3 rounded border-white/20 bg-white/5 text-cyan-400 focus:ring-cyan-400">
+                                            <span class="text-[11px] {{ $isDisabled ? 'text-white/25' : 'text-white/65 group-hover:text-cyan-300' }} transition uppercase font-bruno">
+                                                {{ match($displayValue) {
+                                                    'true' => 'Posiada',
+                                                    'false', '0' => 'Nie posiada',
+                                                    default => $value->value,
+                                                } }}
+                                                @if($isDisabled)
+                                                    <span class="text-[8px] text-white/35 ml-1 font-sans">(0)</span>
+                                                @endif
+                                            </span>
+                                        </label>
+                                    @endforeach
+                                </div>
+
+                                @if($attribute->values->count() > 3)
+                                    <button type="button" data-filter-toggle="{{ $attribute->id }}" class="mt-3 text-[10px] text-cyan-300 hover:text-white transition uppercase font-bold">
+                                        + Pokaż więcej ({{ $attribute->values->count() - 3 }})
+                                    </button>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @else
+                <div class="rounded-2xl border border-dashed border-white/10 bg-white/5 p-5 text-sm text-gray-400 lg:col-span-2 xl:col-span-2">
+                    Wybierz kategorię, aby zobaczyć filtry atrybutów.
+                </div>
+            @endif
+
+            <div class="flex flex-wrap items-center gap-3 lg:col-span-2 xl:col-span-3">
+                <button type="submit" class="px-6 py-3 bg-purple-700/70 border border-purple-400/40 text-white rounded-full text-sm font-bold uppercase tracking-widest transition hover:bg-purple-600 hover:shadow-[0_0_15px_rgba(168,85,247,0.6)]">
+                    Filtruj
+                </button>
+
+                <a href="{{ route('home') }}#filtrowanie" class="px-6 py-3 bg-blue-900/20 border border-blue-500/30 text-blue-300 rounded-full text-sm font-bold uppercase tracking-widest transition hover:bg-blue-600 hover:text-white hover:shadow-[0_0_15px_rgba(59,130,246,0.6)]">
+                    Resetuj filtry
                 </a>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -140,6 +228,7 @@
     <div class="flex items-center gap-4 mb-8">
         <div class="h-px grow bg-linear-to-r from-emerald-500/50 to-transparent"></div>
         <h2 class="text-xl font-bruno text-white uppercase italic">Produkty</h2>
+        <span class="text-[10px] text-gray-500 uppercase tracking-[0.25em]">Znaleziono: {{ $all_products->total() }}</span>
         <div class="h-px grow bg-linear-to-l from-emerald-500/50 to-transparent"></div>
     </div>
 

@@ -24,6 +24,32 @@
     background: linear-gradient(90deg, rgba(34, 211, 238, 1), rgba(192, 38, 211, 0.94));
 }
 
+.admin-low-stock-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(251, 191, 36, 0.78) rgba(255, 255, 255, 0.08);
+}
+
+.admin-low-stock-scroll::-webkit-scrollbar {
+    width: 10px;
+}
+
+.admin-low-stock-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 9999px;
+}
+
+.admin-low-stock-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(251, 191, 36, 0.9), rgba(239, 68, 68, 0.78));
+    border: 2px solid rgba(15, 23, 42, 0.94);
+    border-radius: 9999px;
+    box-shadow: 0 0 18px rgba(251, 191, 36, 0.18);
+}
+
+.admin-low-stock-scroll::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(252, 211, 77, 1), rgba(248, 113, 113, 0.95));
+}
+
 .admin-chart-label {
     transform: translateX(-40%) rotate(32deg);
 }

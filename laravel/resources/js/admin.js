@@ -81,7 +81,68 @@ const renderChartFrame = (items, maxValue, chartColors) => {
     `;
 };
 
+const initAdminConfirmModal = () => {
+    const modal = document.getElementById('admin-confirm-modal');
+    const title = document.getElementById('admin-confirm-title');
+    const message = document.getElementById('admin-confirm-message');
+    const confirmButton = document.getElementById('admin-confirm-submit');
+    const cancelButton = document.getElementById('admin-confirm-cancel');
+    const forms = document.querySelectorAll('[data-admin-confirm]');
+
+    if (!modal || !title || !message || !confirmButton || !cancelButton || !forms.length) {
+        return;
+    }
+
+    let pendingForm = null;
+
+    const closeModal = () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.setAttribute('aria-hidden', 'true');
+        pendingForm = null;
+    };
+
+    const openModal = (form) => {
+        pendingForm = form;
+        title.textContent = form.dataset.confirmTitle || 'Potwierdź akcję';
+        message.textContent = form.dataset.confirmMessage || 'Czy na pewno chcesz wykonać tę akcję?';
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.setAttribute('aria-hidden', 'false');
+        confirmButton.focus();
+    };
+
+    forms.forEach((form) => {
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            openModal(form);
+        });
+    });
+
+    confirmButton.addEventListener('click', () => {
+        if (pendingForm) {
+            pendingForm.submit();
+        }
+    });
+
+    cancelButton.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
+    initAdminConfirmModal();
+
     const categoryChart = document.getElementById('category-chart');
     const modelChart = document.getElementById('model-chart');
     const emptyState = document.getElementById('model-chart-empty');
