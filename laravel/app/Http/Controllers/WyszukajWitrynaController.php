@@ -56,7 +56,7 @@ class WyszukajWitrynaController extends Controller
             'brand',
             'category',
             'attributeValues.attribute',
-        ]);
+        ])->withAvg('reviews', 'rating');
 
         $this->applySearch($query, $search, $likeOperator);
 

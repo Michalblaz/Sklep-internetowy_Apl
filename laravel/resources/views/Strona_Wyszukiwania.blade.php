@@ -113,9 +113,18 @@
                             : 0;
 
                         $price = $product->promo_price ?? $product->base_price;
+                        $rating = round((float) ($product->reviews_avg_rating ?? 0), 2);
+                        $ratingColorSegments = [];
+
+                        for ($segment = 0; $segment < 5; $segment++) {
+                            $segmentFill = max(0, min(1, $rating - $segment));
+                            $ratingColorSegments[] = $segmentFill >= 1
+                                ? 1
+                                : ($segmentFill <= 0 ? 0 : round(floor($segmentFill * 10) / 10, 1));
+                        }
                     @endphp
 
-                    <div class="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6 hover:bg-white/10 transition">
+                    <div class="search-result-card bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6 hover:bg-white/10 transition">
 
                         {{-- LEWA --}}
                         <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full">
@@ -130,8 +139,26 @@
                                     {{ $product->name }}
                                 </p>
 
+                                <div class="order-3 mt-3 flex w-fit items-center gap-3 rounded-full border border-white/10 bg-black/20 px-3 py-2"
+                                     aria-label="Srednia ocena produktu: {{ number_format($rating, 2) }}">
+                                    <div class="flex items-center gap-1">
+                                        @foreach($ratingColorSegments as $segmentFill)
+                                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="rating-star h-4 w-4">
+                                                <path class="rating-star__base" d="M12 2.5 14.94 8.46 21.52 9.42 16.76 14.06 17.88 20.62 12 17.53 6.12 20.62 7.24 14.06 2.48 9.42 9.06 8.46 12 2.5Z" />
+                                                <path class="rating-star__fill"
+                                                      style="clip-path: inset(0 {{ number_format((1 - $segmentFill) * 100, 0, '.', '') }}% 0 0);"
+                                                      d="M12 2.5 14.94 8.46 21.52 9.42 16.76 14.06 17.88 20.62 12 17.53 6.12 20.62 7.24 14.06 2.48 9.42 9.06 8.46 12 2.5Z" />
+                                            </svg>
+                                        @endforeach
+                                    </div>
+
+                                    <span class="text-xs font-semibold text-white/85">
+                                        {{ number_format($rating, 2) }}
+                                    </span>
+                                </div>
+
                                 <a href="{{ route('products.show', $product->id) }}"
-                                   class="mt-4 inline-flex justify-center px-5 py-2 w-[200px]
+                                   class="order-2 mt-12 inline-flex justify-center px-5 py-2 w-[200px]
                                           bg-linear-to-r from-indigo-600 to-purple-600
                                           hover:from-indigo-500 hover:to-purple-500
                                           text-white font-bold rounded-full transition">
@@ -218,6 +245,13 @@
                         </div>
                     </div>
 
+                    <button type="submit"
+                            class="w-full py-3 bg-linear-to-r from-indigo-600 to-purple-600
+                                   hover:from-indigo-500 hover:to-purple-500
+                                   text-white font-bold rounded-xl uppercase tracking-widest text-xs transition">
+                        Filtruj
+                    </button>
+
                     {{-- MARKI --}}
                     @if($brands->count())
                         <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
@@ -300,6 +334,20 @@
     scrollbar-color: rgba(168, 85, 247, 0.65) rgba(255, 255, 255, 0.08);
 }
 
+.rating-star__base {
+    fill: rgba(255, 255, 255, 0.16);
+    stroke: rgba(255, 255, 255, 0.22);
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+}
+
+.rating-star__fill {
+    fill: rgb(243, 255, 0);
+    stroke: rgba(6, 8, 14, 0.9);
+    stroke-width: 1.1;
+    stroke-linejoin: round;
+}
+
 .filter-options::-webkit-scrollbar {
     width: 6px;
 }
@@ -370,18 +418,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!form) return;
 
-    document.querySelectorAll('#filter-form input[type="checkbox"], select[form="filter-form"]').forEach(el => {
-        el.addEventListener('change', () => form.submit());
-    });
-
-    let t;
-    form.querySelectorAll('input[type="number"]').forEach(input => {
-        input.addEventListener('input', () => {
-            clearTimeout(t);
-            t = setTimeout(() => form.submit(), 600);
-        });
-    });
-
     const track = document.getElementById('recommended-track');
     const container = document.getElementById('recommended-container');
     if (track && container) {
@@ -391,17 +427,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const filterPanel = document.getElementById('filter-panel');
     const resultsList = document.getElementById('search-results-list');
+    const firstResultCard = document.querySelector('.search-result-card');
 
     function syncFilterPanelHeight() {
-        if (!filterPanel || !resultsList || window.innerWidth < 1024) {
+        if (!filterPanel || !resultsList || !firstResultCard || window.innerWidth < 1024) {
             if (filterPanel) {
                 filterPanel.style.maxHeight = '';
+                filterPanel.style.minHeight = '';
             }
 
             return;
         }
 
-        filterPanel.style.maxHeight = `${resultsList.offsetHeight}px`;
+        const cardHeight = firstResultCard.offsetHeight;
+        const resultCards = resultsList.querySelectorAll('.search-result-card').length;
+        const resultListStyles = window.getComputedStyle(resultsList);
+        const cardGap = parseFloat(resultListStyles.rowGap || resultListStyles.gap) || 16;
+        const visibleCards = Math.min(Math.max(resultCards, 2), 8);
+        const maxPanelHeight = (cardHeight * visibleCards) + (cardGap * (visibleCards - 1));
+
+        filterPanel.style.minHeight = `${(cardHeight * 2) + cardGap}px`;
+        filterPanel.style.maxHeight = `${maxPanelHeight}px`;
     }
 
     syncFilterPanelHeight();
