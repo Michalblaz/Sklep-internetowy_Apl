@@ -3,6 +3,20 @@
     'discount' => 0,
 ])
 
+@php
+    $rating = round((float) ($product->reviews_avg_rating ?? 0), 2);
+    $ratingSegments = [];
+
+    for ($segment = 0; $segment < 5; $segment++) {
+        $segmentFill = max(0, min(1, $rating - $segment));
+        $ratingSegments[] = $segmentFill >= 1
+            ? 1
+            : ($segmentFill <= 0 ? 0 : round(floor($segmentFill * 10) / 10, 1));
+    }
+
+    $stockQuantity = (int) ($product->stock_quantity ?? 0);
+@endphp
+
 <div class="relative group flex flex-col h-full bg-[#1a202c] border border-gray-700 rounded-2xl p-4 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)]">
 
     <div class="absolute top-3 left-3 z-10 bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-xl text-sm shadow-[0_0_15px_rgba(34,197,94,0.3)] transition-all duration-300 group-hover:scale-105">
@@ -38,12 +52,37 @@
     </div>
 
     <div class="flex flex-col flex-grow">
-        <h3 class="text-white text-center font-bold text-lg mb-6 tracking-wide uppercase">
+        <h3 class="flex min-h-[4.75rem] items-start justify-center text-white text-center font-bold text-lg mb-3 tracking-wide uppercase">
             {{ $product->name }}
         </h3>
 
+        <div class="mt-auto mb-6 flex min-h-[4.25rem] flex-col items-center justify-end gap-2 text-center">
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] {{ $stockQuantity > 0 ? 'text-cyan-200/85' : 'text-red-300/90' }}">
+                {{ $stockQuantity > 0 ? 'Na stanie: ' . $stockQuantity : 'Brak na stanie' }}
+            </p>
+
+            <div class="flex items-center justify-center gap-2 text-sm text-white/80" title="Średnia ocen: {{ number_format($rating, 2, ',', ' ') }}">
+                <div class="aspect-square w-8">
+                    <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false" class="block h-full w-full overflow-visible">
+                        @foreach ($ratingSegments as $segmentFill)
+                            @php
+                                $segmentStyle = '--arm-fill:' . number_format($segmentFill, 2, '.', '') . ';';
+                            @endphp
+                            <polygon
+                                points="50,50 38,33 50,6 62,33"
+                                class="home-rating-star__arm"
+                                style="{{ $segmentStyle }}"
+                                transform="rotate({{ $loop->index * 72 }} 50 50)"
+                            />
+                        @endforeach
+                    </svg>
+                </div>
+                <span class="font-semibold">{{ number_format($rating, 2, ',', ' ') }}</span>
+            </div>
+        </div>
+
         <a href="{{ route('products.show', $product->id) }}"
-           class="mt-auto w-full inline-flex justify-center py-3 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-full transition-all duration-300 shadow-lg uppercase tracking-widest">
+           class="w-full inline-flex justify-center py-3 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-full transition-all duration-300 shadow-lg uppercase tracking-widest">
             Zobacz
         </a>
     </div>

@@ -55,11 +55,11 @@ const renderChartFrame = (items, maxValue, chartColors) => {
     const scaleTicks = buildScaleTicks(maxValue);
 
     return `
-        <div class="mb-4 flex items-center justify-between gap-4">
+        <div class="mb-8 flex items-start justify-between gap-4">
             <p class="text-xs uppercase tracking-[0.28em] text-gray-400">Ilość produktów</p>
             <p class="text-[11px] text-gray-500">Najedź na słupek, aby zobaczyć szczegóły</p>
         </div>
-        <div class="relative min-w-max pb-36">
+        <div class="relative min-w-max pb-36 pt-3">
             <div class="absolute left-0 top-0 bottom-28 w-14">
                 ${scaleTicks.map((tick, index) => {
                     const position = scaleTicks.length > 1 ? (index / (scaleTicks.length - 1)) * 100 : 0;
@@ -81,7 +81,68 @@ const renderChartFrame = (items, maxValue, chartColors) => {
     `;
 };
 
+const initAdminConfirmModal = () => {
+    const modal = document.getElementById('admin-confirm-modal');
+    const title = document.getElementById('admin-confirm-title');
+    const message = document.getElementById('admin-confirm-message');
+    const confirmButton = document.getElementById('admin-confirm-submit');
+    const cancelButton = document.getElementById('admin-confirm-cancel');
+    const forms = document.querySelectorAll('[data-admin-confirm]');
+
+    if (!modal || !title || !message || !confirmButton || !cancelButton || !forms.length) {
+        return;
+    }
+
+    let pendingForm = null;
+
+    const closeModal = () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.setAttribute('aria-hidden', 'true');
+        pendingForm = null;
+    };
+
+    const openModal = (form) => {
+        pendingForm = form;
+        title.textContent = form.dataset.confirmTitle || 'Potwierdź akcję';
+        message.textContent = form.dataset.confirmMessage || 'Czy na pewno chcesz wykonać tę akcję?';
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.setAttribute('aria-hidden', 'false');
+        confirmButton.focus();
+    };
+
+    forms.forEach((form) => {
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            openModal(form);
+        });
+    });
+
+    confirmButton.addEventListener('click', () => {
+        if (pendingForm) {
+            pendingForm.submit();
+        }
+    });
+
+    cancelButton.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
+    initAdminConfirmModal();
+
     const categoryChart = document.getElementById('category-chart');
     const modelChart = document.getElementById('model-chart');
     const emptyState = document.getElementById('model-chart-empty');

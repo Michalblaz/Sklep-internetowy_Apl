@@ -1,0 +1,30 @@
+.home-carousel-item {
+    display: flex;
+}
+
+.home-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 260px));
+    justify-content: center;
+    align-items: stretch;
+    gap: 1.5rem;
+}
+
+.home-product-cell {
+    display: flex;
+    width: 260px;
+    min-width: 260px;
+    height: 100%;
+}
+
+.home-product-cell > * {
+    width: 100%;
+}
+
+.home-rating-star__arm {
+    fill: rgb(calc(243 * var(--arm-fill)), calc(255 * var(--arm-fill)), 0);
+    stroke: rgba(6, 8, 14, 1);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}

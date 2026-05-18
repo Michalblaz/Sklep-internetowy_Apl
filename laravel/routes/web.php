@@ -33,6 +33,9 @@ use App\Livewire\Admin\ProductForm;
     Route::post('/produkt/{id}/opinie', [ProductPageController::class, 'storeReview'])->whereNumber('id')->middleware('auth')->name('products.reviews.store');
 
         //Wyszukiwarka
+    Route::get('/wyszukiwanie/podpowiedzi', [WyszukajWitrynaController::class, 'suggestions'])
+    ->name('wyszukaj.suggestions');
+
     Route::get('/wyszukiwanie', [WyszukajWitrynaController::class, 'PrzeniesNaStrone'])
     ->name('wyszukaj');
 
@@ -49,6 +52,7 @@ use App\Livewire\Admin\ProductForm;
      Route::get('/admin/products/create', ProductForm::class)->name('admin.products.create');
      Route::post('/admin/users/{user}/suspend', [AdminController::class, 'suspend'])->name('admin.users.suspend');
      Route::post('/admin/users/{user}/ban', [AdminController::class, 'ban'])->name('admin.users.ban');
+     Route::post('/admin/users/{user}/unban', [AdminController::class, 'unban'])->name('admin.users.unban');
 
      // Logowanie / Rejestracja
     Route::get('/log_in', [AuthController::class, 'showLoginForm'])->name('log_in');

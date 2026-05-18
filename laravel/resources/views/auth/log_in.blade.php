@@ -22,7 +22,7 @@
         </h1>
 
         @if ($errors->any())
-            <div class="text-red-400 mb-4 text-center">
+            <div class="mb-4 w-full max-w-xl rounded-xl border border-red-400/30 bg-red-500/10 px-5 py-4 text-center text-red-300 shadow-[0_0_20px_rgba(239,68,68,0.12)]">
                 @foreach ($errors->all() as $error)
                     <p>{{ $error }}</p>
                 @endforeach

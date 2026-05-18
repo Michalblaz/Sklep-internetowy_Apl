@@ -142,12 +142,12 @@
                                 id="category-chart"
                                 class="admin-chart-scroll max-w-full rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-cyan-500/5 px-4 lg:px-6 py-5 overflow-x-auto overflow-y-hidden"
                             >
-                                <div class="mb-4 flex items-center justify-between gap-4">
+                                <div class="mb-8 flex items-start justify-between gap-4">
                                     <p class="text-xs uppercase tracking-[0.28em] text-gray-400">Ilość produktów</p>
                                     <p class="text-[11px] text-gray-500">Najedź na słupek, aby zobaczyć szczegóły</p>
                                 </div>
 
-                                <div class="relative min-w-max pb-36">
+                                <div class="relative min-w-max pb-36 pt-3">
                                     <div class="absolute left-0 top-0 bottom-28 w-14">
                                         @foreach ($categoryScale as $index => $tick)
                                             @php
@@ -233,6 +233,81 @@
                 class="hidden"
             ></div>
             @if(request('action') !== 'add-product')
+            <section id="stany-magazynowe" class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                        <h2 class="text-purple-400 text-xl font-bruno">Kończące się modele</h2>
+                        <p class="text-sm text-gray-400">Produkty, których stan magazynowy spadł do ustawionego progu lub mniej.</p>
+                    </div>
+                    <form action="{{ route('admin') }}#stany-magazynowe" method="GET" class="flex flex-wrap items-end gap-3">
+                        <div>
+                            <label for="low_stock_threshold" class="mb-2 block text-[10px] uppercase tracking-[0.25em] text-gray-500">
+                                Próg bazowy: 5 szt.
+                            </label>
+                            <input
+                                id="low_stock_threshold"
+                                name="low_stock_threshold"
+                                type="number"
+                                min="0"
+                                max="999"
+                                value="{{ $lowStockThreshold }}"
+                                class="w-28 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white outline-none focus:border-amber-300/60"
+                            >
+                        </div>
+                        <button
+                            type="submit"
+                            class="rounded-xl border border-amber-300/25 bg-amber-500/10 px-4 py-2 text-sm text-amber-200 transition hover:bg-amber-500/20"
+                        >
+                            Zmień próg
+                        </button>
+                    </form>
+                </div>
+
+                @if($lowStockProducts->isEmpty())
+                    <div class="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-8 text-center text-emerald-200">
+                        Wszystkie modele mają bezpieczny stan magazynowy.
+                    </div>
+                @else
+                    <div class="admin-low-stock-scroll grid max-h-[34rem] gap-4 overflow-y-auto pr-2 md:grid-cols-2 xl:grid-cols-3">
+                        @foreach($lowStockProducts as $product)
+                            @php
+                                $isOutOfStock = (int) $product->stock_quantity === 0;
+                            @endphp
+
+                            <div class="rounded-2xl border {{ $isOutOfStock ? 'border-red-400/25 bg-red-500/10' : 'border-amber-400/25 bg-amber-500/10' }} p-5">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div>
+                                        <p class="text-white font-semibold leading-snug">{{ $product->name }}</p>
+                                        <p class="mt-1 text-xs text-gray-400">
+                                            {{ $product->category->name ?? 'Brak kategorii' }}
+                                            @if($product->brand)
+                                                · {{ $product->brand->name }}
+                                            @endif
+                                        </p>
+                                    </div>
+
+                                    <span class="shrink-0 rounded-full border px-3 py-1 text-xs font-bold uppercase {{ $isOutOfStock ? 'border-red-300/30 text-red-200 bg-red-500/15' : 'border-amber-300/30 text-amber-200 bg-amber-500/15' }}">
+                                        {{ $isOutOfStock ? 'Brak' : 'Mało' }}
+                                    </span>
+                                </div>
+
+                                <div class="mt-5 flex items-end justify-between gap-4">
+                                    <div>
+                                        <p class="text-xs uppercase tracking-[0.25em] text-gray-500">Na stanie</p>
+                                        <p class="text-3xl text-white">{{ number_format($product->stock_quantity) }}</p>
+                                    </div>
+
+                                    <a href="{{ route('admin', ['action' => 'add-product', 'edit_id' => $product->id]) }}"
+                                       class="rounded-xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-200 transition hover:bg-cyan-500/20">
+                                        Edytuj
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </section>
+
             <section id="reklamacje" class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
@@ -343,25 +418,41 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col sm:flex-row gap-3 lg:w-[280px]">
-                                    <form method="POST" action="{{ route('admin.users.suspend', $user->id) }}" class="flex-1">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:w-[480px]">
+                                    <form method="POST" action="{{ route('admin.users.unban', $user->id) }}" data-admin-confirm data-confirm-title="Odblokować konto?" data-confirm-message="Czy na pewno chcesz odblokować konto {{ $user->email }}?">
                                         @csrf
                                         <button
                                             type="submit"
-                                            @disabled($user->account_status !== 'aktywny')
-                                            class="w-full rounded-xl border border-amber-400/20 bg-amber-500/10 px-4 py-2 text-sm text-amber-200 transition enabled:hover:bg-amber-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                                            @disabled($user->account_status === 'aktywny')
+                                            class="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-2 text-center text-sm leading-tight text-cyan-200 transition enabled:hover:bg-cyan-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                                        >
+                                            Odblokuj
+                                        </button>
+                                    </form>
+
+                                    <form
+                                        method="POST"
+                                        action="{{ route('admin.users.suspend', $user->id) }}"
+                                        data-admin-confirm
+                                        data-confirm-title="{{ $user->account_status === 'zbanowany' ? 'Zmienić ban na zawieszenie?' : 'Zawiesić konto?' }}"
+                                        data-confirm-message="{{ $user->account_status === 'zbanowany' ? 'Czy na pewno chcesz zmienić ban konta ' . $user->email . ' na zawieszenie na 7 dni?' : 'Czy na pewno chcesz zawiesić konto ' . $user->email . ' na 7 dni?' }}"
+                                    >
+                                        @csrf
+                                        <button
+                                            type="submit"
+                                            @disabled($user->account_status === 'zawieszony')
+                                            class="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-amber-400/20 bg-amber-500/10 px-4 py-2 text-center text-sm leading-tight text-amber-200 transition enabled:hover:bg-amber-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
                                         >
                                             Zawieś na 7 dni
                                         </button>
                                     </form>
 
-                                    <form method="POST" action="{{ route('admin.users.ban', $user->id) }}" class="flex-1">
+                                    <form method="POST" action="{{ route('admin.users.ban', $user->id) }}" data-admin-confirm data-confirm-title="Zbanować konto?" data-confirm-message="Czy na pewno chcesz zbanować konto {{ $user->email }} bezterminowo?">
                                         @csrf
                                         <button
                                             type="submit"
                                             @disabled($user->account_status === 'zbanowany')
-                                            onclick="return confirm('Czy na pewno chcesz zbanować to konto bezterminowo?')"
-                                            class="w-full rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-2 text-sm text-red-200 transition enabled:hover:bg-red-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                                            class="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-2 text-center text-sm leading-tight text-red-200 transition enabled:hover:bg-red-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
                                         >
                                             Ban bezterminowy
                                         </button>
@@ -388,12 +479,13 @@
     <aside class="w-full xl:w-[260px] xl:sticky xl:top-8 self-start bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-xl">
         <h2 class="text-white text-xl mb-6 font-bruno">Menu</h2>
         <div class="flex flex-col gap-3 text-sm uppercase tracking-[0.25em] text-purple-300">
-            <a href="#sklep" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Sklep</a>
-            <a href="#konta" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Konta</a>
-            <a href="#statystyki" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Statystyki</a>
-            <a href="#wykresy" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Wykresy</a>
-            <a href="#reklamacje" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Reklamacje</a>
-            <a href="#uzytkownicy" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Użytkownicy</a>
+            <a href="{{ route('admin') }}#sklep" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Sklep</a>
+            <a href="{{ route('admin') }}#konta" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Konta</a>
+            <a href="{{ route('admin') }}#statystyki" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Statystyki</a>
+            <a href="{{ route('admin') }}#wykresy" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Wykresy</a>
+            <a href="{{ route('admin') }}#stany-magazynowe" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Stany</a>
+            <a href="{{ route('admin') }}#reklamacje" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Reklamacje</a>
+            <a href="{{ route('admin') }}#uzytkownicy" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Użytkownicy</a>
             <hr class="border-white/10 my-2">
            <a href="{{ route('admin', ['action' => 'add-product']) }}"
                 class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 transition">
@@ -402,5 +494,29 @@
             </a>
         </div>
     </aside>
+</div>
+
+<div id="admin-confirm-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/70 px-4 backdrop-blur-sm" aria-hidden="true">
+    <div class="w-full max-w-md rounded-3xl border border-white/10 bg-slate-950/95 p-6 shadow-[0_24px_70px_rgba(0,0,0,0.55)]">
+        <p id="admin-confirm-title" class="text-xl text-white font-bruno">Potwierdź akcję</p>
+        <p id="admin-confirm-message" class="mt-4 text-sm leading-6 text-gray-300">Czy na pewno chcesz wykonać tę akcję?</p>
+
+        <div class="mt-7 grid grid-cols-2 gap-3">
+            <button
+                type="button"
+                id="admin-confirm-cancel"
+                class="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-gray-200 transition hover:bg-white/10"
+            >
+                Anuluj
+            </button>
+            <button
+                type="button"
+                id="admin-confirm-submit"
+                class="rounded-xl border border-purple-300/30 bg-purple-600/80 px-4 py-3 text-sm font-bold text-white transition hover:bg-purple-500"
+            >
+                Potwierdź
+            </button>
+        </div>
+    </div>
 </div>
 @endsection
