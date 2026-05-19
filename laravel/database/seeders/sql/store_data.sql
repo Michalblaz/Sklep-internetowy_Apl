@@ -2652,6 +2652,31 @@ INSERT INTO public.users VALUES (2, 'admin@admin', '$2y$12$pMYi.0BbkodP8g.JGJaiB
 INSERT INTO public.users VALUES (3, 'kb134890@stud.ur.edu.pl', '$2y$12$woyRsZFWJYOMIu6Wqd25m.VMtB6Q7v8z7eKK57zjulKJPINPLlRoO', 'Kornel', 'Barć', '123456789', false);
 INSERT INTO public.users VALUES (4, 'jc134896@stud.ur.edu.pl', '$2y$12$gorFwPdOo64n5f/QuujkruZCpWe/0fxNYKSgjnwq0/jEToMb9o7ba', 'Jakub', 'Chmiel', '531485472', false);
 
+
+
+
+
+
+
+--  Głośniki
+INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (354, 11, 67, 'Creative 2.0 Pebble (czarny)', '80.00', null, 10, 4, 'products/speakers/Creative_2.0_Pebble_(czarny).jpg'), (355, 11, 68, 'Microlab M-300BT', '370.00', null, 5, 5, 'products/speakers/Microlab_M-300BT.jpg'), (356, 11, 69, 'Edifier R1855DB', '590.00', '550.00', 5, 120, 'products/speakers/Edifier_R1855DB.jpg'), (357, 11, 70, 'Onkyo CREATOR GX-30ARC Czarne', '1200.00', null, 20, 70, 'products/speakers/Onkyo_CREATOR_GX-30ARC_Czarne.jpg'), (358, 11, 70, 'Onkyo CREATOR GX-10-DB Białe', '900.00', null, 27, 90, 'products/speakers/Onkyo_CREATOR_GX-10-DB_Białe.jpg'), (359, 11, 67, 'Creative Sound Blaster GS3', '200.00', null, 17, 50, 'products/speakers/Creative_Sound_Blaster_GS3.jpg'), (360, 11, 72, 'SpeedLink GRAVITY LT 2.1', '350.00', null, 12, 70, 'products/speakers/SpeedLink_GRAVITY_LT_2.1.jpg'), (361, 11, 71, 'Trust GXT619W THORNE RGB SOUNDBAR', '140.00', null, 28, 35, 'products/speakers/Trust_GXT619W_THORNE_RGB_SOUNDBAR.jpg'), (362, 11, 52, 'SteelSeries Arena 7', '999.00', '980.00', 18, 40, 'products/speakers/SteelSeries_Arena_7.jpg'), (363, 11, 67, 'Creative 2.0 Pebble V3 BT', '140.00', null, 36, 40, 'products/speakers/Creative_2.0_Pebble_V3_BT.jpg'), (364, 11, 72, 'SpeedLink TOKEN RGB Gaming Stereo Speaker', '80.00', null, 6, 30, 'products/speakers/SpeedLink_TOKEN_RGB_Gaming_Stereo_Speaker.jpg'), (365, 11, 47, 'Genesis Helium 200 2.0', '140.00', null, 9, 30, 'products/speakers/Genesis_Helium_200_2.0.jpg'), (366, 11, 71, 'Trust 2.1 GXT 629 Tytan RGB Speaker Set', '370.00', null, 9, 30, 'products/speakers/Trust_2.1_GXT_629_Tytan_RGB_Speaker_Set.jpg'), (367, 11, 69, 'Edifier 2.1 M1360', '180.00', null, 19, 40, 'products/speakers/Edifier_2.1_M1360.jpg'), (368, 11, 69, 'Edifier Głośniki 2.0 HECATE G2000 (białe)', '300.00', null, 20, 22, 'products/speakers/Edifier_Głośniki_2.0_HECATE_G2000_(białe).jpg'), (369, 11, 40, 'Dell Listwa dźwiękowa Dell Slim — SB521A', '220.00', null, 30, 42, 'products/speakers/Dell_Listwa_dźwiękowa_Dell_Slim_—_SB521A.jpg'), (370, 11, 66, 'Silver Monkey X Jewel black', '250.00', null, 3, 50, 'products/speakers/Silver_Monkey_X_Jewel_black.jpg'), (371, 11, 67, 'Creative Stage Air v2', '200.00', null, 13, 30, 'products/speakers/Creative_Stage_Air_v2.jpg'), (372, 11, 66, 'Silver Monkey X Jewel white', '250.00', null, 19, 40, 'products/speakers/Silver_Monkey_X_Jewel_white.jpg'), (373, 11, 55, 'Logitech 5.1 Z906 Surround Sound Speakers', '1120.00', null, 12, 300, 'products/speakers/Logitech_5.1_Z906_Surround_Sound_Speakers.jpg'), (374, 11, 72, 'SpeedLink GRAVITY CARBON RGB 2.1', '435.00', null, 2, 220, 'products/speakers/SpeedLink_GRAVITY_CARBON_RGB_2.1.jpg');
+INSERT INTO public.product_attributes(product_id, attribute_category_id, attribute_value_id) VALUES (354, 29, 254), (355, 29, 254), ( 356, 29, 254), ( 357, 29, 254), ( 358, 29, 254), ( 359, 29, 254), ( 360, 29, 254), (361, 29, 254), ( 362, 29, 254), ( 363, 29, 254), ( 364, 29, 254), ( 365, 29, 254), ( 366, 29, 254), ( 367, 29, 254), ( 368, 29, 254), ( 369, 29, 254), ( 370, 29, 254), ( 371, 29, 254), ( 372, 29, 254), ( 373, 29, 254), ( 374, 29, 254);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- Synchronizacja licznika ID dla tabeli użytkowników
 SELECT pg_catalog.setval('public.users_id_seq', (SELECT MAX(id) FROM public.users), true);
 

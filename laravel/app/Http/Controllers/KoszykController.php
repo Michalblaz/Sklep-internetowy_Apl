@@ -11,4 +11,9 @@ class KoszykController extends Controller
 
         return view('koszyk');
     }
+    public function transakcje()
+    {
+
+        return view('Transakcje');
+    }
 }

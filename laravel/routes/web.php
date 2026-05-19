@@ -43,7 +43,8 @@ use App\Livewire\Admin\ProductForm;
 
         // Koszyk
     Route::get('/koszyk', [KoszykController::class, 'index'])->name('koszyk');
-    Route::view('/Transakcje', 'Transakcje')->name('transakcje');
+    Route::get('/koszyk/transakcje', [KoszykController::class, 'Transakcje'])->name('transakcje');
+
 
 
 
