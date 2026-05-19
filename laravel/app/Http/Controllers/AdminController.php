@@ -156,6 +156,10 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             ->withQueryString()
             ->fragment('reklamacje');
 
+        $userNameFilter = trim((string) request('user_name', ''));
+        $userEmailFilter = trim((string) request('user_email', ''));
+        $userStatusFilter = request('user_status');
+
         $users = User::query()
             ->where(function ($query) {
                 $query->where('users.is_Admin', false)
@@ -163,6 +167,36 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             })
             ->leftJoinSub($latestBans, 'latest_bans', function ($join) {
                 $join->on('users.id', '=', 'latest_bans.id_users');
+            })
+            ->when($userNameFilter !== '', function ($query) use ($userNameFilter) {
+                $query->whereRaw(
+                    "LOWER(TRIM(COALESCE(users.first_name, '') || ' ' || COALESCE(users.last_name, ''))) LIKE ?",
+                    ['%' . mb_strtolower($userNameFilter) . '%']
+                );
+            })
+            ->when($userEmailFilter !== '', function ($query) use ($userEmailFilter) {
+                $query->whereRaw('LOWER(users.email) LIKE ?', ['%' . mb_strtolower($userEmailFilter) . '%']);
+            })
+            ->when(in_array($userStatusFilter, ['aktywny', 'zawieszony', 'zbanowany'], true), function ($query) use ($userStatusFilter) {
+                match ($userStatusFilter) {
+                    'zbanowany' => $query->whereNotNull('latest_bans.id_users')
+                        ->where(function ($query) {
+                            $query->whereNull('latest_bans.end_time')
+                                ->orWhereRaw("LOWER(latest_bans.end_time::text) IN ('infinity', 'infinite')");
+                        }),
+                    'zawieszony' => $query->whereNotNull('latest_bans.id_users')
+                        ->whereNotNull('latest_bans.end_time')
+                        ->whereRaw("LOWER(latest_bans.end_time::text) NOT IN ('infinity', 'infinite')")
+                        ->where('latest_bans.end_time', '>', now()),
+                    default => $query->where(function ($query) {
+                        $query->whereNull('latest_bans.id_users')
+                            ->orWhere(function ($query) {
+                                $query->whereNotNull('latest_bans.end_time')
+                                    ->whereRaw("LOWER(latest_bans.end_time::text) NOT IN ('infinity', 'infinite')")
+                                    ->where('latest_bans.end_time', '<=', now());
+                            });
+                    }),
+                };
             })
             ->select(
                 'users.id',
