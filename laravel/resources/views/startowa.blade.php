@@ -146,20 +146,40 @@
                 </div>
             </div>
 
-            <div class="space-y-3">
+            <div class="relative space-y-3">
                 <label class="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-bold">Marka</label>
-                <div class="grid gap-2 sm:grid-cols-2">
-                    @foreach($brands as $brand)
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input type="checkbox" name="brands[]" value="{{ $brand->id }}" {{ in_array($brand->id, request('brands', [])) ? 'checked' : '' }} class="w-3 h-3 rounded border-white/20 bg-white/5 text-purple-500 focus:ring-purple-500">
-                            <span class="text-xs text-white/60 group-hover:text-white transition">{{ $brand->name }}</span>
-                        </label>
-                    @endforeach
+                <button type="button" data-brand-dropdown-toggle class="flex w-full items-center justify-between rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-left text-sm text-white transition hover:border-purple-400/60 hover:bg-purple-500/10">
+                    <span id="home-brand-summary">
+                        {{ count(request('brands', [])) ? 'Wybrano marek: ' . count(request('brands', [])) : 'Wybierz marki' }}
+                    </span>
+                    <span class="text-purple-300 transition" data-brand-dropdown-icon>&#9662;</span>
+                </button>
+
+                <div id="home-brand-dropdown" class="hidden absolute left-0 right-0 z-30 rounded-2xl border border-purple-400/25 bg-[#080b18]/95 p-4 shadow-2xl shadow-purple-950/50 backdrop-blur-xl">
+                    <div class="mb-3">
+                        <input
+                            type="text"
+                            id="home-brand-search"
+                            autocomplete="off"
+                            placeholder="Szukaj marki..."
+                            class="w-full rounded-xl border border-white/10 bg-black/35 px-4 py-3 text-xs text-white placeholder:text-white/35 outline-none transition focus:border-cyan-300/70 focus:bg-cyan-400/5 focus:shadow-[0_0_18px_rgba(34,211,238,0.16)]"
+                        >
+                    </div>
+                    <div id="home-brand-options" class="home-brand-grid gap-2 pr-2">
+                        @foreach($brands as $brand)
+                            <label class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 cursor-pointer group transition hover:border-purple-400/40 hover:bg-purple-500/10">
+                                <input type="checkbox" name="brands[]" value="{{ $brand->id }}" {{ in_array($brand->id, request('brands', [])) ? 'checked' : '' }} class="w-3 h-3 rounded border-white/20 bg-white/5 text-purple-500 focus:ring-purple-500">
+                                <span class="text-xs text-white/60 group-hover:text-white transition">{{ $brand->name }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    <div id="home-brand-hidden-selected" class="hidden"></div>
                 </div>
             </div>
 
+            <div id="home-attribute-filters" class="lg:col-span-2 xl:col-span-2">
             @if($selectedCategoryModel)
-                <div class="space-y-5 lg:col-span-2 xl:col-span-2">
+                <div class="space-y-5">
                     <p class="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-bold">Atrybuty kategorii</p>
 
                     <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -205,10 +225,11 @@
                     </div>
                 </div>
             @else
-                <div class="rounded-2xl border border-dashed border-white/10 bg-white/5 p-5 text-sm text-gray-400 lg:col-span-2 xl:col-span-2">
+                <div class="rounded-2xl border border-dashed border-white/10 bg-white/5 p-5 text-sm text-gray-400">
                     Wybierz kategorię, aby zobaczyć filtry atrybutów.
                 </div>
             @endif
+            </div>
 
             <div class="flex flex-wrap items-center gap-3 lg:col-span-2 xl:col-span-3">
                 <button type="submit" class="px-6 py-3 bg-purple-700/70 border border-purple-400/40 text-white rounded-full text-sm font-bold uppercase tracking-widest transition hover:bg-purple-600 hover:shadow-[0_0_15px_rgba(168,85,247,0.6)]">
@@ -220,6 +241,10 @@
                 </a>
             </div>
         </form>
+
+        <script type="application/json" id="home-filter-data">
+            @json($filterDataByCategory)
+        </script>
     </div>
 </div>
 
