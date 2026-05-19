@@ -105,16 +105,16 @@
     </div>
 </div>
 
-<!-- FILTROWANIE -->
-<div id="filtrowanie" class="w-full px-4 lg:px-8 py-10">
+<!-- KATEGORIE -->
+<div id="kategorie" class="w-full px-4 lg:px-8 py-10">
     <div class="flex items-center gap-4 mb-8">
         <div class="h-px grow bg-linear-to-r from-purple-500/50 to-transparent"></div>
-        <h2 class="text-xl font-bruno text-white uppercase italic">Filtrowanie Produktów</h2>
+        <h2 class="text-xl font-bruno text-white uppercase italic">Kategorie Produktów</h2>
         <div class="h-px grow bg-linear-to-l from-purple-500/50 to-transparent"></div>
     </div>
 
     <div class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-[40px] p-8">
-        <form id="home-filter-form" action="{{ route('home') }}#filtrowanie" method="GET" class="grid gap-6 lg:grid-cols-2 xl:grid-cols-[0.8fr_0.8fr_1fr]">
+        <form id="home-filter-form" action="{{ route('home') }}#kategorie" method="GET" class="grid gap-6 lg:grid-cols-2 xl:grid-cols-[0.8fr_0.8fr_1fr]">
             <div class="space-y-2">
                 <label class="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-bold">Kategoria</label>
                 <select name="category_id" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-purple-400 outline-none">
@@ -236,7 +236,7 @@
                     Filtruj
                 </button>
 
-                <a href="{{ route('home') }}#filtrowanie" class="px-6 py-3 bg-blue-900/20 border border-blue-500/30 text-blue-300 rounded-full text-sm font-bold uppercase tracking-widest transition hover:bg-blue-600 hover:text-white hover:shadow-[0_0_15px_rgba(59,130,246,0.6)]">
+                <a href="{{ route('home') }}#kategorie" class="px-6 py-3 bg-blue-900/20 border border-blue-500/30 text-blue-300 rounded-full text-sm font-bold uppercase tracking-widest transition hover:bg-blue-600 hover:text-white hover:shadow-[0_0_15px_rgba(59,130,246,0.6)]">
                     Resetuj filtry
                 </a>
             </div>
