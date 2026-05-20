@@ -36,6 +36,46 @@ class StartowaController extends Controller
         $selectedCategoryModel = null;
         $brands = Brand::orderBy('name')->get();
         $availableValueIds = [];
+        $filterCategories = Category::with(['attributes.values' => function ($query) {
+            $query->orderByRaw('LENGTH(value) ASC')->orderBy('value', 'asc');
+        }])->get();
+        $brandsByCategory = Brand::query()
+            ->join('products', 'brands.id', '=', 'products.brand_id')
+            ->select('brands.id', 'brands.name', 'products.category_id')
+            ->distinct()
+            ->orderBy('brands.name')
+            ->get()
+            ->groupBy('category_id');
+        $filterDataByCategory = [
+            'allBrands' => Brand::orderBy('name')->get(['id', 'name'])
+                ->map(fn ($brand) => [
+                    'id' => $brand->id,
+                    'name' => $brand->name,
+                ])->values(),
+            'categories' => $filterCategories
+                ->mapWithKeys(function ($category) use ($brandsByCategory) {
+                    return [
+                        (string) $category->id => [
+                            'brands' => $brandsByCategory->get($category->id, collect())
+                                ->map(fn ($brand) => [
+                                    'id' => $brand->id,
+                                    'name' => $brand->name,
+                                ])->values(),
+                            'attributes' => $category->attributes
+                                ->map(fn ($attribute) => [
+                                    'id' => $attribute->id,
+                                    'name' => $attribute->name,
+                                    'display_name' => $this->translateKey($attribute->name),
+                                    'values' => $attribute->values
+                                        ->map(fn ($value) => [
+                                            'id' => $value->id,
+                                            'value' => $value->value,
+                                        ])->values(),
+                                ])->values(),
+                        ],
+                    ];
+                }),
+        ];
 
         $all_products = Product::withAvg('reviews', 'rating')
             ->when($selectedCategory, function ($query) use ($selectedCategory) {
@@ -135,7 +175,8 @@ class StartowaController extends Controller
             'selectedCategory',
             'selectedCategoryModel',
             'brands',
-            'availableValueIds'
+            'availableValueIds',
+            'filterDataByCategory'
         ));
     }
 

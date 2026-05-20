@@ -317,7 +317,7 @@
                     <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Stronicowanie włączone</span>
                 </div>
 
-                <div class="space-y-4">
+                <div class="admin-record-scroll space-y-4 max-h-[34rem] overflow-y-auto pr-2">
                     @forelse ($complaints as $complaint)
                         <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
                             <div class="flex flex-col lg:flex-row lg:items-start gap-5">
@@ -387,7 +387,73 @@
                     <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Stronicowanie włączone</span>
                 </div>
 
-                <div class="space-y-4">
+                <form action="{{ route('admin') }}#uzytkownicy" method="GET" class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                    @if(request()->filled('low_stock_threshold'))
+                        <input type="hidden" name="low_stock_threshold" value="{{ request('low_stock_threshold') }}">
+                    @endif
+
+                    <div class="grid gap-4 lg:grid-cols-[1fr_1fr_0.8fr_auto_auto] lg:items-end">
+                        <div>
+                            <label for="user_name" class="mb-2 block text-[10px] uppercase tracking-[0.25em] text-gray-500">
+                                Imię i nazwisko
+                            </label>
+                            <input
+                                id="user_name"
+                                name="user_name"
+                                type="text"
+                                value="{{ request('user_name') }}"
+                                placeholder="np. Jan Kowalski"
+                                class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-cyan-300/60 focus:bg-cyan-400/5"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="user_email" class="mb-2 block text-[10px] uppercase tracking-[0.25em] text-gray-500">
+                                E-mail
+                            </label>
+                            <input
+                                id="user_email"
+                                name="user_email"
+                                type="text"
+                                value="{{ request('user_email') }}"
+                                placeholder="np. klient@email.pl"
+                                class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-cyan-300/60 focus:bg-cyan-400/5"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="user_status" class="mb-2 block text-[10px] uppercase tracking-[0.25em] text-gray-500">
+                                Status
+                            </label>
+                            <select
+                                id="user_status"
+                                name="user_status"
+                                class="admin-filter-select w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none transition focus:border-purple-300/60"
+                            >
+                                <option value="">Wszystkie</option>
+                                <option value="aktywny" @selected(request('user_status') === 'aktywny')>Aktywny</option>
+                                <option value="zawieszony" @selected(request('user_status') === 'zawieszony')>Zawieszony</option>
+                                <option value="zbanowany" @selected(request('user_status') === 'zbanowany')>Zbanowany</option>
+                            </select>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="rounded-xl border border-purple-300/25 bg-purple-600/40 px-5 py-3 text-sm font-bold text-white transition hover:bg-purple-500/60 hover:shadow-[0_0_18px_rgba(168,85,247,0.35)]"
+                        >
+                            Filtruj
+                        </button>
+
+                        <a
+                            href="{{ route('admin', request()->filled('low_stock_threshold') ? ['low_stock_threshold' => request('low_stock_threshold')] : []) }}#uzytkownicy"
+                            class="rounded-xl border border-cyan-300/20 bg-cyan-500/10 px-5 py-3 text-center text-sm font-bold text-cyan-200 transition hover:bg-cyan-500/20"
+                        >
+                            Reset
+                        </a>
+                    </div>
+                </form>
+
+                <div class="admin-record-scroll space-y-4 max-h-[34rem] overflow-y-auto pr-2">
                     @forelse ($users as $user)
                         @php
                             $statusClasses = match ($user->account_status) {
