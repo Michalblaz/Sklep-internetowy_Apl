@@ -848,7 +848,6 @@ INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (344, 8, 22, 'SMX Mysz gamingowa Bonobo black', 378.00, NULL, 7, 3, 'products/mouse/SMX_Mysz_gamingowa_Bonobo_black.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (345, 8, 28, 'ENDORFY Lix Plus', 200.00, NULL, 17, 2, 'products/mouse/ENDORFY_Lix_Plus.jpg');
 INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (346, 8, 60, 'Razer Basilisk V3 X HyperSpeed', 220.00, NULL, 16, 3, 'products/mouse/Razer_Basilisk_V3_X_HyperSpeed.jpg');
-INSERT INTO public.products (id, category_id, brand_id, name, base_price, promo_price, stock_quantity, power_draw_w, image_url) VALUES (347, 8, 60, 'Razer Basilisk V3 X HyperSpeed', 220.00, NULL, 16, 3, 'products/mouse/Razer_Basilisk_V3_X_HyperSpeed.jpg');
 
 
 --

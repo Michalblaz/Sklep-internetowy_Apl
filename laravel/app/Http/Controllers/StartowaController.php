@@ -48,12 +48,6 @@ class StartowaController extends Controller
             }])->find($selectedCategory);
 
             if ($selectedCategoryModel) {
-                $selectedCategoryModel->attributes->transform(function ($attribute) {
-                    $attribute->display_name = $this->translateKey($attribute->name);
-
-                    return $attribute;
-                });
-
                 $brands = Brand::whereHas('products', function ($query) use ($selectedCategory) {
                     $query->where('category_id', $selectedCategory);
                 })->orderBy('name')->get();
@@ -145,59 +139,4 @@ class StartowaController extends Controller
         ));
     }
 
-    private function translateKey(string $key): string
-    {
-        return match ($key) {
-            'socket' => 'Gniazdo',
-            'cores' => 'Liczba rdzeni',
-            'cpu_type' => 'Typ procesora',
-            'threads' => 'Liczba wątków',
-            'base_clock' => 'Taktowanie bazowe',
-            'boost_clock' => 'Taktowanie Boost',
-            'graphics_card_series' => 'Seria karty graficznej',
-            'motherboard_chipset' => 'Chipset płyty głównej',
-            'board_standard' => 'Standard płyty głównej',
-            'ram_type' => 'Typ pamięci RAM',
-            'ram_capacity_gb' => 'Pojemność RAM',
-            'ram_speed_mhz' => 'Taktowanie RAM',
-            'ram_latency_cl' => 'Opóźnienie CL',
-            'storage_type' => 'Typ nośnika',
-            'storage_capacity_gb' => 'Pojemność dysku',
-            'storage_interface' => 'Interfejs',
-            'psu_wattage' => 'Moc zasilacza',
-            'psu_efficiency_rating' => 'Certyfikat sprawności',
-            'psu_standard' => 'Standard zasilacza',
-            'case_type' => 'Typ obudowy',
-            'max_gpu_length_mm' => 'Maks. długość GPU',
-            'max_cpu_cooler_height_mm' => 'Maks. wysokość chłodzenia CPU',
-            'connectivity_type' => 'Typ łączności',
-            'sensor_type' => 'Typ sensora',
-            'switch_type' => 'Typ przełączników',
-            'audio_channels' => 'Kanały audio',
-            'cooler_type' => 'Typ chłodzenia',
-            'network_standard' => 'Standard sieci',
-            'interface_type' => 'Typ interfejsu',
-            'monitor_resolution' => 'Rozdzielczość',
-            'refresh_rate_hz' => 'Częstotliwość odświeżania',
-            'panel_type' => 'Typ matrycy',
-            'screen_size_inch' => 'Rozmiar ekranu',
-            'integrated_gpu' => 'Zintegrowana grafika',
-            'connector_type' => 'Typ złącza',
-            'chipset_manufacturer' => 'Producent chipsetu',
-            'fan_included' => 'Chłodzenie w zestawie',
-            'fan_max_tdp' => 'Maks. TDP chłodzenia',
-            'GPU_length' => 'Długość karty graficznej',
-            'CPU_cooler_height' => 'Wysokość chłodzenia CPU',
-            'cpu_generation' => 'Generacja procesora',
-            'supported_cpu_generations' => 'Obsługiwane generacje CPU',
-            'ram_slots' => 'Liczba slotów RAM',
-            'ram_modules' => 'Liczba modułów RAM',
-            'gpu_power_connectors' => 'Złącza zasilania GPU',
-            'cpu_power_connector' => 'Złącze zasilania CPU',
-            'm2_slots' => 'Liczba slotów M.2',
-            'radiator_size' => 'Rozmiar radiatora',
-            'max_radiator' => 'Maks. rozmiar radiatora',
-            default => str_replace('_', ' ', ucfirst($key)),
-        };
-    }
 }

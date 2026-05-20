@@ -72,19 +72,26 @@ class ProductForm extends Component
             $this->availableAttributes = [];
             return;
         }
-
-        $this->availableAttributes = DB::table('category_attributes')
-            ->join('attribute_category', 'category_attributes.attribute_id', '=', 'attribute_category.id')
+        $this->availableAttributes = \App\Models\Attribute::query()
+            ->join('category_attributes', 'attribute_category.id', '=', 'category_attributes.attribute_id')
             ->where('category_attributes.category_id', $value)
-            ->select('attribute_category.id', 'attribute_category.name')
+            ->select('attribute_category.*')
             ->get()
             ->map(function ($attr) {
-                $attr->values = DB::table('attribute_values')
-                    ->where('attribute_category_id', $attr->id)
-                    ->pluck('value')
-                    ->toArray();
-                return $attr;
-            });
+
+                return [
+                    'id'           => $attr->id,
+                    'name'         => $attr->name,
+                    'display_name' => $attr->display_name,
+                    'values'       => DB::table('attribute_values')
+                        ->where('attribute_category_id', $attr->id)
+                        ->pluck('value')
+                        ->toArray()
+                ];
+            })
+            ->sortBy('display_name')
+            ->values()
+            ->toArray();
     }
 
     public function save()

@@ -55,8 +55,7 @@
             </div>
             <button
                 type="submit"
-                class="px-4 py-2 rounded-full bg-purple-600 hover:bg-purple-500 text-sm font-bold transition"
-            >
+                class="px-4 py-2 rounded-full bg-purple-600 hover:bg-purple-500 text-sm font-bold transition">
                 Szukaj
             </button>
         </form>
@@ -75,7 +74,7 @@
                     @endif
                 @endauth
 
-                <a href="{{ route('koszyk') }}" class="text-xl text-gray-400 hover:text-purple-400 transition-all">
+                <a href="{{ route('cart.index') }}" class="text-xl text-gray-400 hover:text-purple-400 transition-all">
                     <i class="fa-solid fa-cart-shopping"></i>
                 </a>
             </div>

@@ -34,7 +34,7 @@
                     <div class="h-px grow bg-linear-to-l from-neon-blue/50 to-transparent"></div>
                 </div>
 
-            <div class="relative bg-black/20 px-16 py-4 rounded-xl border border-white/10"> 
+            <div class="relative bg-black/20 px-16 py-4 rounded-xl border border-white/10">
 
                 <div id="recommended-container" class="overflow-hidden">
 
@@ -176,12 +176,18 @@
                                 {{ $price }} zł
                             </p>
 
-                            <button class="w-full py-3 bg-linear-to-r from-indigo-600 to-purple-600
-                                           hover:from-indigo-500 hover:to-purple-500
-                                           text-white font-bold rounded-full transition">
-                                Dodaj do koszyka
-                            </button>
+                            <form action="{{ route('cart.add') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
 
+                                <input type="hidden" name="quantity" value="1">
+
+                                <button type="submit" class="w-60 py-3 bg-linear-to-r from-indigo-600 to-purple-600
+                                    hover:from-indigo-500 hover:to-purple-500
+                                    text-white font-bold rounded-full transition">
+                                    Dodaj do koszyka
+                                </button>
+                            </form>
                         </div>
 
                     </div>
@@ -282,7 +288,7 @@
                         @if($attribute->values->count())
                             <div class="rounded-xl border border-white/10 bg-white/[0.03] p-4">
                                 <p class="text-[10px] text-gray-400 uppercase mb-3 font-bold tracking-widest">
-                                    {{ $attribute->name }}
+                                   {{ $attribute->display_name }}
                                 </p>
 
                                 <div class="filter-options space-y-2 max-h-56 overflow-y-auto pr-1">
@@ -294,7 +300,7 @@
 
                                         <label class="flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-xs transition cursor-pointer
                                                       {{ $checked ? 'border-cyan-400/70 bg-cyan-500/15 text-white shadow-[0_0_14px_rgba(34,211,238,0.14)]' : 'border-white/10 bg-black/20 text-white/60 hover:border-cyan-400/40 hover:bg-white/10 hover:text-white' }}">
-                                            <span class="truncate">{{ $value->value }}</span>
+                                            <span class="truncate">{{ $attribute->formatValue($value->value) }}</span>
                                             <input type="checkbox"
                                                    name="attrs[{{ $attribute->id }}][]"
                                                    value="{{ $value->id }}"

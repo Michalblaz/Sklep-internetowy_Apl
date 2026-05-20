@@ -5,7 +5,7 @@
     $panelClass = 'relative overflow-hidden rounded-[2rem] border border-[rgba(123,213,255,0.14)] bg-[linear-gradient(145deg,rgba(82,101,115,0.88),rgba(20,59,86,0.92)_44%,rgba(30,37,82,0.96)_100%)] shadow-[0_24px_60px_rgba(5,9,29,0.45),inset_0_1px_0_rgba(255,255,255,0.06)]';
     $panelGlowClass = 'after:pointer-events-none after:absolute after:bottom-[-40%] after:right-[-12%] after:h-[18rem] after:w-[18rem] after:rounded-full after:bg-[radial-gradient(circle,rgba(154,96,255,0.28),transparent_68%)] max-lg:after:h-56 max-lg:after:w-56';
     $panelCardClass = $panelClass . ' ' . $panelGlowClass;
-    $buttonClass = 'inline-flex min-h-12 items-center justify-center rounded-[0.95rem] bg-[linear-gradient(90deg,rgba(124,152,255,0.95),rgba(150,72,255,0.95))] px-[1.7rem] py-[0.8rem] text-[0.9rem] uppercase tracking-[0.04em] text-[#eef3ff] shadow-[0_0_22px_rgba(124,126,255,0.35),inset_0_0_16px_rgba(255,255,255,0.18)]';
+    $buttonClass = 'w-60 py-3 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-full transition';
 @endphp
 
 <style>
@@ -88,7 +88,15 @@
                             @endif
                         </div>
                     </div>
-                    <button type="button" class="{{ $buttonClass }} relative z-10 w-full shrink-0 py-3 text-base">Dodaj do koszyka</button>
+
+                    <form action="{{ route('cart.add') }}" method="POST" id="add-to-cart-form" class="inline">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+
+                    <input type="hidden" name="quantity" value="1">
+
+                    <button type="submit" class="{{ $buttonClass }} relative z-10 w-full shrink-0 py-3 text-base">Dodaj do koszyka</button>
+                </form>
                 </div>
             </aside>
         </section>
@@ -255,5 +263,42 @@
             @endif
         </article>
     </section>
+    <div id="cartModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3 class="text-xl mb-4 text-[#8b89ff]">Dodano do koszyka!</h3>
+            <p class="text-white/80">Dobry wybór! Polecam przejrzeć polecane produkty, które mogą cię zaciekawić.</p>
+
+            <button class="modal-btn btn-primary" onclick="window.location.href='/koszyk'">Przejdź do koszyka</button>
+            <button class="modal-btn btn-secondary" onclick="closeModal()">Zostań na stronie</button>
+        </div>
+    </div>
 @endif
+<script>
+document.querySelector('#add-to-cart-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    let formData = new FormData(this);
+    let token = document.querySelector('input[name="_token"]').value;
+
+    fetch("{{ route('cart.add') }}", {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': token,
+            'Accept': 'application/json'
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            document.getElementById('cartModal').style.display = 'flex';
+        }
+    })
+    .catch(error => console.error('Błąd:', error));
+});
+
+function closeModal() {
+    document.getElementById('cartModal').style.display = 'none';
+}
+</script>
 @endsection

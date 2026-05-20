@@ -26,26 +26,26 @@
     --text-muted: #9ba0aa;
     --green-check: #00ff40;
     --bg-dark: #0b0e1e;
-    --bg-teal: #0f4a4a; 
-    --bg-purple-deep: #2d135c; 
+    --bg-teal: #0f4a4a;
+    --bg-purple-deep: #2d135c;
 }
 
     body {
         font-family: var(--font-bruno);
         background-color: #0b0e1e;
-         background-image: 
+         background-image:
             radial-gradient(circle at 0% 0%, rgba(27, 131, 131, 0.4) 0%, transparent 40%),
             radial-gradient(circle at 100% 100%, rgba(73, 37, 141, 0.5) 0%, transparent 50%),
             radial-gradient(circle at 50% 50%, #0f1536 0%, #000000 100%);
-        
-        background-attachment: fixed; 
+
+        background-attachment: fixed;
     min-height: 100vh;
     color: var(--text-main);
     display: flex;
     flex-direction: column;
     }
 
-    nav[role="navigation"] span, 
+    nav[role="navigation"] span,
     nav[role="navigation"] a {
             @apply bg-black/40 border border-white/10 text-white px-4 py-2 rounded-lg font-bruno text-[10px] transition-all;
     }
@@ -55,4 +55,59 @@
 
 
 
+}
+/* Kontener modala */
+.modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(5, 9, 29, 0.85); /* Ciemny cyberpunkowy granat */
+    backdrop-filter: blur(8px); /* Efekt rozmycia tła */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ważne: zawsze na wierzchu */
+}
+
+/* Karta modala */
+.modal-content {
+    background: linear-gradient(145deg, rgba(20, 25, 45, 0.95), rgba(10, 15, 30, 0.95));
+    padding: 2.5rem;
+    border: 1px solid rgba(123, 213, 255, 0.3);
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(139, 137, 255, 0.3), inset 0 0 10px rgba(123, 213, 255, 0.1);
+    color: #f2f4ff;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+/* Przyciski w stylu neonowym */
+.modal-btn {
+    display: block;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.8rem;
+    border-radius: 9999px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #4f46e5, #9333ea);
+    color: white;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #b5b5b5;
+}
+
+.btn-secondary:hover {
+    border-color: #8b89ff;
+    color: white;
 }

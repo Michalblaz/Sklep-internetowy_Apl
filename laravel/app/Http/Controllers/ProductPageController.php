@@ -26,6 +26,13 @@ class ProductPageController extends Controller
         }
 
         if ($product) {
+            if (auth()->check()) {
+            DB::table('product_browsing_history')->insert([
+                'product_id' => $product->id,
+                'user_id'    => auth()->id(),
+                'viewed_at'  => now(),
+            ]);
+        }
             $attributeTable = (new Attribute())->getTable();
             $attributeColumn = Product::attributeCategoryPivotColumn();
 
@@ -36,16 +43,18 @@ class ProductPageController extends Controller
                 ->orderBy('ac.name')
                 ->get([
                     'ac.name as key',
-                    'ac.name as raw_label',
                     'av.value as value',
                 ])
+                ->filter(fn ($spec) => filled($spec->value))
                 ->map(function ($spec) {
+                    $attribute = new Attribute();
+                    $attribute->name = $spec->key;
+
                     return [
-                        'label' => $this->translateSpecLabel($spec->raw_label),
-                        'value' => $this->translateSpecValue($spec->value),
+                        'label' => $attribute->display_name,
+                        'value' => $attribute->formatValue($spec->value)
                     ];
                 })
-                ->filter(fn ($spec) => filled($spec['value']))
                 ->values();
 
             $reviews = DB::table('reviews as r')
@@ -187,79 +196,5 @@ class ProductPageController extends Controller
         }
 
         return $segments;
-    }
-
-    private function translateSpecValue($value)
-    {
-        if (!is_string($value)) {
-            return $value;
-        }
-
-        return match (strtolower($value)) {
-            'true' => 'Tak',
-            'false' => 'Nie',
-            default => $value,
-        };
-    }
-
-    private function translateSpecLabel(string $key): string
-    {
-        return match ($key) {
-            'storage_capacity_gb' => 'Pojemność (GB)',
-            'storage_interface' => 'Interfejs',
-            'storage_type' => 'Typ nośnika',
-            'storage_read_speed_mb_s' => 'Prędkość odczytu (MB/s)',
-            'storage_write_speed_mb_s' => 'Prędkość zapisu (MB/s)',
-            'storage_form_factor' => 'Format',
-            'storage_controller' => 'Kontroler',
-            'storage_has_heatsink' => 'Radiator',
-            'ram_capacity_gb' => 'Pojemność (GB)',
-            'ram_modules_count' => 'Liczba modułów',
-            'ram_latency_cl' => 'Opóźnienie (CL)',
-            'ram_type' => 'Typ pamięci',
-            'ram_speed_mhz' => 'Taktowanie (MHz)',
-            'cpu_cores' => 'Liczba rdzeni',
-            'cpu_threads' => 'Liczba wątków',
-            'cpu_base_clock_ghz' => 'Taktowanie bazowe (GHz)',
-            'cpu_boost_clock_ghz' => 'Taktowanie turbo (GHz)',
-            'base_clock' => 'Taktowanie bazowe (MHz)',
-            'boost_clock' => 'Taktowanie turbo (MHz)',
-            'cores' => 'Liczba rdzeni',
-            'threads' => 'Liczba wątków',
-            'cpu_type' => 'Typ procesora',
-            'fan_included' => 'Chłodzenie w zestawie',
-            'integrated_gpu' => 'Zintegrowany układ graficzny',
-            'socket' => 'Socket',
-            'gpu_memory_gb' => 'Pamięć VRAM (GB)',
-            'gpu_chipset' => 'Chipset',
-            'gpu_length_mm' => 'Długość (mm)',
-            'psu_power_w' => 'Moc zasilacza (W)',
-            'psu_wattage' => 'Moc zasilacza (W)',
-            'psu_efficiency_rating' => 'Sprawność',
-            'psu_standard' => 'Standard zasilacza',
-            'motherboard_socket' => 'Socket',
-            'motherboard_chipset' => 'Chipset',
-            'board_standard' => 'Format płyty',
-            'case_form_factor' => 'Obsługiwany format płyty',
-            'case_type' => 'Typ obudowy',
-            'max_gpu_length_mm' => 'Maks. długość GPU (mm)',
-            'max_cpu_cooler_height_mm' => 'Maks. wysokość chłodzenia CPU (mm)',
-            'graphics_card_series' => 'Seria karty graficznej',
-            'chipset_manufacturer' => 'Producent chipsetu',
-            'connector_type' => 'Typ złącza',
-            'connectivity_type' => 'Typ łączności',
-            'sensor_type' => 'Typ sensora',
-            'switch_type' => 'Typ przełączników',
-            'audio_channels' => 'Kanały audio',
-            'cooler_type' => 'Typ chłodzenia',
-            'network_standard' => 'Standard sieciowy',
-            'interface_type' => 'Typ interfejsu',
-            'monitor_resolution' => 'Rozdzielczość',
-            'refresh_rate_hz' => 'Częstotliwość odświeżania (Hz)',
-            'panel_type' => 'Typ matrycy',
-            'screen_size_inch' => 'Przekątna ekranu (cale)',
-            'fan_max_tdp' => 'Maks. TDP chłodzenia (W)',
-            default => $key,
-        };
     }
 }

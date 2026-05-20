@@ -5,7 +5,9 @@
 @php
     $totalPrice = 0;
     $totalPowerDraw = 0;
+
     $buildItems = session('configurator_build', []);
+    $buttonClass = 'w-60 py-3 bg-linear-to-r from-purple-800 to-indigo-900 hover:from-purple-700 hover:to-indigo-800 text-white font-bold rounded-full transition-all duration-200 active:scale-95 shadow-md hover:shadow-lg';
     $productIdsForPower = collect($buildItems)
         ->flatMap(fn ($data) => isset($data['id']) ? [$data['id']] : collect($data)->pluck('id'))
         ->filter()
@@ -32,8 +34,8 @@
     $selectedPsu = $buildItems[6] ?? null;
     $selectedPsuWatts = 0;
     if ($selectedPsu) {
-        $selectedPsuWatts = $selectedPsuWatts = (new \App\Http\Controllers\ConfiguratorController)->getNumericValueFromSession($selectedPsu, 20); 
-    }   
+        $selectedPsuWatts = $selectedPsuWatts = (new \App\Http\Controllers\ConfiguratorController)->getNumericValueFromSession($selectedPsu, 20);
+    }
 @endphp
 <div class="w-full px-4 lg:px-8 py-6">
     @if(session('error'))
@@ -55,7 +57,7 @@
                         // Standardowe atrybuty (Socket itp)
                         foreach($build as $catId => $bItem) {
                             if ($category && $catId == $category->id) {
-                                continue; 
+                                continue;
                             }
                             $itemData = isset($bItem[0]) ? $bItem[0] : $bItem; // Obsługa tablic np. dla RAMu
                             if(isset($itemData['attributes'])) {
@@ -217,7 +219,7 @@
                             $categoryItems = [$selectedInThisCategory];
                         }
                     }
-                    
+
                     $isChanging = request('change') == '1';
                     $isMultiCategory = in_array($category->id, [4, 5]); // RAM = 4, Dyski = 5
 
@@ -230,7 +232,7 @@
                             @php
                                 // Pobieramy model dla KRAŻDEGO z wybranych przedmiotów (żeby atrybuty/ceny się zgadzały)
                                 $selectedProductModel = $selectedItemData ? \App\Models\Product::with(['attributeValues.attribute'])->find($selectedItemData['id']) : null;
-                                
+
                                 // Zabezpieczenie: Przygotowujemy atrybuty specyficzne dla tego wybranego modelu
                                 $selectedProductAttributes = [];
                                 if ($selectedProductModel) {
@@ -245,11 +247,11 @@
                             @endphp
 
                             <div class="relative bg-black/40 border border-neon-blue/30 rounded-2xl p-6 lg:p-10 backdrop-blur-md shadow-[0_0_30px_rgba(0,240,255,0.05)] overflow-hidden flex flex-col md:flex-row items-center gap-10">
-                                
+
                                 <div class="w-56 h-56 bg-white rounded-xl p-4 flex items-center justify-center shrink-0 shadow-lg">
-                                    @if($selectedProductModel && $selectedProductModel->image_url) 
-                                        <img src="{{ asset('images/' . $selectedProductModel->image_url) }}" 
-                                            alt="{{ $selectedProductModel->name }}" 
+                                    @if($selectedProductModel && $selectedProductModel->image_url)
+                                        <img src="{{ asset('images/' . $selectedProductModel->image_url) }}"
+                                            alt="{{ $selectedProductModel->name }}"
                                             class="max-w-full max-h-full object-contain">
                                     @else
                                         <span class="text-gray-400 text-[10px] font-bruno">Brak zdjęcia</span>
@@ -262,9 +264,9 @@
                                             Aktualnie wybrany {{ $isMultiCategory ? '#'.($index+1) : '' }}
                                         </span>
                                     </div>
-                                    
+
                                     <h2 class="text-3xl font-bold text-white mb-2 uppercase tracking-tight">{{ $selectedItemData['name'] }}</h2>
-                                    
+
                                     @php
                                         $selectedModelDiscount = ($selectedProductModel && $selectedProductModel->base_price > 0 && $selectedProductModel->promo_price && $selectedProductModel->promo_price < $selectedProductModel->base_price)
                                             ? round((($selectedProductModel->base_price - $selectedProductModel->promo_price) / $selectedProductModel->base_price) * 100)
@@ -273,7 +275,7 @@
                                         $selectedBasePrice = $selectedItemData['base_price'] ?? $selectedProductModel?->base_price ?? $selectedItemData['price'];
                                         $selectedPromoPrice = $selectedItemData['promo_price'] ?? ($selectedModelDiscount > 0 ? $selectedProductModel->promo_price : null);
                                     @endphp
-                                    
+
                                     @if($selectedDiscount > 0 && $selectedPromoPrice)
                                         <div class="flex items-center gap-3 mb-6">
                                             <div class="flex flex-col leading-tight">
@@ -298,7 +300,7 @@
                                         <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                                             @foreach($selectedProductAttributes as $attr)
                                             <div class="flex flex-col border-l-2 border-neon-blue/30 pl-4 py-1 bg-white/5 rounded-r-xl transition-all hover:bg-white/10">
-                                                <span class="text-[9px] text-gray-400 uppercase font-bruno">    
+                                                <span class="text-[9px] text-gray-400 uppercase font-bruno">
                                                     {{ $attr['label'] }}
                                                 </span>
                                             <span class="text-white text-sm font-semibold">
@@ -315,7 +317,7 @@
                                             @endforeach
                                         </div>
                                     @endif
-                                    
+
                                     {{-- PRZYCISKI --}}
                                     <div class="flex flex-wrap gap-4 mt-6">
                                         <a href="{{ route('konfigurator.index', ['category_id' => $category->id, 'change' => '1', 'replace_index' => $index]) }}"
@@ -401,7 +403,7 @@
                             </div>
                         @endforelse
                     </div>
-                    
+
                     <div class="mt-8 flex justify-end px-4">
                         {{ $products->appends(request()->query())->links() }}
                     </div>
@@ -461,12 +463,19 @@
                         <span class="text-[10px] text-red-200 uppercase font-bruno">Pobór mocy:</span>
                         <span class="text-red-400 font-bruno text-lg drop-shadow-[0_0_8px_rgba(248,113,113,0.75)]">~{{ number_format($totalPowerDraw, 0, ',', ' ') }} W</span>
                     </div>
-                    <button class="w-full bg-neon-purple/80 hover:bg-neon-purple py-3 rounded font-bruno text-xs uppercase transition-all shadow-lg shadow-neon-purple/20">
-                        KUP ZESTAW
-                    </button>
+
+
+                    <div class="mt-8">
+                        <form action="{{ route('konfigurator.moveToCart') }}" method="POST">
+                            @csrf
+                            <button class="{{ $buttonClass }} relative z-10 w-full shrink-0 py-3 text-base">
+                                KUP ZESTAW
+                            </button>
+                        </form>
+                    </div>
                     <form action="{{ route('configurator.reset') }}" method="POST">
                         @csrf
-                        <button type="submit" class="w-full bg-neon-purple/80 hover:bg-neon-purple py-3 rounded font-bruno text-xs uppercase transition-all shadow-lg shadow-neon-purple/20">
+                        <button type="submit" class="{{ $buttonClass }} relative z-10 w-full shrink-0 py-3 text-base">
                             RESETUJ ZESTAW
                         </button>
                     </form>

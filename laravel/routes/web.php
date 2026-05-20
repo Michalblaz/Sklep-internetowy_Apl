@@ -20,6 +20,7 @@ use App\Livewire\Admin\ProductForm;
         Route::get('/', [ConfiguratorController::class, 'index'])->name('konfigurator.index');
         Route::post('/select', [ConfiguratorController::class, 'selectProduct'])->name('configurator.select');
         Route::post('/reset', [ConfiguratorController::class, 'resetBuild'])->name('configurator.reset');
+        Route::post('/do-koszyka', [App\Http\Controllers\ConfiguratorController::class, 'moveToCart'])->name('konfigurator.moveToCart');
         Route::get('/remove/{category}/{index}', [ConfiguratorController::class, 'removeFromBuild'])->name('konfigurator.remove');
     });
 
@@ -42,7 +43,12 @@ use App\Livewire\Admin\ProductForm;
 
 
         // Koszyk
-    Route::get('/koszyk', [KoszykController::class, 'index'])->name('koszyk');
+    Route::get('/koszyk', [KoszykController::class, 'index'])->name('cart.index');
+    Route::post('/koszyk/dodaj', [KoszykController::class, 'add'])->name('cart.add');
+    Route::post('/koszyk/usun', [KoszykController::class, 'remove'])->name('cart.remove');
+    Route::post('/koszyk/aktualizuj', [KoszykController::class, 'update'])->name('cart.update');
+    Route::post('/koszyk/wyczysc', [KoszykController::class, 'clear'])->name('cart.clear');
+    Route::post('/koszyk/ubezpieczenie', [KoszykController::class, 'toggleInsurance'])->name('cart.insurance');
     Route::get('/koszyk/transakcje', [KoszykController::class, 'Transakcje'])->name('transakcje');
 
 

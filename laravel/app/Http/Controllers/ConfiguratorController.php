@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Brand;
@@ -29,11 +30,6 @@ class ConfiguratorController extends Controller
         $category = Category::with(['attributes.values' => function($q) {
             $q->orderByRaw('LENGTH(value) ASC')->orderBy('value', 'asc');
         }])->findOrFail($categoryId);
-        $category->attributes->transform(function($attribute) {
-
-            $attribute->display_name = $this->translateKey($attribute->name);
-            return $attribute;
-        });
 
          $query = Product::query()
             ->where('category_id', $categoryId)
@@ -262,7 +258,6 @@ class ConfiguratorController extends Controller
             ? $selectedProductModel->attributeValues
                 ->take(6)
                 ->map(fn ($attrVal) => [
-                    'label' => $this->translateKey($attrVal->attribute?->name ?? ''),
                     'value' => $attrVal->value,
                 ])
             : collect();
@@ -583,82 +578,107 @@ class ConfiguratorController extends Controller
         return $query->get();
     }
 
-    private function translateKey(string $key): string
+
+    public function moveToCart(Request $request)
     {
-        return match ($key) {
-             'socket' => 'Gniazdo',
-            'cores' => 'Liczba rdzeni',
-            'cpu_type' => 'Typ procesora',
-            'threads' => 'Liczba wątków',
-            'base_clock' => 'Taktowanie bazowe',
-            'boost_clock' => 'Taktowanie Boost',
+        // 1. Pobieramy produkty z konfiguratora
+        $buildItems = session('configurator_build', []);
 
-            'graphics_card_series' => 'Seria karty graficznej',
+        if (empty($buildItems)) {
+            return back()->with('error', 'Twój konfigurator jest pusty! Dodaj produkty przed przejściem do koszyka.');
+        }
 
-            'motherboard_chipset' => 'Chipset płyty głównej',
-            'board_standard' => 'Standard płyty głównej',
+        // 2. Sprawdzamy, czy użytkownik jest zalogowany
+        if (auth()->check()) {
 
-            'ram_type' => 'Typ pamięci RAM',
-            'ram_capacity_gb' => 'Pojemność RAM',
-            'ram_speed_mhz' => 'Taktowanie RAM',
-            'ram_latency_cl' => 'Opóźnienie CL',
+            // Jeśli użytkownik jest zalogowany (ZAPIS DO BAZY DANYCH) ---
+            $userId = auth()->id();
 
-            'storage_type' => 'Typ nośnika',
-            'storage_capacity_gb' => 'Pojemność dysku',
-            'storage_interface' => 'Interfejs',
+            foreach ($buildItems as $categoryId => $data) {
+                // Jeśli to pojedynczy produkt
+                if (isset($data['id'])) {
+                    $this->addProductToDatabaseCart($userId, $data['id']);
+                }
+                // Jeśli to tablica produktów (np. wiele kości RAM / dysków)
+                elseif (is_array($data)) {
+                    foreach ($data as $item) {
+                        if (isset($item['id'])) {
+                            $this->addProductToDatabaseCart($userId, $item['id']);
+                        }
+                    }
+                }
+            }
 
-            'psu_wattage' => 'Moc zasilacza',
-            'psu_efficiency_rating' => 'Certyfikat sprawności',
-            'psu_standard' => 'Standard zasilacza',
+        } else {
 
-            'case_type' => 'Typ obudowy',
-            'max_gpu_length_mm' => 'Maks. długość GPU',
-            'max_cpu_cooler_height_mm' => 'Maks. wysokość chłodzenia CPU',
+            // Gość (ZAPIS DO SESJI COŚĆ) ---
+            $cart = session('cart', []);
 
-            'connectivity_type' => 'Typ łączności',
-            'sensor_type' => 'Typ sensora',
-            'switch_type' => 'Typ przełączników',
+            foreach ($buildItems as $categoryId => $data) {
+                // Jeśli to pojedynczy produkt
+                if (isset($data['id'])) {
+                    $this->addProductToSessionCart($cart, $data);
+                }
+                // Jeśli to tablica produktów
+                elseif (is_array($data)) {
+                    foreach ($data as $item) {
+                        if (isset($item['id'])) {
+                            $this->addProductToSessionCart($cart, $item);
+                        }
+                    }
+                }
+            }
 
-            'audio_channels' => 'Kanały audio',
+            // Zapisujemy zaktualizowaną tablicę koszyka z powrotem do sesji
+            session(['cart' => $cart]);
+        }
 
-            'cooler_type' => 'Typ chłodzenia',
+        session()->forget('configurator_build');
 
-            'network_standard' => 'Standard sieci',
-            'interface_type' => 'Typ interfejsu',
-
-            'monitor_resolution' => 'Rozdzielczość',
-            'refresh_rate_hz' => 'Częstotliwość odświeżania',
-            'panel_type' => 'Typ matrycy',
-            'screen_size_inch' => 'Rozmiar ekranu',
-
-            'integrated_gpu' => 'Zintegrowana grafika',
-
-            'connector_type' => 'Typ złącza',
-            'chipset_manufacturer' => 'Producent chipsetu',
-
-            'fan_included' => 'Chłodzenie w zestawie',
-            'fan_max_tdp' => 'Maks. TDP chłodzenia',
-
-            'GPU_length' => 'Długość karty graficznej',
-            'CPU_cooler_height' => 'Wysokość chłodzenia CPU',
-
-            'cpu_generation' => 'Generacja procesora',
-            'supported_cpu_generations' => 'Obsługiwane generacje CPU',
-
-            'ram_slots' => 'Liczba slotów RAM',
-            'ram_modules' => 'Liczba modułów RAM',
-
-            'gpu_power_connectors' => 'Złącza zasilania GPU',
-            'cpu_power_connector' => 'Złącze zasilania CPU',
-
-            'm2_slots' => 'Liczba slotów M.2',
-
-            'radiator_size' => 'Rozmiar radiatora',
-            'max_radiator' => 'Maks. rozmiar radiatora',
-            default => str_replace('_', ' ', ucfirst($key)),
-        };
+        return redirect()->route('cart.index')->with('success', 'Cały zestaw został pomyślnie dodany do Twojego koszyka!');
     }
 
+    // Zapis produktu bezpośrednio do bazy danych
+
+    private function addProductToDatabaseCart($userId, $productId)
+    {
+        // Sprawdzamy, czy ten użytkownik ma już ten sam produkt w koszyku
+        $existingItem = DB::table('cart_items')
+            ->where('user_id', $userId)
+            ->where('product_id', $productId)
+            ->first();
+
+        if ($existingItem) {
+            // Jeśli produkt istnieje, zwiększamy jego ilość o 1
+            DB::table('cart_items')
+                ->where('id', $existingItem->id)
+                ->increment('quantity');
+        } else {
+            // Jeśli produktu nie ma, tworzymy nowy rekord w koszyku bazy danych
+            DB::table('cart_items')->insert([
+                'user_id'    => $userId,
+                'product_id' => $productId,
+                'quantity'   => 1,
+            ]);
+        }
+    }
+
+    // Metoda pomocnicza: Zapis produktu do tradycyjnej sesji (dla gości)
+    private function addProductToSessionCart(&$cart, $product)
+    {
+        $productId = $product['id'];
+
+        if (isset($cart[$productId])) {
+            $cart[$productId]['quantity'] += 1;
+        } else {
+            $cart[$productId] = [
+                'id'       => $product['id'],
+                'name'     => $product['name'],
+                'price'    => (float) $product['price'],
+                'quantity' => 1,
+            ];
+        }
+    }
     public function removeFromBuild($categoryId, $index)
     {
         $build = session('configurator_build', []);

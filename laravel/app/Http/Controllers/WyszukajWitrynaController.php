@@ -137,8 +137,9 @@ class WyszukajWitrynaController extends Controller
             ->whereHas('values.products', function ($query) use ($filterProductIds) {
                 $query->whereIn('products.id', $filterProductIds);
             })
-            ->orderBy('name')
-            ->get();
+            ->get()
+            ->sortBy(fn ($attr) => $attr->display_name)
+            ->values();
 
         return view('Strona_Wyszukiwania', compact(
             'all_products',

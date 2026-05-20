@@ -109,19 +109,20 @@
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
                 @foreach($availableAttributes as $attr)
-                <div class="relative group" wire:key="attr-{{ $attr->id }}">
-                    <label class="text-[10px] text-cyan-300/60 uppercase font-bold tracking-widest mb-2 block px-1">
-                        {{ $attr->name }}
+                <div class="relative group" wire:key="attr-{{ $attr['id'] }}">
+                    <label class="text-[10px] text-cyan-300/80 uppercase font-bold tracking-widest mb-2 block px-1">
+                        {{ $attr['display_name'] }}
+                        <span class="text-[9px] text-gray-500 font-mono lowercase font-normal">({{ $attr['name'] }})</span>
                     </label>
                     <div class="relative">
                         <input
-                            list="list-{{ $attr->id }}"
-                            wire:model="attributeValues.{{ $attr->id }}"
+                            list="list-{{ $attr['id'] }}"
+                            wire:model="attributeValues.{{ $attr['id'] }}"
                             placeholder="Szukaj lub wpisz nową..."
                             class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 outline-none focus:border-cyan-400 focus:bg-cyan-400/5 transition-all shadow-[inset_0_0_10px_rgba(0,0,0,0.2)]"
                         >
-                        <datalist id="list-{{ $attr->id }}">
-                            @foreach($attr->values as $val)
+                        <datalist id="list-{{ $attr['id'] }}">
+                            @foreach($attr['values'] as $val)
                                 <option value="{{ $val }}">
                             @endforeach
                         </datalist>

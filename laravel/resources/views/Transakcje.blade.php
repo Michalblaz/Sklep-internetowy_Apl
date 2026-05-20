@@ -19,7 +19,7 @@
             <h1 class="text-2xl font-bold sm:text-3xl">Dostawa i Platnosc</h1>
         </div>
 
-        <a href="{{ route('koszyk') }}" class="text-xs uppercase tracking-widest text-white/55 transition hover:text-cyan-300">
+        <a href="{{ route('cart.index') }}" class="text-xs uppercase tracking-widest text-white/55 transition hover:text-cyan-300">
             Powrot do koszyka
         </a>
     </div>
