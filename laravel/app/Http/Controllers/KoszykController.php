@@ -26,7 +26,7 @@ class KoszykController extends Controller
             'product_id' => 'required|integer|exists:products,id',
             'quantity' => 'integer|min:1'
         ]);
-
+        $recommended = \App\Models\Product::getPersonalizedRecommendations(4);
         $productId = $request->input('product_id');
         $quantity = $request->input('quantity', 1);
 
@@ -45,10 +45,11 @@ class KoszykController extends Controller
                 'viewed_at'  => now(),
             ]);
         }
-
+       
         return response()->json([
         'success' => true,
-        'message' => 'Produkt dodany do koszyka!'
+        'message' => 'Produkt dodany do koszyka!',
+        'recommended' => $recommended
     ]);
     }
 

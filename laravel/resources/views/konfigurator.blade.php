@@ -47,7 +47,7 @@
 
         <aside class="col-span-12 lg:col-span-2 xl:col-span-2">
             @if($category)
-            <div class="bg-black/40 p-5 rounded-r-2xl border-y border-r border-white/10 backdrop-blur-xl sticky top-6 -ml-4 lg:-ml-8 shadow-2xl shadow-purple-900/10">
+            <div id="filter-panel" class="bg-black/40 p-5 rounded-r-2xl border-y border-r border-white/10 backdrop-blur-xl sticky top-6 -ml-4 lg:-ml-8 shadow-2xl shadow-purple-900/10">
                 <h2 class="text-neon-blue font-bruno text-sm mb-6 uppercase tracking-widest italic">Panel Filtrów</h2>
                 <form id="filter-form" action="{{ route('konfigurator.index') }}" method="GET" class="space-y-6">
                     @php
@@ -78,6 +78,8 @@
                             <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Cena rosnąco ↑</option>
                             <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Cena malejąco ↓</option>
                             <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nazwa A-Z</option>
+                            <option value="rating_desc" {{ request('sort') == 'rating_desc' ? 'selected' : '' }}>Najwyżej oceniane</option>
+                            <option value="stock_desc" {{ request('sort') == 'stock_desc' ? 'selected' : '' }}>Dostępność: od największej</option>
                         </select>
                     </div>
                        <div class="mb-6">
@@ -183,8 +185,12 @@
                         @endif
                     </div>
                 @endforeach
+                   <button type="submit" class="{{ $buttonClass }} relative z-10 w-full shrink-0 !py-1 text-base mb-2">
+                        Filtruj wyniki
+                    </button>
+
                     <a href="{{ route('konfigurator.index', array_merge(['category_id' => $category->id], request('change') == '1' ? ['change' => '1'] : [])) }}"
-                        class="block text-center w-full bg-neon-purple/80 hover:bg-neon-purple py-2 rounded font-bruno text-[10px] uppercase transition-all shadow-lg shadow-neon-purple/20">
+                        class="relative z-10 w-full block shrink-0 !py-1 text-base text-center font-bold uppercase rounded-full border border-red-500 bg-red-950/20 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.15)] hover:bg-red-600 hover:text-white hover:shadow-[0_0_25px_rgba(239,68,68,0.45)] transition-all duration-200 active:scale-95">
                         Resetuj filtry
                     </a>
                 </form>
@@ -487,30 +493,39 @@
 
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"> </script>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
         const filterForm = document.getElementById('filter-form');
+        const filterPanel = document.getElementById('filter-panel');
 
-        if (filterForm) {
-            // 1. Obsługa Checkboxów i Selecta (Sortowanie)
+        if (filterForm && filterPanel) {
+            // Flaga informująca, czy użytkownik dokonał jakiejkolwiek zmiany w filtrach
+            let filtersChanged = false;
+
+            // 1. Nasłuchiwanie zmian na checkboxach i selectach
             filterForm.querySelectorAll('input[type="checkbox"], select').forEach(element => {
                 element.addEventListener('change', function() {
-                    console.log('Zmiana w: ' + this.name + ' -> Wysyłam formularz');
-                    filterForm.submit();
+                    console.log('Wykryto zmianę w: ' + this.name);
+                    filtersChanged = true;
                 });
             });
 
-            let typingTimer;
+            // 2. Nasłuchiwanie zmian w polach wpisywania ceny (od/do)
             filterForm.querySelectorAll('input[type="number"]').forEach(input => {
                 input.addEventListener('input', function() {
-                    clearTimeout(typingTimer);
-                    typingTimer = setTimeout(() => {
-                        console.log('Cena zmieniona -> Wysyłam formularz');
-                        filterForm.submit();
-                    }, 800);
+                    console.log('Wykryto zmianę ceny w: ' + this.name);
+                    filtersChanged = true;
                 });
             });
-        } else {
-            console.error('Błąd: Nie znaleziono formularza o ID #filter-form');
+
+            // 3. Obsługa opuszczania panelu myszką jeśli zmieniliśmy jakieś filtry 
+            filterPanel.addEventListener('mouseleave', function() {
+                if (filtersChanged) {
+                    console.log('Myszka opuściła panel i filtry zostały zmienione -> Wysyłam formularz');
+                    filterForm.submit();
+                } else {
+                    console.log('Myszka opuściła panel, ale nic nie zmieniono -> Brak akcji');
+                }
+            });
         }
     });
 </script>

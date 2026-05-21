@@ -33,10 +33,8 @@ class ConfiguratorController extends Controller
 
          $query = Product::query()
             ->where('category_id', $categoryId)
-            ->with([
-                'brand',
-                'attributeValues',
-            ]);
+            ->with(['brand', 'attributeValues'])
+            ->withAvg('reviews', 'rating');
 
         // --- LOGIKA KOMPATYBILNOŚCI ---
         $currentCategoryAttributeIds = $category->attributes->pluck('id')->toArray();
@@ -214,6 +212,12 @@ class ConfiguratorController extends Controller
                 break;
             case 'name_asc':
                 $query->orderBy('name', 'asc');
+                break;
+            case 'rating_desc':
+                $query->orderByRaw('reviews_avg_rating DESC NULLS LAST');
+                break;
+            case 'stock_desc':
+                $query->orderBy('stock_quantity', 'desc');
                 break;
             default:
                 $query->orderBy('id', 'desc');

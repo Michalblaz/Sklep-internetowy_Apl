@@ -263,19 +263,40 @@
             @endif
         </article>
     </section>
-  
     @endif
-    <div id="cartModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(4px);" class="cursor-pointer">
-        <div style="background: #0f111a; border: 1px solid rgba(168,85,247,0.4); padding: 2.5rem; border-radius: 1.5rem; color: #f2f4ff; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 0 30px rgba(168,85,247,0.25);" class="cursor-default" onclick="event.stopPropagation()">
-            <div style="width: 50px; height: 50px; background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; color: #a855f7; font-size: 1.5rem;">✓</div>
-            <h3 class="text-xl mb-2 text-white font-bold tracking-wide">Dodano do koszyka!</h3>
-            <p class="text-white/80 mb-6 text-sm">Dobry wybór! Polecam przejrzeć polecane produkty, które mogą cię zaciekawić.</p>
-           <button class="{{ $buttonClass }} !w-full block mb-3 text-sm font-semibold py-3" onclick="window.location.href='/koszyk'">
-                Przejdź do koszyka
-            </button>
-            <button class="modal-btn btn-secondary w-full block padding-[0.8rem] border border-white/10 text-gray-400 rounded-full font-semibold hover:bg-white/5 hover:text-white transition" onclick="closeModal()">
-                Zostań na stronie
-            </button>
+
+    <div id="cartModal" style="display: none !important;" class="fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div class="bg-[#1a202c] border border-gray-700 p-6 rounded-2xl max-w-4xl w-full mx-4 relative text-white">
+            
+            <div class="flex items-center gap-3 mb-6 text-emerald-400 font-bruno">
+                <span class="flex h-3 w-3 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+                Pomyślnie dodano produkt do koszyka!
+            </div>
+
+            <div class="flex gap-4 mb-8">
+                <button onclick="closeModal()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 font-bold rounded-xl transition text-xs font-bruno uppercase">
+                    Kontynuuj zakupy
+                </button>
+                <a href="/koszyk" class="px-6 py-2 bg-purple-600 hover:bg-purple-500 font-bold rounded-xl transition text-xs font-bruno uppercase text-center">
+                    Przejdź do koszyka
+                </a>
+            </div>
+
+            <hr class="border-white/10 mb-6">
+
+            <div>
+                <h4 class="text-sm font-bruno text-purple-300 uppercase tracking-wider mb-4">
+                    Polecamy również:
+                </h4>
+                
+                <div id="modal-recommendations" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    </div>
+            </div>
+
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">✕</button>
         </div>
     </div>
 <script>
@@ -322,6 +343,53 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 if(data.success) {
                     const modal = document.getElementById('cartModal');
+                    const recContainer = document.getElementById('modal-recommendations');
+                    
+                    if (recContainer && data.recommended) {
+                        recContainer.innerHTML = '';
+                        
+                        data.recommended.forEach(item => {
+                            // Wyliczanie zniżki w JS
+                            const basePrice = parseFloat(item.base_price);
+                            const promoPrice = item.promo_price ? parseFloat(item.promo_price) : null;
+                            const hasDiscount = promoPrice && basePrice > 0;
+                            const discountPercent = hasDiscount ? Math.round(((basePrice - promoPrice) / basePrice) * 100) : 0;
+                            const finalPrice = hasDiscount ? promoPrice : basePrice;
+
+                            // Tworzenie struktury małego kafelka
+                            const cardHtml = `
+                                <div class="relative bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col justify-between h-full group hover:border-purple-500/40 transition duration-300">
+                                    <div>
+                                        <div class="w-full aspect-square bg-white/5 rounded-lg overflow-hidden mb-2 relative flex items-center justify-center">
+                                            <img src="/images/${item.image_url}" alt="${item.name}" class="object-contain w-4/5 h-4/5 group-hover:scale-105 transition duration-300">
+                                            ${hasDiscount ? `<span class="absolute top-1 right-1 bg-red-600 text-[9px] text-white font-bold px-1.5 py-0.5 rounded-md font-bruno animate-pulse">-${discountPercent}%</span>` : ''}
+                                        </div>
+                                        
+                                        <h5 class="text-xs font-bold text-white/80 line-clamp-2 h-8 group-hover:text-purple-400 transition uppercase tracking-tighter">
+                                            <a href="/produkt/${item.id}">${item.name}</a>
+                                        </h5>
+                                    </div>
+
+                                    <div class="mt-2">
+                                        <div class="text-xs font-bruno mb-2">
+                                            ${hasDiscount ? `
+                                                <span class="text-green-400 font-black">${promoPrice.toFixed(2).replace('.', ',')} zł</span>
+                                                <span class="text-[10px] text-gray-500 line-through block">${basePrice.toFixed(2).replace('.', ',')} zł</span>
+                                            ` : `
+                                                <span class="text-white font-black">${basePrice.toFixed(2).replace('.', ',')} zł</span>
+                                            `}
+                                        </div>
+                                        
+                                        <a href="/produkt/${item.id}" class="block text-center w-full py-1.5 bg-purple-900/40 hover:bg-purple-600 border border-purple-500/30 hover:border-purple-500 text-purple-300 hover:text-white text-[10px] font-bold font-bruno rounded-lg transition duration-200">
+                                            Zobacz produkt
+                                        </a>
+                                    </div>
+                                </div>
+                            `;
+                            recContainer.insertAdjacentHTML('beforeend', cardHtml);
+                        });
+                    }
+
                     if (modal) {
                         modal.style.setProperty('display', 'flex', 'important');
                     }

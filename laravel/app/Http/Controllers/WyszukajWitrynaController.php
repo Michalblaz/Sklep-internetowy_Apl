@@ -72,11 +72,7 @@ class WyszukajWitrynaController extends Controller
             ->tap(fn ($baseQuery) => $this->applySearch($baseQuery, $search, $likeOperator))
             ->pluck('id');
 
-        $recommendedProducts = Product::with(['brand', 'category'])
-            ->whereIn('id', $filterProductIds)
-            ->orderByDesc('id')
-            ->take(10)
-            ->get();
+        $recommendedProducts = Product::getPersonalizedRecommendations(10);
 
         $products = Product::whereNull('promo_price')->take(10)->get();
 
