@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use Illuminate\Http\Request;
 use App\Models\Attribute;
+use App\Models\Product;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class ProductPageController extends Controller
 {
-    public function show(?int $id = null)
+    public function show(?int $id = null): View
     {
         $product = null;
         $specs = collect();
@@ -18,6 +21,7 @@ class ProductPageController extends Controller
         $topSpecs = [];
         $rating = 0.0;
         $ratingColorSegments = array_fill(0, 5, 0);
+        $isObserved = false;
 
         if ($id !== null) {
             $product = Product::query()
@@ -27,12 +31,13 @@ class ProductPageController extends Controller
 
         if ($product) {
             if (auth()->check()) {
-            DB::table('product_browsing_history')->insert([
-                'product_id' => $product->id,
-                'user_id'    => auth()->id(),
-                'viewed_at'  => now(),
-            ]);
-        }
+                DB::table('product_browsing_history')->insert([
+                    'product_id' => $product->id,
+                    'user_id' => auth()->id(),
+                    'viewed_at' => now(),
+                ]);
+            }
+
             $attributeTable = (new Attribute())->getTable();
             $attributeColumn = Product::attributeCategoryPivotColumn();
 
@@ -52,7 +57,7 @@ class ProductPageController extends Controller
 
                     return [
                         'label' => $attribute->display_name,
-                        'value' => $attribute->formatValue($spec->value)
+                        'value' => $attribute->formatValue($spec->value),
                     ];
                 })
                 ->values();
@@ -111,6 +116,15 @@ class ProductPageController extends Controller
                         'rating',
                         'comment',
                     ]);
+
+                $wishlistId = $this->findObservedWishlistId(auth()->id());
+
+                if ($wishlistId !== null) {
+                    $isObserved = DB::table('wishlist_items')
+                        ->where('wishlist_id', $wishlistId)
+                        ->where('product_id', $product->id)
+                        ->exists();
+                }
             }
         }
 
@@ -140,11 +154,12 @@ class ProductPageController extends Controller
             'hasPromotion' => $hasPromotion,
             'discountPercent' => $discountPercent,
             'imagePath' => $imagePath,
+            'isObserved' => $isObserved,
             'description' => null,
         ]);
     }
 
-    public function storeReview(Request $request, int $id)
+    public function storeReview(Request $request, int $id): RedirectResponse
     {
         $product = Product::findOrFail($id);
 
@@ -184,6 +199,49 @@ class ProductPageController extends Controller
             ->with('success', $existingReview ? 'Opinia została zaktualizowana.' : 'Opinia została dodana.');
     }
 
+    public function toggleObserved(Request $request, int $id): JsonResponse
+    {
+        $product = Product::findOrFail($id);
+
+        if (!$request->user()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Musisz być zalogowany, żeby obserwować produkty.',
+            ], 401);
+        }
+
+        $wishlistId = $this->findOrCreateObservedWishlistId($request->user()->id);
+
+        $existingWishlistItem = DB::table('wishlist_items')
+            ->where('wishlist_id', $wishlistId)
+            ->where('product_id', $product->id)
+            ->exists();
+
+        if ($existingWishlistItem) {
+            DB::table('wishlist_items')
+                ->where('wishlist_id', $wishlistId)
+                ->where('product_id', $product->id)
+                ->delete();
+
+            return response()->json([
+                'success' => true,
+                'isObserved' => false,
+                'message' => 'Produkt został usunięty z obserwowanych.',
+            ]);
+        }
+
+        DB::table('wishlist_items')->insert([
+            'wishlist_id' => $wishlistId,
+            'product_id' => $product->id,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'isObserved' => true,
+            'message' => 'Produkt został dodany do obserwowanych.',
+        ]);
+    }
+
     private function buildRatingSegments(float $rating): array
     {
         $segments = [];
@@ -196,5 +254,29 @@ class ProductPageController extends Controller
         }
 
         return $segments;
+    }
+
+    private function findObservedWishlistId(int $userId): ?int
+    {
+        $wishlist = DB::table('wishlists')
+            ->where('user_id', $userId)
+            ->whereRaw('LOWER(name) = ?', ['obserwowane'])
+            ->first(['id']);
+
+        return $wishlist ? (int) $wishlist->id : null;
+    }
+
+    private function findOrCreateObservedWishlistId(int $userId): int
+    {
+        $wishlistId = $this->findObservedWishlistId($userId);
+
+        if ($wishlistId !== null) {
+            return $wishlistId;
+        }
+
+        return (int) DB::table('wishlists')->insertGetId([
+            'user_id' => $userId,
+            'name' => 'Obserwowane',
+        ]);
     }
 }

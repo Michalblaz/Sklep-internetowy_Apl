@@ -32,6 +32,7 @@ use App\Livewire\Admin\ProductForm;
     Route::get('/produkt', [ProductPageController::class, 'show'])->name('product.show');
     Route::get('/produkt/{id}', [ProductPageController::class, 'show'])->whereNumber('id')->name('products.show');
     Route::post('/produkt/{id}/opinie', [ProductPageController::class, 'storeReview'])->whereNumber('id')->middleware('auth')->name('products.reviews.store');
+    Route::post('/produkt/{id}', [ProductPageController::class, 'toggleObserved'])->whereNumber('id')->name('products.favorite.toggle');
 
         //Wyszukiwarka
     Route::get('/wyszukiwanie/podpowiedzi', [WyszukajWitrynaController::class, 'suggestions'])
@@ -73,4 +74,12 @@ use App\Livewire\Admin\ProductForm;
     // Profil
     Route::middleware(['auth'])->group(function () {
         Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
+        Route::post('/profil', [ProfileController::class, 'update'])->name('profil.update');
+        Route::post('/profil/reklamacje', [ProfileController::class, 'storeComplaint'])->name('profil.complaints.store');
+        Route::post('/profil/lista/{productId}/do-koszyka', [ProfileController::class, 'moveObservedToCart'])
+            ->whereNumber('productId')
+            ->name('profil.saved.move-to-cart');
+        Route::post('/profil/lista/{productId}/usun', [ProfileController::class, 'removeObserved'])
+            ->whereNumber('productId')
+            ->name('profil.saved.remove');
     });

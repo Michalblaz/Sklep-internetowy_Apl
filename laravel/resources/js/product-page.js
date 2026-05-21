@@ -1,4 +1,90 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const observedNotice = document.querySelector('[data-observed-notice]');
+    const observedButton = document.querySelector('[data-observed-button]');
+    const observedIcon = document.querySelector('[data-observed-icon]');
+
+    const setObservedState = (isObserved) => {
+        if (!observedButton || !observedIcon) {
+            return;
+        }
+
+        observedButton.dataset.observedActive = isObserved ? 'true' : 'false';
+        observedButton.setAttribute('aria-label', isObserved ? 'Usuń z obserwowanych' : 'Dodaj do obserwowanych');
+        observedIcon.textContent = isObserved ? '♥' : '♡';
+
+        observedButton.classList.toggle('border-rose-300/45', isObserved);
+        observedButton.classList.toggle('bg-rose-500/15', isObserved);
+        observedButton.classList.toggle('text-rose-300', isObserved);
+        observedButton.classList.toggle('shadow-[0_0_18px_rgba(244,63,94,0.25)]', isObserved);
+        observedButton.classList.toggle('border-white/15', !isObserved);
+        observedButton.classList.toggle('bg-white/5', !isObserved);
+        observedButton.classList.toggle('text-white/80', !isObserved);
+        observedButton.classList.toggle('hover:bg-white/10', !isObserved);
+    };
+
+    const showObservedNotice = (message, type = 'success') => {
+        if (!observedNotice) {
+            return;
+        }
+
+        observedNotice.textContent = message;
+        observedNotice.classList.remove(
+            'hidden',
+            'border',
+            'border-emerald-400/40',
+            'bg-emerald-500/10',
+            'text-emerald-100',
+            'border-rose-400/40',
+            'bg-rose-500/10',
+            'text-rose-100',
+        );
+
+        if (type === 'error') {
+            observedNotice.classList.add('border', 'border-rose-400/40', 'bg-rose-500/10', 'text-rose-100');
+        } else {
+            observedNotice.classList.add('border', 'border-emerald-400/40', 'bg-emerald-500/10', 'text-emerald-100');
+        }
+    };
+
+    if (observedButton) {
+        observedButton.addEventListener('click', async () => {
+            const token = observedButton.dataset.observedToken;
+            const endpoint = observedButton.dataset.observedEndpoint;
+
+            if (!token || !endpoint) {
+                return;
+            }
+
+            observedButton.disabled = true;
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    showObservedNotice(data.message || 'Nie udało się zaktualizować obserwowanych.', 'error');
+                    return;
+                }
+
+                setObservedState(Boolean(data.isObserved));
+                showObservedNotice(data.message || 'Zaktualizowano obserwowane.');
+            } catch (error) {
+                console.error('Błąd:', error);
+                showObservedNotice('Nie udało się zaktualizować obserwowanych.', 'error');
+            } finally {
+                observedButton.disabled = false;
+            }
+        });
+    }
+
     const reviewForm = document.querySelector('[data-review-form]');
     const ratingInput = reviewForm?.querySelector('[data-rating-input]');
     const ratingStars = reviewForm ? Array.from(reviewForm.querySelectorAll('[data-rating-star]')) : [];

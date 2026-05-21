@@ -31,6 +31,20 @@
         data-review-widget
         data-reviews='@json($reviews)'
     >
+        @if (session('success'))
+            <div class="rounded-[1.8rem] border border-emerald-400/40 bg-emerald-500/10 px-5 py-4 text-sm text-emerald-100" data-page-flash-success>
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="rounded-[1.8rem] border border-rose-400/40 bg-rose-500/10 px-5 py-4 text-sm text-rose-100" data-page-flash-error>
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <div class="hidden rounded-[1.8rem] px-5 py-4 text-sm" data-observed-notice></div>
+
         <div class="px-4 md:px-6">
             <h1 class="mx-auto max-w-4xl text-center text-2xl leading-tight md:text-[2rem]">
                 {{ $product->name }}
@@ -89,14 +103,29 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('cart.add') }}" method="POST" id="add-to-cart-form" class="inline">
-                    @csrf
-                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <div class="flex items-center gap-3">
+                        <form action="{{ route('cart.add') }}" method="POST" id="add-to-cart-form" class="flex-1">
+                            @csrf
+                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                            <input type="hidden" name="quantity" value="1">
 
-                    <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="{{ $buttonClass }} add-to-cart-btn relative z-10 w-full shrink-0 py-3 text-base">
+                                Do koszyka
+                            </button>
+                        </form>
 
-                    <button type="submit" class="{{ $buttonClass }} add-to-cart-btn relative z-10 w-full shrink-0 py-3 text-base">Dodaj do koszyka</button>
-                </form>
+                        <button
+                            type="button"
+                            aria-label="{{ $isObserved ? 'Usuń z obserwowanych' : 'Dodaj do obserwowanych' }}"
+                            data-observed-button
+                            data-observed-active="{{ $isObserved ? 'true' : 'false' }}"
+                            data-observed-endpoint="{{ route('products.favorite.toggle', $product->id) }}"
+                            data-observed-token="{{ csrf_token() }}"
+                            class="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full border transition {{ $isObserved ? 'border-rose-300/45 bg-rose-500/15 text-rose-300 shadow-[0_0_18px_rgba(244,63,94,0.25)]' : 'border-white/15 bg-white/5 text-white/80 hover:bg-white/10' }}"
+                        >
+                            <span class="text-[1.45rem] leading-none" data-observed-icon>{{ $isObserved ? '♥' : '♡' }}</span>
+                        </button>
+                    </div>
                 </div>
             </aside>
         </section>
@@ -214,12 +243,6 @@
             @if (auth()->check())
                 <p class="mb-3 text-lg text-white/90">{{ $currentUserReview ? 'Edytuj opinię' : 'Dodaj opinię' }}</p>
 
-                @if (session('success'))
-                    <div class="mb-4 rounded-xl border border-emerald-400/30 bg-emerald-500/15 px-4 py-3 text-sm text-emerald-200">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
                 @if ($errors->any())
                     <div class="mb-4 rounded-xl border border-red-400/30 bg-red-500/15 px-4 py-3 text-sm text-red-200">
                         {{ $errors->first() }}
@@ -263,44 +286,42 @@
             @endif
         </article>
     </section>
-    @endif
+@endif
 
-    <div id="cartModal" style="display: none !important;" class="fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-sm">
-        <div class="bg-[#1a202c] border border-gray-700 p-6 rounded-2xl max-w-4xl w-full mx-4 relative text-white">
-            
-            <div class="flex items-center gap-3 mb-6 text-emerald-400 font-bruno">
-                <span class="flex h-3 w-3 relative">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                </span>
-                Pomyślnie dodano produkt do koszyka!
-            </div>
-
-            <div class="flex gap-4 mb-8">
-                <button onclick="closeModal()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 font-bold rounded-xl transition text-xs font-bruno uppercase">
-                    Kontynuuj zakupy
-                </button>
-                <a href="/koszyk" class="px-6 py-2 bg-purple-600 hover:bg-purple-500 font-bold rounded-xl transition text-xs font-bruno uppercase text-center">
-                    Przejdź do koszyka
-                </a>
-            </div>
-
-            <hr class="border-white/10 mb-6">
-
-            <div>
-                <h4 class="text-sm font-bruno text-purple-300 uppercase tracking-wider mb-4">
-                    Polecamy również:
-                </h4>
-                
-                <div id="modal-recommendations" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    </div>
-            </div>
-
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">✕</button>
+<div id="cartModal" style="display: none !important;" class="fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="relative mx-4 w-full max-w-4xl rounded-2xl border border-gray-700 bg-[#1a202c] p-6 text-white">
+        <div class="mb-6 flex items-center gap-3 font-bruno text-emerald-400">
+            <span class="relative flex h-3 w-3">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex h-3 w-3 rounded-full bg-emerald-500"></span>
+            </span>
+            Pomyślnie dodano produkt do koszyka!
         </div>
+
+        <div class="mb-8 flex gap-4">
+            <button onclick="closeModal()" class="rounded-xl bg-gray-700 px-6 py-2 text-xs font-bold uppercase transition hover:bg-gray-600">
+                Kontynuuj zakupy
+            </button>
+            <a href="/koszyk" class="rounded-xl bg-purple-600 px-6 py-2 text-center text-xs font-bold uppercase transition hover:bg-purple-500">
+                Przejdź do koszyka
+            </a>
+        </div>
+
+        <hr class="mb-6 border-white/10">
+
+        <div>
+            <h4 class="mb-4 text-sm uppercase tracking-wider text-purple-300">
+                Polecamy również:
+            </h4>
+
+            <div id="modal-recommendations" class="grid grid-cols-2 gap-4 md:grid-cols-4"></div>
+        </div>
+
+        <button onclick="closeModal()" class="absolute right-4 top-4 text-xl text-gray-400 hover:text-white">✕</button>
     </div>
+</div>
+
 <script>
-// Funkcja zamykania modalu
 function closeModal() {
     const modal = document.getElementById('cartModal');
     if (modal) {
@@ -309,83 +330,85 @@ function closeModal() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Obsługa kliknięcia poza okienkiem modalu (w ciemne tło)
     const cartModal = document.getElementById('cartModal');
+
     if (cartModal) {
-        cartModal.addEventListener('click', function(e) {
-            if (e.target === this) {
+        cartModal.addEventListener('click', function (event) {
+            if (event.target === this) {
                 closeModal();
             }
         });
     }
 
-    // 2. Obsługa dodawania do koszyka przez AJAX dla wszystkich przycisków na stronie
-    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            let form = this.closest('form');
-            if (!form) return;
-            
-            let formData = new FormData(form);
-            let token = form.querySelector('input[name="_token"]')?.value || document.querySelector('input[name="_token"]')?.value;
-            
+    document.querySelectorAll('.add-to-cart-btn').forEach((button) => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const form = this.closest('form');
+            if (!form) {
+                return;
+            }
+
+            const formData = new FormData(form);
+            const token = form.querySelector('input[name="_token"]')?.value || document.querySelector('input[name="_token"]')?.value;
+
             fetch(form.action, {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'X-CSRF-TOKEN': token,
                     'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
                 },
-                body: formData
+                body: formData,
             })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success) {
+                .then((response) => response.json())
+                .then((data) => {
+                    if (!data.success) {
+                        return;
+                    }
+
                     const modal = document.getElementById('cartModal');
                     const recContainer = document.getElementById('modal-recommendations');
-                    
+
                     if (recContainer && data.recommended) {
                         recContainer.innerHTML = '';
-                        
-                        data.recommended.forEach(item => {
-                            // Wyliczanie zniżki w JS
+
+                        data.recommended.forEach((item) => {
                             const basePrice = parseFloat(item.base_price);
                             const promoPrice = item.promo_price ? parseFloat(item.promo_price) : null;
                             const hasDiscount = promoPrice && basePrice > 0;
                             const discountPercent = hasDiscount ? Math.round(((basePrice - promoPrice) / basePrice) * 100) : 0;
-                            const finalPrice = hasDiscount ? promoPrice : basePrice;
 
-                            // Tworzenie struktury małego kafelka
                             const cardHtml = `
-                                <div class="relative bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col justify-between h-full group hover:border-purple-500/40 transition duration-300">
+                                <div class="group relative flex h-full flex-col justify-between rounded-xl border border-white/5 bg-black/40 p-3 transition duration-300 hover:border-purple-500/40">
                                     <div>
-                                        <div class="w-full aspect-square bg-white/5 rounded-lg overflow-hidden mb-2 relative flex items-center justify-center">
-                                            <img src="/images/${item.image_url}" alt="${item.name}" class="object-contain w-4/5 h-4/5 group-hover:scale-105 transition duration-300">
-                                            ${hasDiscount ? `<span class="absolute top-1 right-1 bg-red-600 text-[9px] text-white font-bold px-1.5 py-0.5 rounded-md font-bruno animate-pulse">-${discountPercent}%</span>` : ''}
+                                        <div class="relative mb-2 flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-white/5">
+                                            <img src="/images/${item.image_url}" alt="${item.name}" class="h-4/5 w-4/5 object-contain transition duration-300 group-hover:scale-105">
+                                            ${hasDiscount ? `<span class="absolute right-1 top-1 animate-pulse rounded-md bg-red-600 px-1.5 py-0.5 text-[9px] font-bold text-white">-${discountPercent}%</span>` : ''}
                                         </div>
-                                        
-                                        <h5 class="text-xs font-bold text-white/80 line-clamp-2 h-8 group-hover:text-purple-400 transition uppercase tracking-tighter">
+
+                                        <h5 class="line-clamp-2 h-8 text-xs font-bold uppercase tracking-tighter text-white/80 transition group-hover:text-purple-400">
                                             <a href="/produkt/${item.id}">${item.name}</a>
                                         </h5>
                                     </div>
 
                                     <div class="mt-2">
-                                        <div class="text-xs font-bruno mb-2">
+                                        <div class="mb-2 text-xs">
                                             ${hasDiscount ? `
-                                                <span class="text-green-400 font-black">${promoPrice.toFixed(2).replace('.', ',')} zł</span>
-                                                <span class="text-[10px] text-gray-500 line-through block">${basePrice.toFixed(2).replace('.', ',')} zł</span>
+                                                <span class="font-black text-green-400">${promoPrice.toFixed(2).replace('.', ',')} zł</span>
+                                                <span class="block text-[10px] text-gray-500 line-through">${basePrice.toFixed(2).replace('.', ',')} zł</span>
                                             ` : `
-                                                <span class="text-white font-black">${basePrice.toFixed(2).replace('.', ',')} zł</span>
+                                                <span class="font-black text-white">${basePrice.toFixed(2).replace('.', ',')} zł</span>
                                             `}
                                         </div>
-                                        
-                                        <a href="/produkt/${item.id}" class="block text-center w-full py-1.5 bg-purple-900/40 hover:bg-purple-600 border border-purple-500/30 hover:border-purple-500 text-purple-300 hover:text-white text-[10px] font-bold font-bruno rounded-lg transition duration-200">
+
+                                        <a href="/produkt/${item.id}" class="block w-full rounded-lg border border-purple-500/30 bg-purple-900/40 py-1.5 text-center text-[10px] font-bold text-purple-300 transition duration-200 hover:border-purple-500 hover:bg-purple-600 hover:text-white">
                                             Zobacz produkt
                                         </a>
                                     </div>
                                 </div>
                             `;
+
                             recContainer.insertAdjacentHTML('beforeend', cardHtml);
                         });
                     }
@@ -393,9 +416,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (modal) {
                         modal.style.setProperty('display', 'flex', 'important');
                     }
-                }
-            })
-            .catch(error => console.error('Błąd:', error));
+                })
+                .catch((error) => console.error('Błąd:', error));
         });
     });
 });
