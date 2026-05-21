@@ -196,17 +196,12 @@
                                             $isSelected = is_array($selectedValues) && in_array($value->id, $selectedValues);
                                             $isAvailable = in_array($value->id, $availableValueIds ?? []);
                                             $isDisabled = !$isAvailable && !$isSelected;
-                                            $displayValue = strtolower((string) $value->value);
                                         @endphp
 
                                         <label class="home-filter-option flex items-center gap-3 group {{ $isDisabled ? 'opacity-30 cursor-not-allowed grayscale' : 'cursor-pointer' }} {{ $index >= 3 ? 'hidden' : '' }}" @if($index >= 3) data-filter-extra="{{ $attribute->id }}" @endif>
                                             <input type="checkbox" name="attrs[{{ $attribute->id }}][]" value="{{ $value->id }}" {{ $isSelected ? 'checked' : '' }} {{ $isDisabled ? 'disabled' : '' }} class="w-3 h-3 rounded border-white/20 bg-white/5 text-cyan-400 focus:ring-cyan-400">
                                             <span class="text-[11px] {{ $isDisabled ? 'text-white/25' : 'text-white/65 group-hover:text-cyan-300' }} transition uppercase font-bruno">
-                                                {{ match($displayValue) {
-                                                    'true' => 'Posiada',
-                                                    'false', '0' => 'Nie posiada',
-                                                    default => $value->value,
-                                                } }}
+                                                {{ $attribute->formatValue($value->value) }}
                                                 @if($isDisabled)
                                                     <span class="text-[8px] text-white/35 ml-1 font-sans">(0)</span>
                                                 @endif

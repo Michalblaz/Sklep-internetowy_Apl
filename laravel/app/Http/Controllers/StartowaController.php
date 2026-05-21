@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Product;
+use App\Models\Attribute; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -65,11 +66,11 @@ class StartowaController extends Controller
                                 ->map(fn ($attribute) => [
                                     'id' => $attribute->id,
                                     'name' => $attribute->name,
-                                    'display_name' => $this->translateKey($attribute->name),
+                                    'display_name' => $attribute->display_name,
                                     'values' => $attribute->values
                                         ->map(fn ($value) => [
                                             'id' => $value->id,
-                                            'value' => $value->value,
+                                            'value' => $attribute->formatValue($value->value),
                                         ])->values(),
                                 ])->values(),
                         ],

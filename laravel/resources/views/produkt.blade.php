@@ -95,7 +95,7 @@
 
                     <input type="hidden" name="quantity" value="1">
 
-                    <button type="submit" class="{{ $buttonClass }} relative z-10 w-full shrink-0 py-3 text-base">Dodaj do koszyka</button>
+                    <button type="submit" class="{{ $buttonClass }} add-to-cart-btn relative z-10 w-full shrink-0 py-3 text-base">Dodaj do koszyka</button>
                 </form>
                 </div>
             </aside>
@@ -263,42 +263,73 @@
             @endif
         </article>
     </section>
-    <div id="cartModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <h3 class="text-xl mb-4 text-[#8b89ff]">Dodano do koszyka!</h3>
-            <p class="text-white/80">Dobry wybór! Polecam przejrzeć polecane produkty, które mogą cię zaciekawić.</p>
-
-            <button class="modal-btn btn-primary" onclick="window.location.href='/koszyk'">Przejdź do koszyka</button>
-            <button class="modal-btn btn-secondary" onclick="closeModal()">Zostań na stronie</button>
+  
+    @endif
+    <div id="cartModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(4px);" class="cursor-pointer">
+        <div style="background: #0f111a; border: 1px solid rgba(168,85,247,0.4); padding: 2.5rem; border-radius: 1.5rem; color: #f2f4ff; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 0 30px rgba(168,85,247,0.25);" class="cursor-default" onclick="event.stopPropagation()">
+            <div style="width: 50px; height: 50px; background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; color: #a855f7; font-size: 1.5rem;">✓</div>
+            <h3 class="text-xl mb-2 text-white font-bold tracking-wide">Dodano do koszyka!</h3>
+            <p class="text-white/80 mb-6 text-sm">Dobry wybór! Polecam przejrzeć polecane produkty, które mogą cię zaciekawić.</p>
+           <button class="{{ $buttonClass }} !w-full block mb-3 text-sm font-semibold py-3" onclick="window.location.href='/koszyk'">
+                Przejdź do koszyka
+            </button>
+            <button class="modal-btn btn-secondary w-full block padding-[0.8rem] border border-white/10 text-gray-400 rounded-full font-semibold hover:bg-white/5 hover:text-white transition" onclick="closeModal()">
+                Zostań na stronie
+            </button>
         </div>
     </div>
-@endif
 <script>
-document.querySelector('#add-to-cart-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    let formData = new FormData(this);
-    let token = document.querySelector('input[name="_token"]').value;
-
-    fetch("{{ route('cart.add') }}", {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': token,
-            'Accept': 'application/json'
-        },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.success) {
-            document.getElementById('cartModal').style.display = 'flex';
-        }
-    })
-    .catch(error => console.error('Błąd:', error));
-});
-
+// Funkcja zamykania modalu
 function closeModal() {
-    document.getElementById('cartModal').style.display = 'none';
+    const modal = document.getElementById('cartModal');
+    if (modal) {
+        modal.style.setProperty('display', 'none', 'important');
+    }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Obsługa kliknięcia poza okienkiem modalu (w ciemne tło)
+    const cartModal = document.getElementById('cartModal');
+    if (cartModal) {
+        cartModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    }
+
+    // 2. Obsługa dodawania do koszyka przez AJAX dla wszystkich przycisków na stronie
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            let form = this.closest('form');
+            if (!form) return;
+            
+            let formData = new FormData(form);
+            let token = form.querySelector('input[name="_token"]')?.value || document.querySelector('input[name="_token"]')?.value;
+            
+            fetch(form.action, {
+                method: 'POST',
+                headers: { 
+                    'X-CSRF-TOKEN': token,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    const modal = document.getElementById('cartModal');
+                    if (modal) {
+                        modal.style.setProperty('display', 'flex', 'important');
+                    }
+                }
+            })
+            .catch(error => console.error('Błąd:', error));
+        });
+    });
+});
 </script>
 @endsection
