@@ -104,9 +104,24 @@
                     </div>
 
                     <div class="grid sm:grid-cols-2 gap-4 lg:gap-6 text-gray-200">
-                        <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
-                            <p class="text-sm text-gray-400 mb-2">Aktywne zamówienia</p>
-                            <p class="text-3xl text-white">{{ number_format($shopStats['active_orders']) }}</p>
+                        <div class="rounded-2xl border border-cyan-400/20 bg-cyan-500/5 p-5">
+                            <p class="text-sm text-gray-400 mb-4">Zamówienia</p>
+                            <div class="grid grid-cols-3 gap-3">
+                                <div class="rounded-xl border border-sky-400/20 bg-sky-500/10 px-3 py-3">
+                                    <p class="text-[10px] uppercase tracking-[0.18em] text-sky-200/70">Nowe</p>
+                                    <p class="mt-2 text-2xl text-white">{{ number_format($shopStats['orders_new']) }}</p>
+                                </div>
+
+                                <div class="rounded-xl border border-amber-400/20 bg-amber-500/10 px-3 py-3">
+                                    <p class="text-[10px] uppercase tracking-[0.18em] text-amber-200/70">W trakcie</p>
+                                    <p class="mt-2 text-2xl text-white">{{ number_format($shopStats['orders_in_progress']) }}</p>
+                                </div>
+
+                                <div class="rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-3 py-3">
+                                    <p class="text-[10px] uppercase tracking-[0.18em] text-emerald-200/70">Dostarczone</p>
+                                    <p class="mt-2 text-2xl text-white">{{ number_format($shopStats['orders_delivered']) }}</p>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
@@ -311,14 +326,124 @@
             <section id="reklamacje" class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
-                        <h2 class="text-purple-400 text-xl font-bruno">Reklamacje</h2>
+                        <h2 class="text-purple-400 text-xl font-bruno">Reklamacje i zwroty</h2>
                         <p class="text-sm text-gray-400">Lista zgłoszeń z nazwą użytkownika, powodem i opisem.</p>
                     </div>
                     <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Przewijanie włączone</span>
                 </div>
 
+                <div class="grid gap-4 md:grid-cols-3">
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <p class="text-xs uppercase tracking-[0.25em] text-gray-500">Wszystkie zgłoszenia</p>
+                        <p class="mt-2 text-3xl text-white">{{ number_format($complaintStats['all']) }}</p>
+                    </div>
+                    <div class="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-4">
+                        <p class="text-xs uppercase tracking-[0.25em] text-cyan-200/70">Reklamacje</p>
+                        <p class="mt-2 text-3xl text-white">{{ number_format($complaintStats['complaints']) }}</p>
+                    </div>
+                    <div class="rounded-2xl border border-fuchsia-400/20 bg-fuchsia-500/10 p-4">
+                        <p class="text-xs uppercase tracking-[0.25em] text-fuchsia-200/70">Zwroty</p>
+                        <p class="mt-2 text-3xl text-white">{{ number_format($complaintStats['returns']) }}</p>
+                    </div>
+                </div>
+
+                <form action="{{ route('admin') }}#reklamacje" method="GET" class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                    @if(request()->filled('low_stock_threshold'))
+                        <input type="hidden" name="low_stock_threshold" value="{{ request('low_stock_threshold') }}">
+                    @endif
+
+                    <div class="grid gap-4 xl:grid-cols-[1fr_1fr_0.8fr_0.9fr_auto_auto] xl:items-end">
+                        <div>
+                            <label for="complaint_name" class="mb-2 block text-[10px] uppercase tracking-[0.25em] text-gray-500">
+                                Imię i nazwisko
+                            </label>
+                            <input
+                                id="complaint_name"
+                                name="complaint_name"
+                                type="text"
+                                value="{{ request('complaint_name') }}"
+                                placeholder="np. Jan Kowalski"
+                                class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-cyan-300/60 focus:bg-cyan-400/5"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="complaint_email" class="mb-2 block text-[10px] uppercase tracking-[0.25em] text-gray-500">
+                                E-mail
+                            </label>
+                            <input
+                                id="complaint_email"
+                                name="complaint_email"
+                                type="text"
+                                value="{{ request('complaint_email') }}"
+                                placeholder="np. klient@email.pl"
+                                class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-cyan-300/60 focus:bg-cyan-400/5"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="complaint_type" class="mb-2 block text-[10px] uppercase tracking-[0.25em] text-gray-500">
+                                Typ
+                            </label>
+                            <select
+                                id="complaint_type"
+                                name="complaint_type"
+                                class="admin-filter-select w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none transition focus:border-purple-300/60"
+                            >
+                                <option value="">Wszystkie</option>
+                                <option value="Reklamacja" @selected(request('complaint_type') === 'Reklamacja')>Reklamacja</option>
+                                <option value="Zwrot" @selected(request('complaint_type') === 'Zwrot')>Zwrot</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="complaint_status" class="mb-2 block text-[10px] uppercase tracking-[0.25em] text-gray-500">
+                                Status
+                            </label>
+                            <select
+                                id="complaint_status"
+                                name="complaint_status"
+                                class="admin-filter-select w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none transition focus:border-purple-300/60"
+                            >
+                                <option value="">Wszystkie</option>
+                                <option value="oczekujące" @selected(request('complaint_status') === 'oczekujące')>Oczekujące</option>
+                                <option value="zaakceptowane" @selected(request('complaint_status') === 'zaakceptowane')>Zaakceptowane</option>
+                                <option value="odrzucone" @selected(request('complaint_status') === 'odrzucone')>Odrzucone</option>
+                            </select>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="rounded-xl border border-purple-300/25 bg-purple-600/40 px-5 py-3 text-sm font-bold text-white transition hover:bg-purple-500/60 hover:shadow-[0_0_18px_rgba(168,85,247,0.35)]"
+                        >
+                            Filtruj
+                        </button>
+
+                        <a
+                            href="{{ route('admin', request()->filled('low_stock_threshold') ? ['low_stock_threshold' => request('low_stock_threshold')] : []) }}#reklamacje"
+                            class="rounded-xl border border-cyan-300/20 bg-cyan-500/10 px-5 py-3 text-center text-sm font-bold text-cyan-200 transition hover:bg-cyan-500/20"
+                        >
+                            Reset
+                        </a>
+                    </div>
+                </form>
+
                 <div class="admin-record-scroll space-y-4 max-h-[34rem] overflow-y-auto pr-2">
                     @forelse ($complaints as $complaint)
+                        @php
+                            $complaintStatusClasses = match ($complaint->status) {
+                                'zaakceptowane' => 'border-emerald-400/25 bg-emerald-500/10 shadow-[0_0_24px_rgba(16,185,129,0.14)]',
+                                'odrzucone' => 'border-red-400/25 bg-red-500/10 shadow-[0_0_24px_rgba(248,113,113,0.14)]',
+                                default => 'border-cyan-400/25 bg-cyan-500/10 shadow-[0_0_24px_rgba(34,211,238,0.14)]',
+                            };
+
+                            $complaintStatusTextClasses = match ($complaint->status) {
+                                'zaakceptowane' => 'text-emerald-200',
+                                'odrzucone' => 'text-red-200',
+                                default => 'text-cyan-200',
+                            };
+                        @endphp
+
                         <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
                             <div class="flex flex-col lg:flex-row lg:items-start gap-5">
                                 <div class="lg:w-64 shrink-0">
@@ -327,6 +452,14 @@
                                     <p class="mt-3 text-xs uppercase tracking-[0.25em] text-gray-500">
                                         Zamówienie #{{ $complaint->order_id ?? 'brak' }}
                                     </p>
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        <span class="rounded-full border px-3 py-1 text-xs font-bold uppercase {{ $complaint->type_label === 'Zwrot' ? 'border-fuchsia-300/30 bg-fuchsia-500/15 text-fuchsia-100' : 'border-cyan-300/30 bg-cyan-500/15 text-cyan-100' }}">
+                                            {{ $complaint->type_label }}
+                                        </span>
+                                        <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-gray-300">
+                                            {{ $complaint->order_created_at_label }}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div class="flex-1 grid gap-4 md:grid-cols-2">
@@ -335,33 +468,71 @@
                                         <p class="text-gray-100">{{ $complaint->reason ?: 'Brak powodu' }}</p>
                                     </div>
 
-                                    <div class="rounded-2xl border border-white/10 bg-black/20 p-4 md:col-span-1">
-                                        <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">Status</p>
-                                        <p class="text-gray-100">{{ $complaint->status ?: 'nowa' }}</p>
+                                    <div class="rounded-2xl p-4 md:col-span-1 {{ $complaintStatusClasses }}">
+                                        <p class="text-xs uppercase tracking-[0.25em] mb-2 {{ $complaintStatusTextClasses }}">Status</p>
+                                        <p class="text-lg font-semibold {{ $complaintStatusTextClasses }}">{{ $complaint->status_label }}</p>
                                     </div>
 
                                     <div class="rounded-2xl border border-white/10 bg-black/20 p-4 md:col-span-2">
                                         <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">Opis</p>
                                         <p class="text-gray-200 whitespace-pre-line">{{ $complaint->description ?: 'Brak opisu reklamacji.' }}</p>
                                     </div>
+
+                                    @if($complaint->admin_response)
+                                        <div class="rounded-2xl border border-cyan-400/15 bg-cyan-500/10 p-4 md:col-span-2">
+                                            <p class="text-xs uppercase tracking-[0.25em] text-cyan-200/70 mb-2">
+                                                Odpowiedź sklepu @if($complaint->responded_at_label) · {{ $complaint->responded_at_label }} @endif
+                                            </p>
+                                            <p class="text-cyan-50 whitespace-pre-line">{{ $complaint->admin_response }}</p>
+                                        </div>
+                                    @endif
+
+                                    @if($complaint->customer_reply)
+                                        <div class="rounded-2xl border border-fuchsia-400/15 bg-fuchsia-500/10 p-4 md:col-span-2">
+                                            <p class="text-xs uppercase tracking-[0.25em] text-fuchsia-200/70 mb-2">
+                                                Odpowiedź klienta @if($complaint->customer_replied_at_label) · {{ $complaint->customer_replied_at_label }} @endif
+                                            </p>
+                                            <p class="text-fuchsia-50 whitespace-pre-line">{{ $complaint->customer_reply }}</p>
+                                        </div>
+                                    @endif
                                 </div>
 
-                                <div class="flex lg:flex-col gap-3 lg:w-40">
+                                <div class="flex lg:flex-col gap-3 lg:w-44">
                                     <button
                                         type="button"
-                                        disabled
-                                        class="flex-1 rounded-xl border border-white/10 px-4 py-2 text-sm text-gray-500 bg-white/5 cursor-not-allowed"
+                                        data-complaint-action-open
+                                        data-action-url="{{ route('admin.complaints.update', $complaint->id) }}"
+                                        data-action-type="respond"
+                                        data-action-title="Odpowiedź do klienta"
+                                        data-action-label="Wyślij odpowiedź"
+                                        class="flex-1 rounded-xl border border-cyan-400/20 px-4 py-2 text-sm text-cyan-200 bg-cyan-500/10 transition hover:bg-cyan-500/20"
                                     >
-                                        Odpowiedź
+                                        Odpowiedz
                                     </button>
                                     <button
                                         type="button"
-                                        disabled
-                                        class="flex-1 rounded-xl border border-red-400/10 px-4 py-2 text-sm text-red-300/40 bg-red-500/5 cursor-not-allowed"
+                                        data-complaint-action-open
+                                        data-action-url="{{ route('admin.complaints.update', $complaint->id) }}"
+                                        data-action-type="accept"
+                                        data-action-title="Akceptacja zgłoszenia"
+                                        data-action-label="Akceptuj"
+                                        class="flex-1 rounded-xl border border-emerald-400/20 px-4 py-2 text-sm text-emerald-200 bg-emerald-500/10 transition hover:bg-emerald-500/20"
+                                    >
+                                        Akceptuj
+                                    </button>
+                                    <button
+                                        type="button"
+                                        data-complaint-action-open
+                                        data-action-url="{{ route('admin.complaints.update', $complaint->id) }}"
+                                        data-action-type="reject"
+                                        data-action-title="Odrzucenie zgłoszenia"
+                                        data-action-label="Odrzuć"
+                                        class="flex-1 rounded-xl border border-red-400/20 px-4 py-2 text-sm text-red-200 bg-red-500/10 transition hover:bg-red-500/20"
                                     >
                                         Odrzuć
                                     </button>
                                 </div>
+
                             </div>
                         </div>
                     @empty
@@ -550,6 +721,48 @@
             </a>
         </div>
     </aside>
+</div>
+
+<div id="complaint-action-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/70 px-4 backdrop-blur-sm" aria-hidden="true">
+    <form method="POST" id="complaint-action-form" class="w-full max-w-xl rounded-3xl border border-white/10 bg-slate-950/95 p-6 shadow-[0_24px_70px_rgba(0,0,0,0.55)]">
+        @csrf
+        <input type="hidden" name="action_type" id="complaint-action-type" value="respond">
+
+        <p class="text-[10px] uppercase tracking-[0.35em] text-cyan-300">Reklamacje i zwroty</p>
+        <h2 id="complaint-action-title" class="mt-2 text-xl text-white font-bruno">Odpowiedź do klienta</h2>
+        <p class="mt-3 text-sm leading-6 text-gray-300">
+            Wpisz treść decyzji. Klient zobaczy ją w swoim profilu przy tym zgłoszeniu.
+        </p>
+
+        <label for="complaint-action-response" class="mt-5 mb-2 block text-xs uppercase tracking-[0.25em] text-gray-500">
+            Decyzja / odpowiedź
+        </label>
+        <textarea
+            id="complaint-action-response"
+            name="admin_response"
+            rows="6"
+            required
+            class="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/20"
+            placeholder="Napisz odpowiedź dla klienta..."
+        ></textarea>
+
+        <div class="mt-7 grid grid-cols-2 gap-3">
+            <button
+                type="button"
+                id="complaint-action-cancel"
+                class="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-gray-200 transition hover:bg-white/10"
+            >
+                Anuluj
+            </button>
+            <button
+                type="submit"
+                id="complaint-action-submit"
+                class="rounded-xl border border-purple-300/30 bg-purple-600/80 px-4 py-3 text-sm font-bold text-white transition hover:bg-purple-500"
+            >
+                Wyślij odpowiedź
+            </button>
+        </div>
+    </form>
 </div>
 
 <div id="admin-confirm-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/70 px-4 backdrop-blur-sm" aria-hidden="true">

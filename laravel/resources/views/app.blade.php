@@ -161,12 +161,6 @@
             <p>
                 Sklep korzysta z niezbędnych danych technicznych, żeby działało logowanie, koszyk, zabezpieczenia formularzy oraz zapamiętywanie sesji użytkownika.
             </p>
-            <p>
-                Liczba wyświetleń strony startowej jest zapisywana tylko raz w ramach jednej sesji sklepu. Samo odświeżenie strony albo przechodzenie między widokami nie powinno nabijać kolejnych wejść.
-            </p>
-            <p>
-                Dla statystyk technicznych możemy zapisać m.in. identyfikator sesji, datę wejścia, adres IP oraz informacje o przeglądarce lub urządzeniu. Nie służy to do reklam, tylko do statystyk działania strony.
-            </p>
         </div>
 
         <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-end">

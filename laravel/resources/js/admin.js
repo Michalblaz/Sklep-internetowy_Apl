@@ -140,8 +140,60 @@ const initAdminConfirmModal = () => {
     });
 };
 
+const initComplaintActionModal = () => {
+    const modal = document.getElementById('complaint-action-modal');
+    const form = document.getElementById('complaint-action-form');
+    const title = document.getElementById('complaint-action-title');
+    const typeInput = document.getElementById('complaint-action-type');
+    const responseInput = document.getElementById('complaint-action-response');
+    const submitButton = document.getElementById('complaint-action-submit');
+    const cancelButton = document.getElementById('complaint-action-cancel');
+    const triggers = document.querySelectorAll('[data-complaint-action-open]');
+
+    if (!modal || !form || !title || !typeInput || !responseInput || !submitButton || !cancelButton || !triggers.length) {
+        return;
+    }
+
+    const closeModal = () => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.setAttribute('aria-hidden', 'true');
+        form.reset();
+    };
+
+    const openModal = (trigger) => {
+        form.action = trigger.dataset.actionUrl || '';
+        typeInput.value = trigger.dataset.actionType || 'respond';
+        title.textContent = trigger.dataset.actionTitle || 'Odpowiedź do klienta';
+        submitButton.textContent = trigger.dataset.actionLabel || 'Wyślij odpowiedź';
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.setAttribute('aria-hidden', 'false');
+        responseInput.focus();
+    };
+
+    triggers.forEach((trigger) => {
+        trigger.addEventListener('click', () => openModal(trigger));
+    });
+
+    cancelButton.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     initAdminConfirmModal();
+    initComplaintActionModal();
 
     const categoryChart = document.getElementById('category-chart');
     const modelChart = document.getElementById('model-chart');

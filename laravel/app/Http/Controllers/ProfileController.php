@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -16,8 +17,11 @@ class ProfileController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
+        $this->refreshTimedOrderStatuses($user->id);
+
         $address = $this->loadAddress($user->id);
         $shipments = $this->loadShipments($user->id);
+        $complaintReplies = $this->loadComplaintReplies($user->id);
     
         $rawProducts = $this->loadObservedProducts($user->id);
         $items = $rawProducts instanceof Collection ? $rawProducts : Collection::make($rawProducts);
@@ -48,6 +52,7 @@ class ProfileController extends Controller
                 'address_city' => $address->city ?? '',
             ],
             'shipments' => $shipments,
+            'complaintReplies' => $complaintReplies,
             'observedProducts' => $observedProducts,
         ]);
     }
@@ -127,12 +132,54 @@ class ProfileController extends Controller
             'order_id' => $order->id,
             'reason' => $validated['reason'],
             'description' => $validated['description'] ?? '',
-            'status' => 'new',
+            'status' => 'oczekujące',
         ]);
 
         return redirect()
             ->route('profil')
             ->with('success', 'Zgłoszenie zostało zapisane.');
+    }
+
+    public function replyComplaint(Request $request, int $complaintId): RedirectResponse
+    {
+        $user = $request->user();
+
+        if (!Schema::hasColumn('complaints', 'customer_reply')) {
+            return redirect()
+                ->route('profil')
+                ->with('error', 'Brakuje kolumn odpowiedzi w tabeli complaints. Uruchom migracje.');
+        }
+
+        $validated = $request->validate([
+            'customer_reply' => ['required', 'string', 'max:5000'],
+        ], [
+            'customer_reply.required' => 'Wpisz treść odpowiedzi.',
+        ]);
+
+        $complaint = DB::table('complaints as c')
+            ->join('orders as o', 'o.id', '=', 'c.order_id')
+            ->where('c.id', $complaintId)
+            ->where('o.user_id', $user->id)
+            ->first(['c.id']);
+
+        if (!$complaint) {
+            return redirect()
+                ->route('profil')
+                ->with('error', 'Nie znaleziono zgłoszenia do odpowiedzi.');
+        }
+
+        DB::table('complaints')
+            ->where('id', $complaint->id)
+            ->update([
+                'customer_reply' => $validated['customer_reply'],
+                'customer_replied_at' => now(),
+                'status' => 'oczekujące',
+                'updated_at' => now(),
+            ]);
+
+        return redirect()
+            ->route('profil')
+            ->with('success', 'Twoja odpowiedź została wysłana do obsługi sklepu.');
     }
 
     public function moveObservedToCart(Request $request, int $productId): RedirectResponse
@@ -304,9 +351,57 @@ class ProfileController extends Controller
                     $order->shipping_street,
                     trim(implode(' ', array_filter([$order->shipping_postal_code, $order->shipping_city]))),
                 ]))),
-                'complaint_label' => $complaint ? ($complaint->reason . ' - ' . ($complaint->status ?? 'new')) : null,
+                'complaint_label' => $complaint ? ($complaint->reason . ' - ' . ($complaint->status ?? 'oczekujące')) : null,
             ];
         });
+    }
+
+    private function loadComplaintReplies(int $userId): Collection
+    {
+        if (!Schema::hasTable('complaints')) {
+            return collect();
+        }
+
+        $hasResponseColumns = Schema::hasColumn('complaints', 'admin_response');
+
+        return DB::table('complaints as c')
+            ->join('orders as o', 'o.id', '=', 'c.order_id')
+            ->where('o.user_id', $userId)
+            ->orderByDesc('c.id')
+            ->get([
+                'c.id',
+                'c.order_id',
+                'c.reason',
+                'c.description',
+                'c.status',
+                'o.created_at as order_created_at',
+                $hasResponseColumns ? 'c.admin_response' : DB::raw('NULL as admin_response'),
+                $hasResponseColumns ? 'c.customer_reply' : DB::raw('NULL as customer_reply'),
+                $hasResponseColumns ? 'c.responded_at' : DB::raw('NULL as responded_at'),
+                $hasResponseColumns ? 'c.customer_replied_at' : DB::raw('NULL as customer_replied_at'),
+            ])
+            ->map(function ($complaint) {
+                return [
+                    'id' => (int) $complaint->id,
+                    'order_id' => (int) $complaint->order_id,
+                    'reason' => $complaint->reason ?: 'Zgłoszenie',
+                    'description' => $complaint->description ?: 'Brak opisu zgłoszenia.',
+                    'status' => $complaint->status ?: 'oczekujące',
+                    'status_label' => $this->complaintStatusLabel($complaint->status),
+                    'order_created_at' => $complaint->order_created_at
+                        ? \Carbon\Carbon::parse($complaint->order_created_at)->format('d.m.Y')
+                        : 'Brak daty',
+                    'admin_response' => $complaint->admin_response,
+                    'customer_reply' => $complaint->customer_reply,
+                    'responded_at' => $complaint->responded_at
+                        ? \Carbon\Carbon::parse($complaint->responded_at)->format('d.m.Y H:i')
+                        : null,
+                    'customer_replied_at' => $complaint->customer_replied_at
+                        ? \Carbon\Carbon::parse($complaint->customer_replied_at)->format('d.m.Y H:i')
+                        : null,
+                    'can_reply' => $complaint->status === 'oczekujące' && filled($complaint->admin_response),
+                ];
+            });
     }
 
     private function loadObservedProducts(int $userId): Collection
@@ -378,6 +473,48 @@ class ProfileController extends Controller
             'zakończone',
             'odebrane',
         ], true);
+    }
+
+    private function complaintStatusLabel(?string $status): string
+    {
+        return match ($status) {
+            'zaakceptowane' => 'Zaakceptowane',
+            'odrzucone' => 'Odrzucone',
+            default => 'Oczekujące',
+        };
+    }
+
+    private function refreshTimedOrderStatuses(?int $userId = null): void
+    {
+        if (!Schema::hasTable('orders')) {
+            return;
+        }
+
+        $orders = DB::table('orders')
+            ->when($userId !== null, fn ($query) => $query->where('user_id', $userId))
+            ->whereNotNull('created_at')
+            ->get(['id', 'created_at', 'tracking_status']);
+
+        foreach ($orders as $order) {
+            $currentStatus = mb_strtolower(trim((string) $order->tracking_status));
+
+            if (in_array($currentStatus, ['cancelled', 'canceled', 'anulowane'], true)) {
+                continue;
+            }
+
+            $ageInMinutes = \Carbon\Carbon::parse($order->created_at)->diffInMinutes(now());
+            $nextStatus = match (true) {
+                $ageInMinutes >= 5 => 'Dostarczone',
+                $ageInMinutes >= 1 => 'W trakcie',
+                default => 'Nowe',
+            };
+
+            if ($order->tracking_status !== $nextStatus) {
+                DB::table('orders')
+                    ->where('id', $order->id)
+                    ->update(['tracking_status' => $nextStatus]);
+            }
+        }
     }
 
     private function resolveImagePath(?string $imageUrl): ?string

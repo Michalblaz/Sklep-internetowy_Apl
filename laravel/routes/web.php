@@ -62,6 +62,7 @@ use App\Livewire\Admin\ProductForm;
      Route::post('/admin/users/{user}/suspend', [AdminController::class, 'suspend'])->name('admin.users.suspend');
      Route::post('/admin/users/{user}/ban', [AdminController::class, 'ban'])->name('admin.users.ban');
      Route::post('/admin/users/{user}/unban', [AdminController::class, 'unban'])->name('admin.users.unban');
+     Route::post('/admin/reklamacje/{complaint}/decyzja', [AdminController::class, 'updateComplaint'])->name('admin.complaints.update');
 
      // Logowanie / Rejestracja
     Route::get('/log_in', [AuthController::class, 'showLoginForm'])->name('log_in');
@@ -77,6 +78,9 @@ use App\Livewire\Admin\ProductForm;
         Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
         Route::post('/profil', [ProfileController::class, 'update'])->name('profil.update');
         Route::post('/profil/reklamacje', [ProfileController::class, 'storeComplaint'])->name('profil.complaints.store');
+        Route::post('/profil/reklamacje/{complaintId}/odpowiedz', [ProfileController::class, 'replyComplaint'])
+            ->whereNumber('complaintId')
+            ->name('profil.complaints.reply');
         Route::post('/profil/lista/{productId}/do-koszyka', [ProfileController::class, 'moveObservedToCart'])
             ->whereNumber('productId')
             ->name('profil.saved.move-to-cart');
