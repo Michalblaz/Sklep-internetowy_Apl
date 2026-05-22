@@ -4,6 +4,7 @@
 ])
 
 @php
+    $hasRating = $product->reviews_avg_rating !== null;
     $rating = round((float) ($product->reviews_avg_rating ?? 0), 2);
     $ratingSegments = [];
 
@@ -52,16 +53,16 @@
     </div>
 
     <div class="flex flex-col flex-grow">
-        <h3 class="flex min-h-[4.75rem] items-start justify-center text-white text-center font-bold text-lg mb-3 tracking-wide uppercase">
+        <h3 class="flex min-h-[4.75rem] items-start justify-center text-white text-center font-bold text-lg mb-3 tracking-wide uppercase transition-colors duration-200 group-hover:text-purple-400">
             {{ $product->name }}
         </h3>
 
         <div class="mt-auto mb-6 flex min-h-[4.25rem] flex-col items-center justify-end gap-2 text-center">
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] {{ $stockQuantity > 0 ? 'text-cyan-200/85' : 'text-red-300/90' }}">
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] {{ $stockQuantity <= 0 ? 'text-red-300/90' : ($stockQuantity <= 3 ? 'text-amber-300' : 'text-cyan-200/85') }}">
                 {{ $stockQuantity > 0 ? 'Na stanie: ' . $stockQuantity : 'Brak na stanie' }}
             </p>
 
-            <div class="flex items-center justify-center gap-2 text-sm text-white/80" title="Średnia ocen: {{ number_format($rating, 2, ',', ' ') }}">
+            <div class="flex items-center justify-center gap-2 text-sm text-white/80" title="{{ $hasRating ? 'Średnia ocen: ' . number_format($rating, 2, ',', ' ') : 'Brak ocen' }}">
                 <div class="aspect-square w-8">
                     <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false" class="block h-full w-full overflow-visible">
                         @foreach ($ratingSegments as $segmentFill)
@@ -77,7 +78,7 @@
                         @endforeach
                     </svg>
                 </div>
-                <span class="font-semibold">{{ number_format($rating, 2, ',', ' ') }}</span>
+                <span class="font-semibold">{{ $hasRating ? number_format($rating, 2, ',', ' ') : 'Brak ocen' }}</span>
             </div>
         </div>
 

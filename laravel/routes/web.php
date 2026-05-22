@@ -13,6 +13,7 @@ use App\Livewire\Admin\ProductForm;
 
         //Strona startowa
     Route::get('/', [StartowaController::class, 'startowa'])->name('home');
+    Route::post('/statystyki/wyswietlenie', [StartowaController::class, 'recordPageView'])->name('home.views.record');
 
 
         // Konfigurator

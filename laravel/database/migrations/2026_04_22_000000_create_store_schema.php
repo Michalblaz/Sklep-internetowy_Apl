@@ -24,6 +24,7 @@ return new class extends Migration
     {
         DB::unprepared(<<<'SQL'
 DROP TABLE IF EXISTS public.bans;
+DROP TABLE IF EXISTS public.site_page_views;
 DROP TABLE IF EXISTS public.wishlist_items;
 DROP TABLE IF EXISTS public.wishlists;
 DROP TABLE IF EXISTS public.reviews;

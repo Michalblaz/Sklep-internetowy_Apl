@@ -600,6 +600,45 @@ ALTER SEQUENCE public.reviews_id_seq OWNED BY public.reviews.id;
 
 
 --
+-- Name: site_page_views; Type: TABLE; Schema: public; Owner: "user"
+--
+
+CREATE TABLE public.site_page_views (
+    id integer NOT NULL,
+    page_path character varying(255) NOT NULL,
+    session_id character varying(255),
+    user_id integer,
+    ip_address character varying(45),
+    user_agent text,
+    viewed_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.site_page_views OWNER TO "user";
+
+--
+-- Name: site_page_views_id_seq; Type: SEQUENCE; Schema: public; Owner: "user"
+--
+
+CREATE SEQUENCE public.site_page_views_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.site_page_views_id_seq OWNER TO "user";
+
+--
+-- Name: site_page_views_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: "user"
+--
+
+ALTER SEQUENCE public.site_page_views_id_seq OWNED BY public.site_page_views.id;
+
+
+--
 -- TOC entry 404 (class 1259 OID 17649)
 -- Name: shipping_methods; Type: TABLE; Schema: public; Owner: "user"
 --
@@ -838,6 +877,13 @@ ALTER TABLE ONLY public.reviews ALTER COLUMN id SET DEFAULT nextval('public.revi
 
 
 --
+-- Name: site_page_views id; Type: DEFAULT; Schema: public; Owner: "user"
+--
+
+ALTER TABLE ONLY public.site_page_views ALTER COLUMN id SET DEFAULT nextval('public.site_page_views_id_seq'::regclass);
+
+
+--
 -- TOC entry 3763 (class 2604 OID 17652)
 -- Name: shipping_methods id; Type: DEFAULT; Schema: public; Owner: "user"
 --
@@ -1030,6 +1076,14 @@ ALTER TABLE ONLY public.products
 
 ALTER TABLE ONLY public.reviews
     ADD CONSTRAINT reviews_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: site_page_views site_page_views_pkey; Type: CONSTRAINT; Schema: public; Owner: "user"
+--
+
+ALTER TABLE ONLY public.site_page_views
+    ADD CONSTRAINT site_page_views_pkey PRIMARY KEY (id);
 
 
 --
@@ -1271,6 +1325,14 @@ ALTER TABLE ONLY public.reviews
 
 ALTER TABLE ONLY public.reviews
     ADD CONSTRAINT reviews_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: site_page_views site_page_views_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: "user"
+--
+
+ALTER TABLE ONLY public.site_page_views
+    ADD CONSTRAINT site_page_views_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
 
 
 --
@@ -1676,4 +1738,3 @@ ADD COLUMN pickup_point_info character varying(255);
 --
 -- "user"QL database dump complete
 --
-

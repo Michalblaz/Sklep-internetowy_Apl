@@ -314,7 +314,7 @@
                         <h2 class="text-purple-400 text-xl font-bruno">Reklamacje</h2>
                         <p class="text-sm text-gray-400">Lista zgłoszeń z nazwą użytkownika, powodem i opisem.</p>
                     </div>
-                    <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Stronicowanie włączone</span>
+                    <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Przewijanie włączone</span>
                 </div>
 
                 <div class="admin-record-scroll space-y-4 max-h-[34rem] overflow-y-auto pr-2">
@@ -371,11 +371,6 @@
                     @endforelse
                 </div>
 
-                @if ($complaints->hasPages())
-                    <div class="pt-2">
-                        {{ $complaints->onEachSide(1)->links() }}
-                    </div>
-                @endif
             </section>
 
             <section id="uzytkownicy" class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
@@ -384,7 +379,7 @@
                         <h2 class="text-purple-400 text-xl font-bruno">Użytkownicy</h2>
                         <p class="text-sm text-gray-400">Status kont oraz szybkie akcje zawieszenia i bana.</p>
                     </div>
-                    <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Stronicowanie włączone</span>
+                    <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Przewijanie włączone</span>
                 </div>
 
                 <form action="{{ route('admin') }}#uzytkownicy" method="GET" class="rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -533,11 +528,6 @@
                     @endforelse
                 </div>
 
-                @if ($users->hasPages())
-                    <div class="pt-2">
-                        {{ $users->onEachSide(1)->links() }}
-                    </div>
-                @endif
             </section>
         @endif
     </div>

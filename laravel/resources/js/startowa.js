@@ -99,6 +99,8 @@ const initHomeFilters = () => {
 
     const categorySelect = filterForm.querySelector('select[name="category_id"]');
     const sortSelect = filterForm.querySelector('select[name="sort"]');
+    const ratingSelect = filterForm.querySelector('select[name="min_rating"]');
+    const availabilitySelect = filterForm.querySelector('select[name="availability"]');
     const minPriceInput = filterForm.querySelector('input[name="min_price"]');
     const maxPriceInput = filterForm.querySelector('input[name="max_price"]');
     const brandToggle = filterForm.querySelector('[data-brand-dropdown-toggle]');
@@ -325,6 +327,14 @@ const initHomeFilters = () => {
             sortSelect.value = 'newest';
         }
 
+        if (ratingSelect) {
+            ratingSelect.value = '';
+        }
+
+        if (availabilitySelect) {
+            availabilitySelect.value = '';
+        }
+
         if (brandSearch) {
             brandSearch.value = '';
         }
@@ -335,6 +345,39 @@ const initHomeFilters = () => {
     });
 
     updateBrandSummary();
+};
+
+const initHomeViewTracker = () => {
+    const tracker = document.getElementById('home-view-tracker');
+
+    if (!tracker?.dataset.recordUrl || window.location.pathname !== '/' || window.location.search !== '') {
+        return;
+    }
+
+    const navigation = performance.getEntriesByType('navigation')[0];
+
+    if (navigation?.type === 'reload') {
+        return;
+    }
+
+    const payload = new FormData();
+    payload.append('_token', tracker.dataset.csrfToken ?? '');
+    payload.append('page_path', window.location.pathname);
+    payload.append('is_reload', '0');
+
+    if (navigator.sendBeacon) {
+        navigator.sendBeacon(tracker.dataset.recordUrl, payload);
+        return;
+    }
+
+    fetch(tracker.dataset.recordUrl, {
+        method: 'POST',
+        body: payload,
+        keepalive: true,
+        headers: {
+            Accept: 'application/json',
+        },
+    }).catch(() => {});
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -351,4 +394,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     initHomeFilters();
+    initHomeViewTracker();
 });
