@@ -49,12 +49,12 @@
                         </div>
                     </div>
 
-                    <button id="recommended-prev" onclick="moveCarousel('recommended', -1)"
+                    <button id="recommended-prev" type="button" data-carousel="recommended" data-direction="-1"
                             class="absolute left-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
                         ◀
                     </button>
 
-                    <button id="recommended-next" onclick="moveCarousel('recommended', 1)"
+                    <button id="recommended-next" type="button" data-carousel="recommended" data-direction="1"
                             class="absolute right-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90">
                         ▶
                     </button>
@@ -291,7 +291,7 @@
         </div>
 
         <div class="flex gap-4 mb-8">
-            <button onclick="closeModal()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 font-bold rounded-xl transition text-xs font-bruno uppercase">
+            <button type="button" data-cart-modal-close class="px-6 py-2 bg-gray-700 hover:bg-gray-600 font-bold rounded-xl transition text-xs font-bruno uppercase">
                 Kontynuuj zakupy
             </button>
             <a href="/koszyk" class="px-6 py-2 bg-purple-600 hover:bg-purple-500 font-bold rounded-xl transition text-xs font-bruno uppercase text-center">
@@ -310,233 +310,8 @@
                 </div>
         </div>
 
-        <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">✕</button>
+        <button type="button" data-cart-modal-close class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">✕</button>
     </div>
 </div>
 
-<style>
-.carousel-item { display:flex }
-.filter-options {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(168, 85, 247, 0.65) rgba(255, 255, 255, 0.08);
-}
-
-#filter-panel {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(168, 85, 247, 0.65) rgba(255, 255, 255, 0.08);
-}
-
-.rating-star__base {
-    fill: rgba(255, 255, 255, 0.16);
-    stroke: rgba(255, 255, 255, 0.22);
-    stroke-width: 1.4;
-    stroke-linejoin: round;
-}
-
-.rating-star__fill {
-    fill: rgb(243, 255, 0);
-    stroke: rgba(6, 8, 14, 0.9);
-    stroke-width: 1.1;
-    stroke-linejoin: round;
-}
-
-.filter-options::-webkit-scrollbar {
-    width: 6px;
-}
-
-#filter-panel::-webkit-scrollbar {
-    width: 6px;
-}
-
-.filter-options::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 999px;
-}
-
-#filter-panel::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 999px;
-}
-
-.filter-options::-webkit-scrollbar-thumb {
-    background: rgba(168, 85, 247, 0.65);
-    border-radius: 999px;
-}
-
-#filter-panel::-webkit-scrollbar-thumb {
-    background: rgba(168, 85, 247, 0.65);
-    border-radius: 999px;
-}
-</style>
-
-<script>
-const carouselPositions = { recommended: 0 };
-function closeModal() {
-    const modal = document.getElementById('cartModal');
-    if (modal) {
-        modal.style.setProperty('display', 'none', 'important');
-    }
-}
-
-function moveCarousel(id, direction) {
-    const track = document.getElementById(`${id}-track`);
-    const container = document.getElementById(`${id}-container`);
-    const items = track.querySelectorAll('.carousel-item');
-
-    if (!items.length) return;
-
-    const itemWidth = items[0].offsetWidth + 40;
-    const maxScroll = track.scrollWidth - container.offsetWidth;
-
-    carouselPositions[id] += direction * itemWidth;
-
-    if (carouselPositions[id] < 0) carouselPositions[id] = 0;
-    if (carouselPositions[id] > maxScroll) carouselPositions[id] = maxScroll;
-
-    track.style.transform = `translateX(-${carouselPositions[id]}px)`;
-
-    updateArrows(id, maxScroll);
-}
-
-function updateArrows(id, maxScroll) {
-    const prevBtn = document.getElementById(`${id}-prev`);
-    const nextBtn = document.getElementById(`${id}-next`);
-    const current = carouselPositions[id];
-
-    prevBtn.style.opacity = current <= 0 ? "0" : "0.4";
-    prevBtn.style.pointerEvents = current <= 0 ? "none" : "auto";
-
-    nextBtn.style.opacity = current >= maxScroll ? "0" : "0.4";
-    nextBtn.style.pointerEvents = current >= maxScroll ? "none" : "auto";
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('filter-form');
-    if (!form) return;
-
-    const track = document.getElementById('recommended-track');
-    const container = document.getElementById('recommended-container');
-    if (track && container) {
-        const maxScroll = track.scrollWidth - container.offsetWidth;
-        updateArrows('recommended', maxScroll);
-    }
-
-    const filterPanel = document.getElementById('filter-panel');
-    const resultsList = document.getElementById('search-results-list');
-    const firstResultCard = document.querySelector('.search-result-card');
-
-    function syncFilterPanelHeight() {
-        if (!filterPanel || !resultsList || !firstResultCard || window.innerWidth < 1024) {
-            if (filterPanel) {
-                filterPanel.style.maxHeight = '';
-                filterPanel.style.minHeight = '';
-            }
-            return;
-        }
-
-        const cardHeight = firstResultCard.offsetHeight;
-        const resultCards = resultsList.querySelectorAll('.search-result-card').length;
-        const resultListStyles = window.getComputedStyle(resultsList);
-        const cardGap = parseFloat(resultListStyles.rowGap || resultListStyles.gap) || 16;
-        const visibleCards = Math.min(Math.max(resultCards, 2), 8);
-        const maxPanelHeight = (cardHeight * visibleCards) + (cardGap * (visibleCards - 1));
-
-        filterPanel.style.minHeight = `${(cardHeight * 2) + cardGap}px`;
-        filterPanel.style.maxHeight = `${maxPanelHeight}px`;
-    }
-
-    syncFilterPanelHeight();
-    window.addEventListener('resize', syncFilterPanelHeight);
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Obsługa kliknięcia poza okienkiem modalu
-    const cartModal = document.getElementById('cartModal');
-    if (cartModal) {
-        cartModal.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-    }
-    // 2. Obsługa dodawania do koszyka przez AJAX dla wszystkich przycisków na stronie
-    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            let form = this.closest('form');
-            if (!form) return;
-            
-            let formData = new FormData(form);
-            let token = form.querySelector('input[name="_token"]')?.value || document.querySelector('input[name="_token"]')?.value;
-            
-            fetch(form.action, {
-                method: 'POST',
-                headers: { 
-                    'X-CSRF-TOKEN': token,
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success) {
-                    const modal = document.getElementById('cartModal');
-                    const recContainer = document.getElementById('modal-recommendations');
-                    
-                    if (recContainer && data.recommended) {
-                        recContainer.innerHTML = '';
-                        
-                        data.recommended.forEach(item => {
-                            // Wyliczanie zniżki w JS
-                            const basePrice = parseFloat(item.base_price);
-                            const promoPrice = item.promo_price ? parseFloat(item.promo_price) : null;
-                            const hasDiscount = promoPrice && basePrice > 0;
-                            const discountPercent = hasDiscount ? Math.round(((basePrice - promoPrice) / basePrice) * 100) : 0;
-                            const finalPrice = hasDiscount ? promoPrice : basePrice;
-
-                            // Tworzenie struktury małego kafelka
-                            const cardHtml = `
-                                <div class="relative bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col justify-between h-full group hover:border-purple-500/40 transition duration-300">
-                                    <div>
-                                        <div class="w-full aspect-square bg-white/5 rounded-lg overflow-hidden mb-2 relative flex items-center justify-center">
-                                            <img src="/images/${item.image_url}" alt="${item.name}" class="object-contain w-4/5 h-4/5 group-hover:scale-105 transition duration-300">
-                                            ${hasDiscount ? `<span class="absolute top-1 right-1 bg-red-600 text-[9px] text-white font-bold px-1.5 py-0.5 rounded-md font-bruno animate-pulse">-${discountPercent}%</span>` : ''}
-                                        </div>
-                                        
-                                        <h5 class="text-xs font-bold text-white/80 line-clamp-2 h-8 group-hover:text-purple-400 transition uppercase tracking-tighter">
-                                            <a href="/produkt/${item.id}">${item.name}</a>
-                                        </h5>
-                                    </div>
-
-                                    <div class="mt-2">
-                                        <div class="text-xs font-bruno mb-2">
-                                            ${hasDiscount ? `
-                                                <span class="text-green-400 font-black">${promoPrice.toFixed(2).replace('.', ',')} zł</span>
-                                                <span class="text-[10px] text-gray-500 line-through block">${basePrice.toFixed(2).replace('.', ',')} zł</span>
-                                            ` : `
-                                                <span class="text-white font-black">${basePrice.toFixed(2).replace('.', ',')} zł</span>
-                                            `}
-                                        </div>
-                                        
-                                        <a href="/produkt/${item.id}" class="block text-center w-full py-1.5 bg-purple-900/40 hover:bg-purple-600 border border-purple-500/30 hover:border-purple-500 text-purple-300 hover:text-white text-[10px] font-bold font-bruno rounded-lg transition duration-200">
-                                            Zobacz produkt
-                                        </a>
-                                    </div>
-                                </div>
-                            `;
-                            recContainer.insertAdjacentHTML('beforeend', cardHtml);
-                        });
-                    }
-
-                    if (modal) {
-                        modal.style.setProperty('display', 'flex', 'important');
-                    }
-                }
-            })
-            .catch(error => console.error('Błąd:', error));
-        });
-    });
-});
-</script>
 @endsection

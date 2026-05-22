@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\OrderStatusUpdater;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -17,19 +18,25 @@ class ProfileController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
+        app(OrderStatusUpdater::class)->update();
+
         $this->refreshTimedOrderStatuses($user->id);
 
         $address = $this->loadAddress($user->id);
+        $shipmentHistory = $this->loadShipments($user->id);
+        $shipments = $shipmentHistory
+            ->reject(fn (array $shipment) => $shipment['is_delivered'])
+            ->values();
         $shipments = $this->loadShipments($user->id);
         $complaintReplies = $this->loadComplaintReplies($user->id);
-    
+
         $rawProducts = $this->loadObservedProducts($user->id);
         $items = $rawProducts instanceof Collection ? $rawProducts : Collection::make($rawProducts);
-    
+
         $currentPage = LengthAwarePaginator::resolveCurrentPage('observed_page');
         $perPage = 5;
         $currentItems = $items->slice(($currentPage - 1) * $perPage, $perPage)->values();
-    
+
         $observedProducts = new LengthAwarePaginator(
             $currentItems,
             $items->count(),
@@ -40,6 +47,11 @@ class ProfileController extends Controller
                 'pageName' => 'observed_page',
             ]
         );
+
+        $orders = \App\Models\Order::where('user_id', $user->id)
+        ->with('shippingMethod')
+        ->latest()
+        ->get();
 
         return view('profil', [
             'userData' => [
@@ -52,8 +64,10 @@ class ProfileController extends Controller
                 'address_city' => $address->city ?? '',
             ],
             'shipments' => $shipments,
+            'shipmentHistory' => $shipmentHistory,
             'complaintReplies' => $complaintReplies,
             'observedProducts' => $observedProducts,
+            'orders' => $orders,
         ]);
     }
 
@@ -128,6 +142,22 @@ class ProfileController extends Controller
                 ->withInput();
         }
 
+        $pendingStatus = $validated['reason'] === 'Zwrot'
+            ? 'złożenie zwrotu'
+            : 'złożenie reklamacji';
+
+        DB::transaction(function () use ($order, $validated, $pendingStatus) {
+            DB::table('complaints')->insert([
+                'order_id' => $order->id,
+                'reason' => $validated['reason'],
+                'description' => $validated['description'] ?? '',
+                'status' => 'złożone',
+            ]);
+
+            DB::table('orders')
+                ->where('id', $order->id)
+                ->update(['tracking_status' => $pendingStatus]);
+        });
         DB::table('complaints')->insert([
             'order_id' => $order->id,
             'reason' => $validated['reason'],
@@ -300,6 +330,11 @@ class ProfileController extends Controller
                 'o.shipping_street',
                 'o.shipping_city',
                 'o.shipping_postal_code',
+                'o.shipping_first_name',
+                'o.shipping_last_name',
+                'o.shipping_phone',
+                'o.payment_method',
+                'o.pickup_point_info',
                 'sm.name as shipping_method_name',
             ]);
 
@@ -308,6 +343,13 @@ class ProfileController extends Controller
         }
 
         $orderIds = $orders->pluck('id');
+        $displayIdsByOrder = $orders
+            ->sortBy([
+                ['created_at', 'asc'],
+                ['id', 'asc'],
+            ])
+            ->values()
+            ->mapWithKeys(fn ($order, int $index) => [(int) $order->id => $index + 1]);
 
         $itemsByOrder = DB::table('order_items as oi')
             ->join('products as p', 'p.id', '=', 'oi.product_id')
@@ -329,7 +371,7 @@ class ProfileController extends Controller
             ->get(['order_id', 'reason', 'status'])
             ->groupBy('order_id');
 
-        return $orders->map(function ($order) use ($itemsByOrder, $complaintsByOrder) {
+        return $orders->map(function ($order) use ($itemsByOrder, $complaintsByOrder, $displayIdsByOrder) {
             $items = $itemsByOrder->get($order->id, collect());
             $firstItem = $items->first();
             $itemsTotal = $items->sum(fn ($item) => (float) $item->unit_price * (int) $item->quantity);
@@ -339,6 +381,7 @@ class ProfileController extends Controller
 
             return [
                 'id' => (int) $order->id,
+                'display_id' => (int) ($displayIdsByOrder[(int) $order->id] ?? $order->id),
                 'status' => $status !== '' ? $status : 'W realizacji',
                 'is_delivered' => $this->isDeliveredStatus($status),
                 'shipping_method' => $order->shipping_method_name ?: 'Brak danych',
@@ -351,6 +394,18 @@ class ProfileController extends Controller
                     $order->shipping_street,
                     trim(implode(' ', array_filter([$order->shipping_postal_code, $order->shipping_city]))),
                 ]))),
+                'recipient' => trim(implode(' ', array_filter([$order->shipping_first_name, $order->shipping_last_name]))),
+                'phone' => $order->shipping_phone,
+                'payment_method' => match ($order->payment_method) {
+                    'blik' => 'BLIK',
+                    'card' => 'Karta płatnicza',
+                    'cod' => 'Gotówka przy odbiorze',
+                    default => $order->payment_method ?: 'Brak danych',
+                },
+                'pickup_point' => $order->pickup_point_info,
+                'complaint_label' => $complaint ? ($complaint->reason . ' - ' . ($complaint->status ?? 'new')) : null,
+            ];
+        });
                 'complaint_label' => $complaint ? ($complaint->reason . ' - ' . ($complaint->status ?? 'oczekujące')) : null,
             ];
         });

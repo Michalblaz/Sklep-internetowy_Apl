@@ -3965,7 +3965,11 @@ INSERT INTO public.reviews VALUES (1195, 193, 11, 4, 'Solidny wybór, aczkolwiek
 INSERT INTO public.reviews VALUES (1196, 193, 9, 3, 'Trudno polecić, chyba że ktoś ma bardzo ograniczony budżet.', '2026-05-18 08:15:30');
 
 
-
+INSERT INTO public.shipping_methods (name, price) VALUES
+('Odbiór osobisty (Siedziba firmy)', 0.00),
+('Kurier pod wskazany adres', 15.00),
+('Odbiór w salonie', 7.00),
+('Paczkomaty InPost', 11.00);
 
 -- Synchronizacja licznika ID dla tabeli reviews
 SELECT setval(pg_get_serial_sequence('public.reviews', 'id'), COALESCE(MAX(id), 1)) FROM public.reviews;

@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     shipmentSelectors.forEach((selector) => {
         selector.addEventListener('click', () => {
             const orderId = selector.dataset.orderSelect || '';
-            const orderTitle = selector.dataset.orderTitle || `Przesyłka #${orderId}`;
+            const orderTitle = selector.dataset.orderTitle || `Zamówienie #${orderId}`;
 
             shipmentSelectors.forEach((card) => {
                 card.classList.remove('border-cyan-300/60', 'bg-white/15');
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (selectedShipmentBox) {
-                selectedShipmentBox.textContent = `Wybrana przesyłka: ${orderTitle}`;
+                selectedShipmentBox.textContent = `Wybrane zamówienie: ${orderTitle}`;
             }
 
             if (complaintOrderMessage) {

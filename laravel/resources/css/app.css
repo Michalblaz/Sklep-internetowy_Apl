@@ -3,6 +3,8 @@
 @import "./admin.css";
 @import "./startowa.css";
 @import "./search-autocomplete.css";
+@import "./search-page.css";
+@import "./order-toast.css";
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';

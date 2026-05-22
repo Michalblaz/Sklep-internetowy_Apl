@@ -5,21 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Techblef</title>
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>     
     <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
-
-        [id] {
-            scroll-margin-top: 100px;
-        }
-    </style>
 </head>
 
 <body class="min-h-screen flex flex-col bg-[#0f172a] text-white">
@@ -181,6 +173,18 @@
         </div>
     </div>
 </div>
+@if (session('order_success'))
+    <div id="order-success-toast" class="order-success-toast" role="status" aria-live="polite">
+        <div class="order-success-toast__bar"></div>
+        <div class="order-success-toast__content">
+            <div class="order-success-toast__arrow" aria-hidden="true">&rarr;</div>
+            <div>
+                <p class="order-success-toast__title">{{ session('order_success') }}</p>
+                <p class="order-success-toast__text">Potwierdzenie zamowienia zostalo zapisane.</p>
+            </div>
+        </div>
+    </div>
+@endif
 @livewireScripts
 </body>
 </html>

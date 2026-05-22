@@ -4,3 +4,6 @@ import './product-page';
 import './startowa';
 import './search-autocomplete';
 import './cookie-notice';
+import './transactions';
+import './search-page';
+import './order-toast';

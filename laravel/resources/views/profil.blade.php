@@ -17,6 +17,9 @@
     ];
 
     $activeComplaintOrder = old('order_id');
+    $activeComplaintShipment = $activeComplaintOrder
+        ? ($shipmentHistory ?? collect())->firstWhere('id', (int) $activeComplaintOrder)
+        : null;
 @endphp
 
 <div class="mx-auto max-w-7xl space-y-8 text-white">
@@ -135,99 +138,45 @@
             <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
                 <div class="mb-5 flex flex-wrap items-center justify-between gap-4">
                     <div>
-                        <h2 class="font-['Bruno_Ace'] text-2xl text-white">Śledzenie przesyłki</h2>
+                        <h2 class="font-['Bruno_Ace'] text-2xl text-white">Zamówienia w trakcie</h2>
                     </div>
 
-                    <label class="inline-flex items-center gap-3 rounded-full border border-white/15 bg-slate-950/15 px-4 py-2 text-sm text-white">
-                        <input
-                            id="show-delivered-toggle"
-                            type="checkbox"
-                            class="h-4 w-4 rounded border-white/40 bg-transparent text-fuchsia-400 focus:ring-fuchsia-400"
-                        >
-                        <span>Pokaż dostarczone</span>
-                    </label>
+                    <span class="rounded-full border border-white/15 bg-slate-950/15 px-4 py-2 text-sm text-white/70">
+                        Wybierz zamówienie, aby złożyć reklamację lub zwrot
+                    </span>
                 </div>
 
 
                 <div class="space-y-4" id="shipment-list">
                     @forelse ($shipments as $shipment)
-                        <button
-                            type="button"
-                            data-order-select="{{ $shipment['id'] }}"
-                            data-order-title="Przesyłka #{{ $shipment['id'] }} - {{ $shipment['status'] }}"
-                            data-shipment-card
-                            data-delivered="{{ $shipment['is_delivered'] ? 'true' : 'false' }}"
-                            class="shipment-card w-full rounded-[1.8rem] border border-white/15 bg-slate-950/15 p-4 text-left transition hover:border-cyan-300/40 hover:bg-white/10"
-                        >
-                            <div class="grid gap-4 md:grid-cols-[120px_minmax(0,1fr)]">
-                                <div class="overflow-hidden rounded-[1.4rem] border border-white/10 bg-white/90">
-                                    @if ($shipment['image_path'])
-                                        <img src="{{ $shipment['image_path'] }}" alt="{{ $shipment['first_product_name'] }}" class="h-28 w-full object-contain p-3">
-                                    @else
-                                        <div class="flex h-28 items-center justify-center text-center text-xs text-slate-500">
-                                            Brak zdjęcia
-                                        </div>
-                                    @endif
-                                </div>
-
-                                <div class="space-y-3">
-                                    <div class="grid gap-3 md:grid-cols-3">
-                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                                            <p class="text-[11px] uppercase tracking-[0.25em] text-cyan-100/60">ID</p>
-                                            <p class="mt-2 font-['Bruno_Ace'] text-lg text-white">#{{ $shipment['id'] }}</p>
-                                        </div>
-                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                                            <p class="text-[11px] uppercase tracking-[0.25em] text-cyan-100/60">Status</p>
-                                            <p class="mt-2 text-sm text-white">{{ $shipment['status'] }}</p>
-                                        </div>
-                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                                            <p class="text-[11px] uppercase tracking-[0.25em] text-cyan-100/60">Dostawca</p>
-                                            <p class="mt-2 text-sm text-white">{{ $shipment['shipping_method'] }}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="grid gap-3 md:grid-cols-3">
-                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                                            <p class="text-[11px] uppercase tracking-[0.25em] text-cyan-100/60">Wartość zamówienia</p>
-                                            <p class="mt-2 text-sm text-white">{{ $shipment['total'] }} zł</p>
-                                        </div>
-                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                                            <p class="text-[11px] uppercase tracking-[0.25em] text-cyan-100/60">Data</p>
-                                            <p class="mt-2 text-sm text-white">{{ $shipment['created_at'] ?? 'Brak danych' }}</p>
-                                        </div>
-                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                                            <p class="text-[11px] uppercase tracking-[0.25em] text-cyan-100/60">Produkt</p>
-                                            <p class="mt-2 text-sm text-white">{{ $shipment['first_product_name'] }}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                                        <p class="text-[11px] uppercase tracking-[0.25em] text-cyan-100/60">Adres dostawy</p>
-                                        <p class="mt-2 text-sm text-white">{{ $shipment['address'] !== '' ? $shipment['address'] : 'Brak danych adresowych' }}</p>
-                                        @if ($shipment['complaint_label'])
-                                            <p class="mt-2 text-xs uppercase tracking-[0.2em] text-fuchsia-200/80">
-                                                Ostatnie zgłoszenie: {{ $shipment['complaint_label'] }}
-                                            </p>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </button>
+                        @include('partials.profile-shipment-card', ['shipment' => $shipment, 'selectable' => true])
                     @empty
                         <div class="rounded-[1.8rem] border border-dashed border-white/20 bg-slate-950/15 px-5 py-8 text-center text-sm text-cyan-50/80" data-empty-shipments>
-                            Nie ma przesyłek do śledzenia.
+                            Nie ma aktualnie zamówień w trakcie.
                         </div>
                     @endforelse
                 </div>
+            </section>
 
-                @if ($shipments->isNotEmpty())
-                    <div
-                        id="filtered-shipments-empty"
-                        class="mt-4 hidden rounded-[1.8rem] border border-dashed border-white/20 bg-slate-950/15 px-5 py-8 text-center text-sm text-cyan-50/80"
-                    >
-                        Nie ma przesyłek do śledzenia.
+            <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
+                <details class="group">
+                    <summary class="flex cursor-pointer list-none flex-wrap items-center justify-between gap-4">
+                        <h2 class="font-['Bruno_Ace'] text-2xl text-white">Historia zamówień</h2>
+                        <span class="rounded-full border border-white/15 bg-slate-950/15 px-4 py-2 text-sm text-white/70 transition group-open:bg-white/10">
+                            Rozwiń / zwiń
+                        </span>
+                    </summary>
+
+                    <div class="mt-5 space-y-4">
+                        @forelse ($shipmentHistory as $shipment)
+                            @include('partials.profile-shipment-card', ['shipment' => $shipment, 'selectable' => true])
+                        @empty
+                            <div class="rounded-[1.8rem] border border-dashed border-white/20 bg-slate-950/15 px-5 py-8 text-center text-sm text-cyan-50/80">
+                                Nie masz jeszcze zamówień w historii.
+                            </div>
+                        @endforelse
                     </div>
-                @endif
+                </details>
             </section>
 
             <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
@@ -329,15 +278,15 @@
                     <input type="hidden" name="order_id" id="complaint-order-id" value="{{ $activeComplaintOrder }}">
 
                     <div id="selected-shipment-box" class="rounded-[1.6rem] border border-white/15 bg-slate-950/15 px-5 py-4 text-sm text-cyan-50/90">
-                        @if ($activeComplaintOrder)
-                            Wybrana przesyłka: #{{ $activeComplaintOrder }}
+                        @if ($activeComplaintShipment)
+                            Wybrane zamówienie: #{{ $activeComplaintShipment['display_id'] }} - {{ $activeComplaintShipment['status'] }}
                         @else
-                            Nie wybrano przesyłki do reklamacji.
+                            Nie wybrano zamówienia do reklamacji.
                         @endif
                     </div>
 
                     <p id="complaint-order-message" class="hidden rounded-2xl border border-rose-300/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
-                        Nie wybrano przesyłki do reklamacji.
+                        Nie wybrano zamówienia do reklamacji.
                     </p>
 
                     <div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_260px]">
