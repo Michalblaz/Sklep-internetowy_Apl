@@ -27,7 +27,6 @@ class ProfileController extends Controller
         $shipments = $shipmentHistory
             ->reject(fn (array $shipment) => $shipment['is_delivered'])
             ->values();
-        $shipments = $this->loadShipments($user->id);
         $complaintReplies = $this->loadComplaintReplies($user->id);
 
         $rawProducts = $this->loadObservedProducts($user->id);
@@ -318,25 +317,32 @@ class ProfileController extends Controller
 
     private function loadShipments(int $userId): Collection
     {
+        $orderColumns = [
+            'o.id',
+            'o.tracking_status',
+            'o.shipping_cost',
+            'o.created_at',
+            'o.shipping_street',
+            'o.shipping_city',
+            'o.shipping_postal_code',
+            'o.shipping_first_name',
+            'o.shipping_last_name',
+            'o.shipping_phone',
+        ];
+
+        foreach (['payment_method', 'pickup_point_info'] as $optionalColumn) {
+            $orderColumns[] = Schema::hasColumn('orders', $optionalColumn)
+                ? "o.{$optionalColumn}"
+                : DB::raw("NULL as {$optionalColumn}");
+        }
+
+        $orderColumns[] = 'sm.name as shipping_method_name';
+
         $orders = DB::table('orders as o')
             ->leftJoin('shipping_methods as sm', 'sm.id', '=', 'o.shipping_method_id')
             ->where('o.user_id', $userId)
             ->orderByDesc('o.created_at')
-            ->get([
-                'o.id',
-                'o.tracking_status',
-                'o.shipping_cost',
-                'o.created_at',
-                'o.shipping_street',
-                'o.shipping_city',
-                'o.shipping_postal_code',
-                'o.shipping_first_name',
-                'o.shipping_last_name',
-                'o.shipping_phone',
-                'o.payment_method',
-                'o.pickup_point_info',
-                'sm.name as shipping_method_name',
-            ]);
+            ->get($orderColumns);
 
         if ($orders->isEmpty()) {
             return collect();
@@ -403,9 +409,6 @@ class ProfileController extends Controller
                     default => $order->payment_method ?: 'Brak danych',
                 },
                 'pickup_point' => $order->pickup_point_info,
-                'complaint_label' => $complaint ? ($complaint->reason . ' - ' . ($complaint->status ?? 'new')) : null,
-            ];
-        });
                 'complaint_label' => $complaint ? ($complaint->reason . ' - ' . ($complaint->status ?? 'oczekujące')) : null,
             ];
         });
