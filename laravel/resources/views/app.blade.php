@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Techblef</title>
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>     
     <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -138,6 +139,13 @@
     <p class="text-gray-400 font-bruno">Numer kontaktowy: +48 109247685</p>
     <p class="text-gray-400 font-bruno">Lokalizacja: al. Tadeusza Rejtana 16C, 35-310 Rzeszów</p>
 </footer>
+@if (session('order_success'))
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            alert(@json(session('order_success')));
+        });
+    </script>
+@endif
 @livewireScripts
 </body>
 </html>

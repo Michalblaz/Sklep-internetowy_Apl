@@ -51,6 +51,7 @@ use App\Livewire\Admin\ProductForm;
     Route::post('/koszyk/wyczysc', [KoszykController::class, 'clear'])->name('cart.clear');
     Route::post('/koszyk/ubezpieczenie', [KoszykController::class, 'toggleInsurance'])->name('cart.insurance');
     Route::get('/koszyk/transakcje', [KoszykController::class, 'Transakcje'])->name('transakcje');
+    Route::post('/koszyk/transakcje/zapisz', [KoszykController::class, 'storeTransaction'])->name('transakcje.store');
 
 
 

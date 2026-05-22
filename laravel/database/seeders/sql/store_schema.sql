@@ -1668,7 +1668,9 @@ ALTER TABLE ONLY public.product_browsing_history
 --
 
 
-
+ALTER TABLE public.orders 
+ADD COLUMN payment_method character varying(100),
+ADD COLUMN pickup_point_info character varying(255);
 -- Completed on 2026-04-23 12:54:18
 
 --
