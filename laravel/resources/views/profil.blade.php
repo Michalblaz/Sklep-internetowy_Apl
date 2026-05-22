@@ -48,7 +48,7 @@
         </div>
     @endif
 
-    <div class="grid gap-8 xl:grid-cols-[360px_minmax(0,1fr)]">
+    <div class="grid gap-8 xl:grid-cols-[360px_minmax(0,1fr)] items-start">
         <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.18),rgba(72,187,255,0.18),rgba(110,52,255,0.18))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
             <div class="mb-6 flex items-center justify-between gap-4">
                 <div>
@@ -392,7 +392,41 @@
                             Nie masz jeszcze żadnych obserwowanych produktów.
                         </div>
                     @endforelse
+
+                    @if ($observedProducts->total() > 5)
+                        <div class="mt-8 flex justify-center items-center gap-3 font-['Bruno_Ace']">
+                            @if (!$observedProducts->onFirstPage())
+                                <a href="{{ $observedProducts->appends(request()->except('observed_page'))->previousPageUrl() }}&observed_page={{ $observedProducts->currentPage() - 1 }}"
+                                class="text-fuchsia-500 text-2xl hover:scale-110 transition hover:drop-shadow-[0_0_10px_rgba(217,70,239,0.7)]">
+                                    ◀
+                                </a>
+                            @endif
+
+                            <div class="flex gap-2">
+                                @foreach ($observedProducts->getUrlRange(
+                                    max(1, $observedProducts->currentPage() - 2),
+                                    min($observedProducts->lastPage(), $observedProducts->currentPage() + 2)
+                                ) as $page => $url)
+                                    <a href="{{ request()->fullUrlWithQuery(['observed_page' => $page]) }}"
+                                    class="w-10 h-10 flex items-center justify-center rounded-full border text-sm transition-all duration-300
+                                    {{ $page == $observedProducts->currentPage()
+                                            ? 'bg-fuchsia-600 border-fuchsia-400 text-white shadow-[0_0_12px_rgba(217,70,239,0.8)] scale-110'
+                                            : 'border-white/10 text-gray-400 hover:bg-fuchsia-600 hover:text-white hover:scale-110 hover:shadow-[0_0_10px_rgba(217,70,239,0.6)]' }}">
+                                        {{ $page }}
+                                    </a>
+                                @endforeach
+                            </div>
+
+                            @if ($observedProducts->hasMorePages())
+                                <a href="{{ $observedProducts->appends(request()->except('observed_page'))->nextPageUrl() }}&observed_page={{ $observedProducts->currentPage() + 1 }}"
+                                class="text-fuchsia-500 text-2xl hover:scale-110 transition hover:drop-shadow-[0_0_10px_rgba(217,70,239,0.7)]">
+                                    ▶
+                                </a>
+                            @endif
+                        </div>
+                    @endif
                 </div>
+
             </section>
         </div>
     </div>

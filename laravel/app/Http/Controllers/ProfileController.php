@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProfileController extends Controller
 {
@@ -17,7 +18,24 @@ class ProfileController extends Controller
         $user = $request->user();
         $address = $this->loadAddress($user->id);
         $shipments = $this->loadShipments($user->id);
-        $observedProducts = $this->loadObservedProducts($user->id);
+    
+        $rawProducts = $this->loadObservedProducts($user->id);
+        $items = $rawProducts instanceof Collection ? $rawProducts : Collection::make($rawProducts);
+    
+        $currentPage = LengthAwarePaginator::resolveCurrentPage('observed_page');
+        $perPage = 5;
+        $currentItems = $items->slice(($currentPage - 1) * $perPage, $perPage)->values();
+    
+        $observedProducts = new LengthAwarePaginator(
+            $currentItems,
+            $items->count(),
+            $perPage,
+            $currentPage,
+            [
+                'path' => LengthAwarePaginator::resolveCurrentPath(),
+                'pageName' => 'observed_page',
+            ]
+        );
 
         return view('profil', [
             'userData' => [
@@ -33,6 +51,7 @@ class ProfileController extends Controller
             'observedProducts' => $observedProducts,
         ]);
     }
+
 
     public function update(Request $request): RedirectResponse
     {
