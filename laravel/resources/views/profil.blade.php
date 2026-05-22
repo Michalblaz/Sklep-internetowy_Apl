@@ -48,17 +48,17 @@
         </div>
     @endif
 
-    <div class="grid gap-8 xl:grid-cols-[360px_minmax(0,1fr)]">
+    <div class="grid gap-8 xl:grid-cols-[360px_minmax(0,1fr)] items-start">
         <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.18),rgba(72,187,255,0.18),rgba(110,52,255,0.18))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
             <div class="mb-6 flex items-center justify-between gap-4">
                 <div>
-                    <p class="text-xs uppercase tracking-[0.35em] text-cyan-100/70">Dane użytkownika</p>
-                    <h2 class="mt-2 font-['Bruno_Ace'] text-2xl text-white">Edytuj profil</h2>
+                    <h2 class="font-['Bruno_Ace'] text-2xl text-white">Dane użytkownika</h2>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-cyan-100">
                     <i class="fa-regular fa-user text-lg"></i>
                 </div>
             </div>
+
 
             <form method="POST" action="{{ route('profil.update') }}" id="profile-form" class="space-y-6">
                 @csrf
@@ -68,13 +68,6 @@
                         <div class="rounded-[1.6rem] border border-white/20 bg-slate-950/15 p-4">
                             <div class="mb-2 flex items-center justify-between gap-4">
                                 <label for="{{ $field }}" class="font-['Bruno_Ace'] text-sm text-cyan-50">{{ $label }}</label>
-                                <button
-                                    type="button"
-                                    data-edit-target="{{ $field }}"
-                                    class="rounded-full border border-fuchsia-300/30 bg-fuchsia-400/10 px-3 py-1 text-[11px] uppercase tracking-[0.25em] text-fuchsia-100 transition hover:bg-fuchsia-400/20"
-                                >
-                                    Zmień
-                                </button>
                             </div>
                             <input
                                 id="{{ $field }}"
@@ -88,7 +81,8 @@
                     @endforeach
                 </div>
 
-                <div class="rounded-[1.8rem] border border-white/20 bg-slate-950/15 p-4">
+
+                <div id="password-section" class="hidden rounded-[1.8rem] border border-white/20 bg-slate-950/15 p-4">
                     <h3 class="mb-4 font-['Bruno_Ace'] text-xl text-white">Zmień hasło</h3>
                     <div class="space-y-4">
                         <div>
@@ -120,9 +114,17 @@
                 </div>
 
                 <button
+                    type="button"
+                    id="profile-toggle-edit-button"
+                    class="w-full rounded-full bg-[linear-gradient(90deg,rgba(129,150,255,0.95),rgba(164,66,255,0.95))] px-6 py-4 font-['Bruno_Ace'] text-lg text-white shadow-[0_12px_35px_rgba(126,76,255,0.35)] transition hover:scale-[1.01]"
+                >
+                    Edytuj profil
+                </button>
+
+                <button
                     type="submit"
                     id="profile-submit-button"
-                    class="w-full rounded-full bg-[linear-gradient(90deg,rgba(129,150,255,0.95),rgba(164,66,255,0.95))] px-6 py-4 font-['Bruno_Ace'] text-lg text-white shadow-[0_12px_35px_rgba(126,76,255,0.35)] transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60"
+                    class="hidden w-full rounded-full bg-[linear-gradient(90deg,rgba(129,150,255,0.95),rgba(164,66,255,0.95))] px-6 py-4 font-['Bruno_Ace'] text-lg text-white shadow-[0_12px_35px_rgba(126,76,255,0.35)] transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                     Potwierdź
                 </button>
@@ -133,8 +135,7 @@
             <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
                 <div class="mb-5 flex flex-wrap items-center justify-between gap-4">
                     <div>
-                        <p class="text-xs uppercase tracking-[0.35em] text-cyan-100/70">Menu</p>
-                        <h2 class="mt-2 font-['Bruno_Ace'] text-2xl text-white">Śledzenie przesyłki</h2>
+                        <h2 class="font-['Bruno_Ace'] text-2xl text-white">Śledzenie przesyłki</h2>
                     </div>
 
                     <label class="inline-flex items-center gap-3 rounded-full border border-white/15 bg-slate-950/15 px-4 py-2 text-sm text-white">
@@ -146,6 +147,7 @@
                         <span>Pokaż dostarczone</span>
                     </label>
                 </div>
+
 
                 <div class="space-y-4" id="shipment-list">
                     @forelse ($shipments as $shipment)
@@ -231,13 +233,13 @@
             <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
                 <div class="mb-5 flex items-center justify-between gap-4">
                     <div>
-                        <p class="text-xs uppercase tracking-[0.35em] text-cyan-100/70">Zgłoszenia</p>
-                        <h2 class="mt-2 font-['Bruno_Ace'] text-2xl text-white">Reklamacja i zwrot</h2>
+                        <h2 class="font-['Bruno_Ace'] text-2xl text-white">Reklamacje i zwroty</h2>
                     </div>
                     <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-cyan-100">
                         <i class="fa-solid fa-arrow-rotate-left text-lg"></i>
                     </div>
                 </div>
+
 
                 <form method="POST" action="{{ route('profil.complaints.store') }}" id="complaint-form" class="space-y-4">
                     @csrf
@@ -320,32 +322,13 @@
             <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
                 <div class="mb-5 flex items-center justify-between gap-4">
                     <div>
-                        <p class="text-xs uppercase tracking-[0.35em] text-cyan-100/70">Profil</p>
-                        <h2 class="mt-2 font-['Bruno_Ace'] text-2xl text-white">Ustawienia konta</h2>
-                    </div>
-                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-cyan-100">
-                        <i class="fa-solid fa-gear text-lg"></i>
-                    </div>
-                </div>
-
-                <button
-                    type="button"
-                    class="w-full rounded-full border border-white/15 bg-white/5 px-5 py-4 font-['Bruno_Ace'] text-sm text-white/85 transition hover:bg-white/10"
-                >
-                    Ustawienia konta
-                </button>
-            </section>
-
-            <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
-                <div class="mb-5 flex items-center justify-between gap-4">
-                    <div>
-                        <p class="text-xs uppercase tracking-[0.35em] text-cyan-100/70">Lista użytkownika</p>
-                        <h2 class="mt-2 font-['Bruno_Ace'] text-2xl text-white">Obserwowane</h2>
+                        <h2 class="font-['Bruno_Ace'] text-2xl text-white">Obserwowane</h2>
                     </div>
                     <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-cyan-100">
                         <i class="fa-regular fa-heart text-lg"></i>
                     </div>
                 </div>
+
 
                 <div class="space-y-4">
                     @forelse ($observedProducts as $product)
@@ -409,7 +392,41 @@
                             Nie masz jeszcze żadnych obserwowanych produktów.
                         </div>
                     @endforelse
+
+                    @if ($observedProducts->total() > 5)
+                        <div class="mt-8 flex justify-center items-center gap-3 font-['Bruno_Ace']">
+                            @if (!$observedProducts->onFirstPage())
+                                <a href="{{ $observedProducts->appends(request()->except('observed_page'))->previousPageUrl() }}&observed_page={{ $observedProducts->currentPage() - 1 }}"
+                                class="text-fuchsia-500 text-2xl hover:scale-110 transition hover:drop-shadow-[0_0_10px_rgba(217,70,239,0.7)]">
+                                    ◀
+                                </a>
+                            @endif
+
+                            <div class="flex gap-2">
+                                @foreach ($observedProducts->getUrlRange(
+                                    max(1, $observedProducts->currentPage() - 2),
+                                    min($observedProducts->lastPage(), $observedProducts->currentPage() + 2)
+                                ) as $page => $url)
+                                    <a href="{{ request()->fullUrlWithQuery(['observed_page' => $page]) }}"
+                                    class="w-10 h-10 flex items-center justify-center rounded-full border text-sm transition-all duration-300
+                                    {{ $page == $observedProducts->currentPage()
+                                            ? 'bg-fuchsia-600 border-fuchsia-400 text-white shadow-[0_0_12px_rgba(217,70,239,0.8)] scale-110'
+                                            : 'border-white/10 text-gray-400 hover:bg-fuchsia-600 hover:text-white hover:scale-110 hover:shadow-[0_0_10px_rgba(217,70,239,0.6)]' }}">
+                                        {{ $page }}
+                                    </a>
+                                @endforeach
+                            </div>
+
+                            @if ($observedProducts->hasMorePages())
+                                <a href="{{ $observedProducts->appends(request()->except('observed_page'))->nextPageUrl() }}&observed_page={{ $observedProducts->currentPage() + 1 }}"
+                                class="text-fuchsia-500 text-2xl hover:scale-110 transition hover:drop-shadow-[0_0_10px_rgba(217,70,239,0.7)]">
+                                    ▶
+                                </a>
+                            @endif
+                        </div>
+                    @endif
                 </div>
+
             </section>
         </div>
     </div>

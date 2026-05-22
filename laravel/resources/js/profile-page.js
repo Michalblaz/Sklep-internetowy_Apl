@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     const profileForm = document.getElementById('profile-form');
     const profileSubmitButton = document.getElementById('profile-submit-button');
+    const profileToggleEditButton = document.getElementById('profile-toggle-edit-button');
+    const passwordSection = document.getElementById('password-section');
     const passwordInput = document.getElementById('password');
     const passwordConfirmationInput = document.getElementById('password_confirmation');
     const passwordMismatchMessage = document.getElementById('password-mismatch-message');
-    const editButtons = document.querySelectorAll('[data-edit-target]');
+    const profileFields = document.querySelectorAll('.profile-edit-field');
     const showDeliveredToggle = document.getElementById('show-delivered-toggle');
     const shipmentCards = Array.from(document.querySelectorAll('[data-shipment-card]'));
     const filteredShipmentsEmpty = document.getElementById('filtered-shipments-empty');
@@ -34,21 +36,28 @@ document.addEventListener('DOMContentLoaded', () => {
         return !mismatch;
     };
 
-    editButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            const fieldId = button.dataset.editTarget;
-            const target = fieldId ? document.getElementById(fieldId) : null;
+    if (profileToggleEditButton) {
+        profileToggleEditButton.addEventListener('click', () => {
+            profileFields.forEach((target) => {
+                target.readOnly = false;
+                target.classList.remove('opacity-95');
+            });
 
-            if (!target) {
-                return;
+            if (passwordSection) {
+                passwordSection.classList.remove('hidden');
             }
 
-            target.readOnly = false;
-            target.classList.remove('opacity-95');
-            target.focus();
-            target.select?.();
+            if (profileSubmitButton) {
+                profileSubmitButton.classList.remove('hidden');
+            }
+
+            profileToggleEditButton.classList.add('hidden');
+
+            if (profileFields.length > 0) {
+                profileFields[0].focus();
+            }
         });
-    });
+    }
 
     if (passwordInput) {
         passwordInput.addEventListener('input', updatePasswordState);
