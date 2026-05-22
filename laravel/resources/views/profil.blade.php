@@ -53,12 +53,11 @@
             <div class="mb-6 flex items-center justify-between gap-4">
                 <div>
                     <p class="text-xs uppercase tracking-[0.35em] text-cyan-100/70">Dane użytkownika</p>
-                    <h2 class="mt-2 font-['Bruno_Ace'] text-2xl text-white">Edytuj profil</h2>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-cyan-100">
                     <i class="fa-regular fa-user text-lg"></i>
                 </div>
-            </div>
+        </div>
 
             <form method="POST" action="{{ route('profil.update') }}" id="profile-form" class="space-y-6">
                 @csrf
@@ -68,13 +67,6 @@
                         <div class="rounded-[1.6rem] border border-white/20 bg-slate-950/15 p-4">
                             <div class="mb-2 flex items-center justify-between gap-4">
                                 <label for="{{ $field }}" class="font-['Bruno_Ace'] text-sm text-cyan-50">{{ $label }}</label>
-                                <button
-                                    type="button"
-                                    data-edit-target="{{ $field }}"
-                                    class="rounded-full border border-fuchsia-300/30 bg-fuchsia-400/10 px-3 py-1 text-[11px] uppercase tracking-[0.25em] text-fuchsia-100 transition hover:bg-fuchsia-400/20"
-                                >
-                                    Zmień
-                                </button>
                             </div>
                             <input
                                 id="{{ $field }}"
@@ -88,7 +80,8 @@
                     @endforeach
                 </div>
 
-                <div class="rounded-[1.8rem] border border-white/20 bg-slate-950/15 p-4">
+
+                <div id="password-section" class="hidden rounded-[1.8rem] border border-white/20 bg-slate-950/15 p-4">
                     <h3 class="mb-4 font-['Bruno_Ace'] text-xl text-white">Zmień hasło</h3>
                     <div class="space-y-4">
                         <div>
@@ -120,9 +113,17 @@
                 </div>
 
                 <button
+                    type="button"
+                    id="profile-toggle-edit-button"
+                    class="w-full rounded-full bg-[linear-gradient(90deg,rgba(129,150,255,0.95),rgba(164,66,255,0.95))] px-6 py-4 font-['Bruno_Ace'] text-lg text-white shadow-[0_12px_35px_rgba(126,76,255,0.35)] transition hover:scale-[1.01]"
+                >
+                    Edytuj profil
+                </button>
+
+                <button
                     type="submit"
                     id="profile-submit-button"
-                    class="w-full rounded-full bg-[linear-gradient(90deg,rgba(129,150,255,0.95),rgba(164,66,255,0.95))] px-6 py-4 font-['Bruno_Ace'] text-lg text-white shadow-[0_12px_35px_rgba(126,76,255,0.35)] transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60"
+                    class="hidden w-full rounded-full bg-[linear-gradient(90deg,rgba(129,150,255,0.95),rgba(164,66,255,0.95))] px-6 py-4 font-['Bruno_Ace'] text-lg text-white shadow-[0_12px_35px_rgba(126,76,255,0.35)] transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                     Potwierdź
                 </button>
@@ -315,25 +316,6 @@
                         </div>
                     </div>
                 </form>
-            </section>
-
-            <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
-                <div class="mb-5 flex items-center justify-between gap-4">
-                    <div>
-                        <p class="text-xs uppercase tracking-[0.35em] text-cyan-100/70">Profil</p>
-                        <h2 class="mt-2 font-['Bruno_Ace'] text-2xl text-white">Ustawienia konta</h2>
-                    </div>
-                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-cyan-100">
-                        <i class="fa-solid fa-gear text-lg"></i>
-                    </div>
-                </div>
-
-                <button
-                    type="button"
-                    class="w-full rounded-full border border-white/15 bg-white/5 px-5 py-4 font-['Bruno_Ace'] text-sm text-white/85 transition hover:bg-white/10"
-                >
-                    Ustawienia konta
-                </button>
             </section>
 
             <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
