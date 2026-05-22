@@ -7,6 +7,13 @@
     </div>
 @endif
 
+<div
+    id="home-view-tracker"
+    class="hidden"
+    data-record-url="{{ route('home.views.record') }}"
+    data-csrf-token="{{ csrf_token() }}"
+></div>
+
 <!-- POLECANE -->
 <div id="polecane" class="w-full px-4 lg:px-8 py-6">
     <div class="flex items-center gap-4 mb-8">
@@ -130,10 +137,12 @@
             <div class="space-y-2">
                 <label class="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-bold">Sortowanie</label>
                 <select name="sort" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-purple-400 outline-none">
-                    <option value="newest" {{ request('sort', 'newest') === 'newest' ? 'selected' : '' }}>Najnowsze</option>
+                    <option value="newest" {{ request('sort', 'newest') === 'newest' ? 'selected' : '' }}>Najlepsze oceny</option>
                     <option value="price_asc" {{ request('sort') === 'price_asc' ? 'selected' : '' }}>Cena rosnąco ↑</option>
                     <option value="price_desc" {{ request('sort') === 'price_desc' ? 'selected' : '' }}>Cena malejąco ↓</option>
                     <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Nazwa A-Z</option>
+                    <option value="rating_desc" {{ request('sort') === 'rating_desc' ? 'selected' : '' }}>Najwyżej oceniane</option>
+                    <option value="stock_desc" {{ request('sort') === 'stock_desc' ? 'selected' : '' }}>Dostępność: od największej</option>
                 </select>
             </div>
 
@@ -144,6 +153,28 @@
                     <div class="h-px w-5 bg-white/20"></div>
                     <input type="number" name="max_price" value="{{ request('max_price') }}" placeholder="Do" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-cyan-400 outline-none">
                 </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-bold">Ocena</label>
+                <select name="min_rating" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-purple-400 outline-none">
+                    <option value="">Dowolna ocena</option>
+                    <option value="5" {{ request('min_rating') === '5' ? 'selected' : '' }}>Od 5.0</option>
+                    <option value="4" {{ request('min_rating') === '4' ? 'selected' : '' }}>Od 4.0</option>
+                    <option value="3" {{ request('min_rating') === '3' ? 'selected' : '' }}>Od 3.0</option>
+                    <option value="2" {{ request('min_rating') === '2' ? 'selected' : '' }}>Od 2.0</option>
+                    <option value="1" {{ request('min_rating') === '1' ? 'selected' : '' }}>Od 1.0</option>
+                </select>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-bold">Dostępność</label>
+                <select name="availability" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-purple-400 outline-none">
+                    <option value="">Dowolna</option>
+                    <option value="in_stock" {{ request('availability') === 'in_stock' ? 'selected' : '' }}>Na stanie</option>
+                    <option value="low_stock" {{ request('availability') === 'low_stock' ? 'selected' : '' }}>Końcówka: 1-3 szt.</option>
+                    <option value="out_of_stock" {{ request('availability') === 'out_of_stock' ? 'selected' : '' }}>Brak na stanie</option>
+                </select>
             </div>
 
             <div class="relative space-y-3">

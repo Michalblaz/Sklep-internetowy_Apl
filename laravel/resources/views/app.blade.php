@@ -137,7 +137,56 @@
     <p class="text-gray-400 font-bruno">E-mail: techblef@gmail.com</p>
     <p class="text-gray-400 font-bruno">Numer kontaktowy: +48 109247685</p>
     <p class="text-gray-400 font-bruno">Lokalizacja: al. Tadeusza Rejtana 16C, 35-310 Rzeszów</p>
+    <a
+        href="#polityka-cookies"
+        data-cookie-open
+        class="mt-5 inline-flex items-center gap-2 rounded-full border border-cyan-400/25 bg-cyan-400/5 px-5 py-2 text-xs font-bold uppercase tracking-[0.22em] text-cyan-200 transition hover:border-cyan-300/60 hover:bg-cyan-400/10 hover:text-white"
+    >
+        <i class="fa-solid fa-shield-halved text-cyan-300"></i>
+        Prywatność i cookies
+    </a>
 </footer>
+
+<div
+    id="cookie-notice-modal"
+    class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/70 px-4 backdrop-blur-sm"
+    aria-hidden="true"
+    aria-labelledby="cookie-notice-title"
+>
+    <div class="w-full max-w-2xl rounded-3xl border border-white/10 bg-slate-950/95 p-6 shadow-[0_24px_70px_rgba(0,0,0,0.55)]">
+        <p class="text-[10px] uppercase tracking-[0.35em] text-cyan-300">Prywatność</p>
+        <h2 id="cookie-notice-title" class="mt-2 text-xl text-white font-bruno">Pliki cookies i dane techniczne</h2>
+
+        <div class="mt-5 space-y-3 text-sm leading-6 text-gray-300">
+            <p>
+                Sklep korzysta z niezbędnych danych technicznych, żeby działało logowanie, koszyk, zabezpieczenia formularzy oraz zapamiętywanie sesji użytkownika.
+            </p>
+            <p>
+                Liczba wyświetleń strony startowej jest zapisywana tylko raz w ramach jednej sesji sklepu. Samo odświeżenie strony albo przechodzenie między widokami nie powinno nabijać kolejnych wejść.
+            </p>
+            <p>
+                Dla statystyk technicznych możemy zapisać m.in. identyfikator sesji, datę wejścia, adres IP oraz informacje o przeglądarce lub urządzeniu. Nie służy to do reklam, tylko do statystyk działania strony.
+            </p>
+        </div>
+
+        <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <button
+                type="button"
+                data-cookie-close
+                class="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-bold text-gray-200 transition hover:bg-white/10"
+            >
+                Zamknij
+            </button>
+            <button
+                type="button"
+                data-cookie-accept
+                class="rounded-2xl border border-cyan-300/40 bg-cyan-500/20 px-5 py-3 text-sm font-bold text-cyan-100 shadow-[0_0_22px_rgba(34,211,238,0.18)] transition hover:bg-cyan-400/30 hover:text-white"
+            >
+                Rozumiem
+            </button>
+        </div>
+    </div>
+</div>
 @livewireScripts
 </body>
 </html>

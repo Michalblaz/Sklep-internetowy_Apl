@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class AdminController extends Controller
 {
@@ -53,6 +54,9 @@ class AdminController extends Controller
             ->where('rn', 1);
 
         $customersCount = (clone $customerQuery)->count();
+        $storeViews = Schema::hasTable('site_page_views')
+            ? DB::table('site_page_views')->where('page_path', '/')->count()
+            : 0;
 
         $bannedAccounts = DB::query()
             ->fromSub($latestBans, 'latest_bans')
@@ -146,15 +150,13 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
                 'users.email'
             )
             ->orderByDesc('complaints.id')
-            ->paginate(5, ['*'], 'complaintsPage')
-            ->through(function ($complaint) {
+            ->get()
+            ->map(function ($complaint) {
                 $complaint->customer_name = trim(($complaint->first_name ?? '') . ' ' . ($complaint->last_name ?? ''));
                 $complaint->customer_name = $complaint->customer_name !== '' ? $complaint->customer_name : 'Nieznany użytkownik';
 
                 return $complaint;
-            })
-            ->withQueryString()
-            ->fragment('reklamacje');
+            });
 
         $userNameFilter = trim((string) request('user_name', ''));
         $userEmailFilter = trim((string) request('user_email', ''));
@@ -208,16 +210,14 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             )
             ->orderBy('users.first_name')
             ->orderBy('users.last_name')
-            ->paginate(8, ['*'], 'usersPage')
-            ->through(function ($user) {
+            ->get()
+            ->map(function ($user) {
                 $user->full_name = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? ''));
                 $user->full_name = $user->full_name !== '' ? $user->full_name : 'Brak imienia';
                 $user->account_status = $this->resolveAccountStatus($user->ban_end_time, $user->ban_user_id !== null);
 
                 return $user;
-            })
-            ->withQueryString()
-            ->fragment('uzytkownicy');
+            });
 
         $lowStockProducts = Product::query()
             ->with(['brand', 'category'])
@@ -229,8 +229,8 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
         return view('Admin', [
             'storeStats' => [
                 'customers' => $customersCount,
-                'views' => 0,
-                'views_note' => 'Pole przygotowane pod przyszłe dane o wyświetleniach.',
+                'views' => $storeViews,
+                'views_note' => 'Zliczane są wejścia na stronę startową bez odświeżeń.',
             ],
             'accountStats' => [
                 'active' => $activeAccounts,

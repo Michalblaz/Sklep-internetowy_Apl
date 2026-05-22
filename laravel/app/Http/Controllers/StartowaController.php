@@ -7,7 +7,9 @@ use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Attribute; 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class StartowaController extends Controller
 {
@@ -17,19 +19,44 @@ class StartowaController extends Controller
         $selectedBrands = $request->input('brands', []);
         $selectedAttrs = $request->input('attrs', []);
 
-        $products = Product::withAvg('reviews', 'rating')
-            ->orderByRaw("
-            CASE
-                WHEN promo_price IS NOT NULL AND promo_price < base_price THEN 0
-                ELSE 1
-            END
-        ")
-            ->take(25)
-            ->get();
+        $products = Product::getPersonalizedRecommendations(20)
+            ->sort(function ($firstProduct, $secondProduct) {
+                $firstWithoutRating = $firstProduct->reviews_avg_rating === null ? 1 : 0;
+                $secondWithoutRating = $secondProduct->reviews_avg_rating === null ? 1 : 0;
 
-        $promo_products = Product::withAvg('reviews', 'rating')
+                if ($firstWithoutRating !== $secondWithoutRating) {
+                    return $firstWithoutRating <=> $secondWithoutRating;
+                }
+
+                return ((float) ($secondProduct->reviews_avg_rating ?? 0) <=> (float) ($firstProduct->reviews_avg_rating ?? 0))
+                    ?: ((int) $secondProduct->id <=> (int) $firstProduct->id);
+            })
+            ->values();
+
+        $promoProductsQuery = Product::query()
+            ->select('products.*')
+            ->withAvg('reviews', 'rating')
             ->whereNotNull('promo_price')
-            ->whereColumn('promo_price', '<', 'base_price')
+            ->whereColumn('promo_price', '<', 'base_price');
+
+        if (Auth::check()) {
+            $viewedProducts = DB::table('product_browsing_history')
+                ->select('product_id', DB::raw('MAX(viewed_at) as last_viewed_at'))
+                ->where('user_id', Auth::id())
+                ->groupBy('product_id');
+
+            $promoProductsQuery
+                ->leftJoinSub($viewedProducts, 'viewed_products', function ($join) {
+                    $join->on('products.id', '=', 'viewed_products.product_id');
+                })
+                ->orderByRaw('CASE WHEN viewed_products.product_id IS NULL THEN 1 ELSE 0 END');
+        }
+
+        $promo_products = $promoProductsQuery
+            ->orderByRaw('CASE WHEN (SELECT AVG(reviews.rating) FROM reviews WHERE reviews.product_id = products.id) IS NULL THEN 1 ELSE 0 END')
+            ->orderByRaw('reviews_avg_rating DESC NULLS LAST')
+            ->when(Auth::check(), fn ($query) => $query->orderByDesc('viewed_products.last_viewed_at'))
+            ->orderByDesc('products.id')
             ->take(25)
             ->get();
 
@@ -140,6 +167,24 @@ class StartowaController extends Controller
             $all_products->where('base_price', '<=', $request->max_price);
         }
 
+        $selectedRating = null;
+
+        if ($request->filled('min_rating')) {
+            $selectedRating = max(1, min(5, (float) $request->min_rating));
+
+            $all_products->whereRaw(
+                '(SELECT AVG(reviews.rating) FROM reviews WHERE reviews.product_id = products.id) >= ?',
+                [$selectedRating]
+            );
+        }
+
+        match ($request->query('availability')) {
+            'in_stock' => $all_products->where('stock_quantity', '>', 0),
+            'low_stock' => $all_products->whereBetween('stock_quantity', [1, 3]),
+            'out_of_stock' => $all_products->where('stock_quantity', '<=', 0),
+            default => null,
+        };
+
         if ($selectedCategory) {
             $allMatchingProductIds = (clone $all_products)->pluck('id');
             $availableValueIds = DB::table('product_attributes')
@@ -149,19 +194,39 @@ class StartowaController extends Controller
                 ->toArray();
         }
 
-        switch ($request->query('sort')) {
-            case 'price_asc':
-                $all_products->orderBy('base_price', 'asc');
-                break;
-            case 'price_desc':
-                $all_products->orderBy('base_price', 'desc');
-                break;
-            case 'name_asc':
-                $all_products->orderBy('name', 'asc');
-                break;
-            default:
-                $all_products->orderBy('id', 'desc');
-                break;
+        if ($selectedRating !== null) {
+            $all_products
+                ->orderByRaw('CASE WHEN (SELECT AVG(reviews.rating) FROM reviews WHERE reviews.product_id = products.id) IS NULL THEN 1 ELSE 0 END')
+                ->orderByRaw(
+                    'ABS((SELECT AVG(reviews.rating) FROM reviews WHERE reviews.product_id = products.id) - ?) ASC',
+                    [$selectedRating]
+                )
+                ->orderByRaw('reviews_avg_rating DESC NULLS LAST')
+                ->orderByDesc('id');
+        } else {
+            $all_products->orderByRaw('CASE WHEN (SELECT AVG(reviews.rating) FROM reviews WHERE reviews.product_id = products.id) IS NULL THEN 1 ELSE 0 END');
+
+            switch ($request->query('sort')) {
+                case 'price_asc':
+                    $all_products->orderBy('base_price', 'asc');
+                    break;
+                case 'price_desc':
+                    $all_products->orderBy('base_price', 'desc');
+                    break;
+                case 'name_asc':
+                    $all_products->orderBy('name', 'asc');
+                    break;
+                case 'stock_desc':
+                    $all_products->orderBy('stock_quantity', 'desc');
+                    break;
+                case 'newest':
+                case 'rating_desc':
+                default:
+                    $all_products
+                        ->orderByRaw('reviews_avg_rating DESC NULLS LAST')
+                        ->orderByDesc('id');
+                    break;
+            }
         }
 
         $all_products = $all_products
@@ -179,6 +244,35 @@ class StartowaController extends Controller
             'availableValueIds',
             'filterDataByCategory'
         ));
+    }
+
+    public function recordPageView(Request $request)
+    {
+        $validated = $request->validate([
+            'page_path' => ['required', 'string', 'max:255'],
+            'is_reload' => ['nullable', 'boolean'],
+        ]);
+
+        if (($validated['is_reload'] ?? false) || $validated['page_path'] !== '/' || !Schema::hasTable('site_page_views')) {
+            return response()->noContent();
+        }
+
+        if ($request->session()->has('home_page_view_recorded')) {
+            return response()->noContent();
+        }
+
+        DB::table('site_page_views')->insert([
+            'page_path' => $validated['page_path'],
+            'session_id' => $request->session()->getId(),
+            'user_id' => Auth::id(),
+            'ip_address' => $request->ip(),
+            'user_agent' => substr((string) $request->userAgent(), 0, 1000),
+            'viewed_at' => now(),
+        ]);
+
+        $request->session()->put('home_page_view_recorded', true);
+
+        return response()->noContent();
     }
 
 }
