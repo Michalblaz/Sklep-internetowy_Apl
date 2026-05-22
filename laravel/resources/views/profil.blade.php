@@ -52,12 +52,13 @@
         <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.18),rgba(72,187,255,0.18),rgba(110,52,255,0.18))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
             <div class="mb-6 flex items-center justify-between gap-4">
                 <div>
-                    <p class="text-xs uppercase tracking-[0.35em] text-cyan-100/70">Dane użytkownika</p>
+                    <h2 class="font-['Bruno_Ace'] text-2xl text-white">Dane użytkownika</h2>
                 </div>
                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-cyan-100">
                     <i class="fa-regular fa-user text-lg"></i>
                 </div>
-        </div>
+            </div>
+
 
             <form method="POST" action="{{ route('profil.update') }}" id="profile-form" class="space-y-6">
                 @csrf
@@ -134,8 +135,7 @@
             <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
                 <div class="mb-5 flex flex-wrap items-center justify-between gap-4">
                     <div>
-                        <p class="text-xs uppercase tracking-[0.35em] text-cyan-100/70">Menu</p>
-                        <h2 class="mt-2 font-['Bruno_Ace'] text-2xl text-white">Śledzenie przesyłki</h2>
+                        <h2 class="font-['Bruno_Ace'] text-2xl text-white">Śledzenie przesyłki</h2>
                     </div>
 
                     <label class="inline-flex items-center gap-3 rounded-full border border-white/15 bg-slate-950/15 px-4 py-2 text-sm text-white">
@@ -147,6 +147,7 @@
                         <span>Pokaż dostarczone</span>
                     </label>
                 </div>
+
 
                 <div class="space-y-4" id="shipment-list">
                     @forelse ($shipments as $shipment)
@@ -232,13 +233,13 @@
             <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
                 <div class="mb-5 flex items-center justify-between gap-4">
                     <div>
-                        <p class="text-xs uppercase tracking-[0.35em] text-cyan-100/70">Zgłoszenia</p>
-                        <h2 class="mt-2 font-['Bruno_Ace'] text-2xl text-white">Reklamacja i zwrot</h2>
+                        <h2 class="font-['Bruno_Ace'] text-2xl text-white">Reklamacje i zwroty</h2>
                     </div>
                     <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-cyan-100">
                         <i class="fa-solid fa-arrow-rotate-left text-lg"></i>
                     </div>
                 </div>
+
 
                 <form method="POST" action="{{ route('profil.complaints.store') }}" id="complaint-form" class="space-y-4">
                     @csrf
@@ -321,13 +322,13 @@
             <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
                 <div class="mb-5 flex items-center justify-between gap-4">
                     <div>
-                        <p class="text-xs uppercase tracking-[0.35em] text-cyan-100/70">Lista użytkownika</p>
-                        <h2 class="mt-2 font-['Bruno_Ace'] text-2xl text-white">Obserwowane</h2>
+                        <h2 class="font-['Bruno_Ace'] text-2xl text-white">Obserwowane</h2>
                     </div>
                     <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-cyan-100">
                         <i class="fa-regular fa-heart text-lg"></i>
                     </div>
                 </div>
+
 
                 <div class="space-y-4">
                     @forelse ($observedProducts as $product)
