@@ -12,15 +12,6 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
-
-        [id] {
-            scroll-margin-top: 100px;
-        }
-    </style>
 </head>
 
 <body class="min-h-screen flex flex-col bg-[#0f172a] text-white">
@@ -189,11 +180,16 @@
     </div>
 </div>
 @if (session('order_success'))
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            alert(@json(session('order_success')));
-        });
-    </script>
+    <div id="order-success-toast" class="order-success-toast" role="status" aria-live="polite">
+        <div class="order-success-toast__bar"></div>
+        <div class="order-success-toast__content">
+            <div class="order-success-toast__arrow" aria-hidden="true">&rarr;</div>
+            <div>
+                <p class="order-success-toast__title">{{ session('order_success') }}</p>
+                <p class="order-success-toast__text">Potwierdzenie zamowienia zostalo zapisane.</p>
+            </div>
+        </div>
+    </div>
 @endif
 @livewireScripts
 </body>
