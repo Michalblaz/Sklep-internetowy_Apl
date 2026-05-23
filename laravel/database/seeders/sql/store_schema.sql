@@ -351,7 +351,7 @@ CREATE TABLE public.complaints (
     order_id integer,
     reason character varying(255),
     description text,
-    status character varying(50) DEFAULT 'new'::character varying
+    status character varying(50) DEFAULT 'oczekujące'::character varying
 );
 
 

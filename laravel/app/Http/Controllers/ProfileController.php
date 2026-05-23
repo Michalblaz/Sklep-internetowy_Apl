@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -19,11 +20,33 @@ class ProfileController extends Controller
         $user = $request->user();
         app(OrderStatusUpdater::class)->update();
 
+        $this->refreshTimedOrderStatuses($user->id);
+
         $address = $this->loadAddress($user->id);
         $shipmentHistory = $this->loadShipments($user->id);
         $shipments = $shipmentHistory
             ->reject(fn (array $shipment) => $shipment['is_delivered'])
             ->values();
+        $complaintReplies = $this->loadComplaintReplies($user->id);
+
+        $rawProducts = $this->loadObservedProducts($user->id);
+        $items = $rawProducts instanceof Collection ? $rawProducts : Collection::make($rawProducts);
+
+        $currentPage = LengthAwarePaginator::resolveCurrentPage('observed_page');
+        $perPage = 5;
+        $currentItems = $items->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $observedProducts = new LengthAwarePaginator(
+            $currentItems,
+            $items->count(),
+            $perPage,
+            $currentPage,
+            [
+                'path' => LengthAwarePaginator::resolveCurrentPath(),
+                'pageName' => 'observed_page',
+            ]
+        );
+
     
         $groupedWishlists = $this->loadObservedProducts($user->id);
     
@@ -44,6 +67,8 @@ class ProfileController extends Controller
             ],
             'shipments' => $shipments,
             'shipmentHistory' => $shipmentHistory,
+            'complaintReplies' => $complaintReplies,
+            'observedProducts' => $observedProducts,
             'orders' => $orders,
             'groupedWishlists' => $groupedWishlists,
         ]);
@@ -136,10 +161,58 @@ class ProfileController extends Controller
                 ->where('id', $order->id)
                 ->update(['tracking_status' => $pendingStatus]);
         });
+        DB::table('complaints')->insert([
+            'order_id' => $order->id,
+            'reason' => $validated['reason'],
+            'description' => $validated['description'] ?? '',
+            'status' => 'oczekujące',
+        ]);
 
         return redirect()
             ->route('profil')
             ->with('success', 'Zgłoszenie zostało zapisane.');
+    }
+
+    public function replyComplaint(Request $request, int $complaintId): RedirectResponse
+    {
+        $user = $request->user();
+
+        if (!Schema::hasColumn('complaints', 'customer_reply')) {
+            return redirect()
+                ->route('profil')
+                ->with('error', 'Brakuje kolumn odpowiedzi w tabeli complaints. Uruchom migracje.');
+        }
+
+        $validated = $request->validate([
+            'customer_reply' => ['required', 'string', 'max:5000'],
+        ], [
+            'customer_reply.required' => 'Wpisz treść odpowiedzi.',
+        ]);
+
+        $complaint = DB::table('complaints as c')
+            ->join('orders as o', 'o.id', '=', 'c.order_id')
+            ->where('c.id', $complaintId)
+            ->where('o.user_id', $user->id)
+            ->first(['c.id']);
+
+        if (!$complaint) {
+            return redirect()
+                ->route('profil')
+                ->with('error', 'Nie znaleziono zgłoszenia do odpowiedzi.');
+        }
+
+        DB::table('complaints')
+            ->where('id', $complaint->id)
+            ->update([
+                'customer_reply' => $validated['customer_reply'],
+                'customer_replied_at' => now(),
+                'status' => 'oczekujące',
+                'updated_at' => now(),
+            ]);
+
+        return redirect()
+            ->route('profil')
+            ->with('success', 'Twoja odpowiedź została wysłana do obsługi sklepu.');
     }
 
     public function moveObservedToCart(Request $request, int $wishlistId, int $productId): RedirectResponse
@@ -218,25 +291,32 @@ class ProfileController extends Controller
 
     private function loadShipments(int $userId): Collection
     {
+        $orderColumns = [
+            'o.id',
+            'o.tracking_status',
+            'o.shipping_cost',
+            'o.created_at',
+            'o.shipping_street',
+            'o.shipping_city',
+            'o.shipping_postal_code',
+            'o.shipping_first_name',
+            'o.shipping_last_name',
+            'o.shipping_phone',
+        ];
+
+        foreach (['payment_method', 'pickup_point_info'] as $optionalColumn) {
+            $orderColumns[] = Schema::hasColumn('orders', $optionalColumn)
+                ? "o.{$optionalColumn}"
+                : DB::raw("NULL as {$optionalColumn}");
+        }
+
+        $orderColumns[] = 'sm.name as shipping_method_name';
+
         $orders = DB::table('orders as o')
             ->leftJoin('shipping_methods as sm', 'sm.id', '=', 'o.shipping_method_id')
             ->where('o.user_id', $userId)
             ->orderByDesc('o.created_at')
-            ->get([
-                'o.id',
-                'o.tracking_status',
-                'o.shipping_cost',
-                'o.created_at',
-                'o.shipping_street',
-                'o.shipping_city',
-                'o.shipping_postal_code',
-                'o.shipping_first_name',
-                'o.shipping_last_name',
-                'o.shipping_phone',
-                'o.payment_method',
-                'o.pickup_point_info',
-                'sm.name as shipping_method_name',
-            ]);
+            ->get($orderColumns);
 
         if ($orders->isEmpty()) {
             return collect();
@@ -303,12 +383,60 @@ class ProfileController extends Controller
                     default => $order->payment_method ?: 'Brak danych',
                 },
                 'pickup_point' => $order->pickup_point_info,
-                'complaint_label' => $complaint ? ($complaint->reason . ' - ' . ($complaint->status ?? 'new')) : null,
+                'complaint_label' => $complaint ? ($complaint->reason . ' - ' . ($complaint->status ?? 'oczekujące')) : null,
             ];
         });
     }
 
-    private function loadObservedProducts(int $userId): Collection
+    private function loadComplaintReplies(int $userId): Collection
+    {
+        if (!Schema::hasTable('complaints')) {
+            return collect();
+        }
+
+        $hasResponseColumns = Schema::hasColumn('complaints', 'admin_response');
+
+        return DB::table('complaints as c')
+            ->join('orders as o', 'o.id', '=', 'c.order_id')
+            ->where('o.user_id', $userId)
+            ->orderByDesc('c.id')
+            ->get([
+                'c.id',
+                'c.order_id',
+                'c.reason',
+                'c.description',
+                'c.status',
+                'o.created_at as order_created_at',
+                $hasResponseColumns ? 'c.admin_response' : DB::raw('NULL as admin_response'),
+                $hasResponseColumns ? 'c.customer_reply' : DB::raw('NULL as customer_reply'),
+                $hasResponseColumns ? 'c.responded_at' : DB::raw('NULL as responded_at'),
+                $hasResponseColumns ? 'c.customer_replied_at' : DB::raw('NULL as customer_replied_at'),
+            ])
+            ->map(function ($complaint) {
+                return [
+                    'id' => (int) $complaint->id,
+                    'order_id' => (int) $complaint->order_id,
+                    'reason' => $complaint->reason ?: 'Zgłoszenie',
+                    'description' => $complaint->description ?: 'Brak opisu zgłoszenia.',
+                    'status' => $complaint->status ?: 'oczekujące',
+                    'status_label' => $this->complaintStatusLabel($complaint->status),
+                    'order_created_at' => $complaint->order_created_at
+                        ? \Carbon\Carbon::parse($complaint->order_created_at)->format('d.m.Y')
+                        : 'Brak daty',
+                    'admin_response' => $complaint->admin_response,
+                    'customer_reply' => $complaint->customer_reply,
+                    'responded_at' => $complaint->responded_at
+                        ? \Carbon\Carbon::parse($complaint->responded_at)->format('d.m.Y H:i')
+                        : null,
+                    'customer_replied_at' => $complaint->customer_replied_at
+                        ? \Carbon\Carbon::parse($complaint->customer_replied_at)->format('d.m.Y H:i')
+                        : null,
+                    'can_reply' => $complaint->status === 'oczekujące' && filled($complaint->admin_response),
+                ];
+            });
+    }
+
+    private function loadComplaintReplies(int $userId): Collection
     {
         // Pobieramy wszystkie przedmioty na wishlistach przypisanych do użytkownika
         $items = DB::table('wishlist_items as wi')
@@ -382,6 +510,48 @@ class ProfileController extends Controller
             'zakończone',
             'odebrane',
         ], true);
+    }
+
+    private function complaintStatusLabel(?string $status): string
+    {
+        return match ($status) {
+            'zaakceptowane' => 'Zaakceptowane',
+            'odrzucone' => 'Odrzucone',
+            default => 'Oczekujące',
+        };
+    }
+
+    private function refreshTimedOrderStatuses(?int $userId = null): void
+    {
+        if (!Schema::hasTable('orders')) {
+            return;
+        }
+
+        $orders = DB::table('orders')
+            ->when($userId !== null, fn ($query) => $query->where('user_id', $userId))
+            ->whereNotNull('created_at')
+            ->get(['id', 'created_at', 'tracking_status']);
+
+        foreach ($orders as $order) {
+            $currentStatus = mb_strtolower(trim((string) $order->tracking_status));
+
+            if (in_array($currentStatus, ['cancelled', 'canceled', 'anulowane'], true)) {
+                continue;
+            }
+
+            $ageInMinutes = \Carbon\Carbon::parse($order->created_at)->diffInMinutes(now());
+            $nextStatus = match (true) {
+                $ageInMinutes >= 5 => 'Dostarczone',
+                $ageInMinutes >= 1 => 'W trakcie',
+                default => 'Nowe',
+            };
+
+            if ($order->tracking_status !== $nextStatus) {
+                DB::table('orders')
+                    ->where('id', $order->id)
+                    ->update(['tracking_status' => $nextStatus]);
+            }
+        }
     }
 
     private function resolveImagePath(?string $imageUrl): ?string

@@ -12,15 +12,6 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
-
-        [id] {
-            scroll-margin-top: 100px;
-        }
-    </style>
 </head>
 
 <body class="min-h-screen flex flex-col bg-[#0f172a] text-white">
@@ -162,12 +153,6 @@
             <p>
                 Sklep korzysta z niezbędnych danych technicznych, żeby działało logowanie, koszyk, zabezpieczenia formularzy oraz zapamiętywanie sesji użytkownika.
             </p>
-            <p>
-                Liczba wyświetleń strony startowej jest zapisywana tylko raz w ramach jednej sesji sklepu. Samo odświeżenie strony albo przechodzenie między widokami nie powinno nabijać kolejnych wejść.
-            </p>
-            <p>
-                Dla statystyk technicznych możemy zapisać m.in. identyfikator sesji, datę wejścia, adres IP oraz informacje o przeglądarce lub urządzeniu. Nie służy to do reklam, tylko do statystyk działania strony.
-            </p>
         </div>
 
         <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-end">
@@ -189,11 +174,16 @@
     </div>
 </div>
 @if (session('order_success'))
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            alert(@json(session('order_success')));
-        });
-    </script>
+    <div id="order-success-toast" class="order-success-toast" role="status" aria-live="polite">
+        <div class="order-success-toast__bar"></div>
+        <div class="order-success-toast__content">
+            <div class="order-success-toast__arrow" aria-hidden="true">&rarr;</div>
+            <div>
+                <p class="order-success-toast__title">{{ session('order_success') }}</p>
+                <p class="order-success-toast__text">Potwierdzenie zamowienia zostalo zapisane.</p>
+            </div>
+        </div>
+    </div>
 @endif
 @livewireScripts
 </body>

@@ -182,6 +182,89 @@
             <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
                 <div class="mb-5 flex items-center justify-between gap-4">
                     <div>
+                        <h2 class="font-['Bruno_Ace'] text-2xl text-white">Odpowiedzi sklepu</h2>
+                        <p class="mt-2 text-sm text-cyan-50/70">Tu zobaczysz decyzje dotyczące reklamacji i zwrotów oraz możesz odpisać obsłudze.</p>
+                    </div>
+                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-cyan-100">
+                        <i class="fa-regular fa-comments text-lg"></i>
+                    </div>
+                </div>
+
+                <div class="max-h-[34rem] space-y-4 overflow-y-auto pr-2">
+                    @forelse ($complaintReplies as $complaint)
+                        <div class="rounded-[1.8rem] border border-white/15 bg-slate-950/15 p-4">
+                            <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
+                                <div>
+                                    <p class="text-xs uppercase tracking-[0.25em] text-cyan-100/60">
+                                        Zamówienie #{{ $complaint['order_id'] }} · {{ $complaint['order_created_at'] }}
+                                    </p>
+                                    <h3 class="mt-2 font-['Bruno_Ace'] text-xl text-white">{{ $complaint['reason'] }}</h3>
+                                </div>
+
+                                <span class="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-sm text-white">
+                                    {{ $complaint['status_label'] }}
+                                </span>
+                            </div>
+
+                            <div class="grid gap-4 lg:grid-cols-2">
+                                <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                    <p class="mb-2 text-xs uppercase tracking-[0.25em] text-cyan-100/60">Twoje zgłoszenie</p>
+                                    <p class="whitespace-pre-line text-sm text-cyan-50/85">{{ $complaint['description'] }}</p>
+                                </div>
+
+                                <div class="rounded-2xl border border-cyan-300/20 bg-cyan-500/10 p-4">
+                                    <p class="mb-2 text-xs uppercase tracking-[0.25em] text-cyan-100/70">
+                                        Decyzja sklepu @if($complaint['responded_at']) · {{ $complaint['responded_at'] }} @endif
+                                    </p>
+                                    <p class="whitespace-pre-line text-sm text-cyan-50">
+                                        {{ $complaint['admin_response'] ?: 'Obsługa sklepu jeszcze nie dodała odpowiedzi.' }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            @if ($complaint['customer_reply'])
+                                <div class="mt-4 rounded-2xl border border-fuchsia-300/20 bg-fuchsia-500/10 p-4">
+                                    <p class="mb-2 text-xs uppercase tracking-[0.25em] text-fuchsia-100/70">
+                                        Twoja odpowiedź @if($complaint['customer_replied_at']) · {{ $complaint['customer_replied_at'] }} @endif
+                                    </p>
+                                    <p class="whitespace-pre-line text-sm text-fuchsia-50">{{ $complaint['customer_reply'] }}</p>
+                                </div>
+                            @endif
+
+                            @if ($complaint['can_reply'])
+                                <form method="POST" action="{{ route('profil.complaints.reply', $complaint['id']) }}" class="mt-4 space-y-3">
+                                    @csrf
+                                    <label for="customer_reply_{{ $complaint['id'] }}" class="block text-sm text-cyan-50">
+                                        Odpowiedz obsłudze
+                                    </label>
+                                    <textarea
+                                        id="customer_reply_{{ $complaint['id'] }}"
+                                        name="customer_reply"
+                                        rows="4"
+                                        required
+                                        class="w-full rounded-[1.4rem] border border-white/15 bg-slate-950/20 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/30"
+                                        placeholder="Napisz wiadomość do obsługi sklepu..."
+                                    ></textarea>
+                                    <button
+                                        type="submit"
+                                        class="rounded-full bg-[linear-gradient(90deg,rgba(129,150,255,0.95),rgba(164,66,255,0.95))] px-5 py-3 font-['Bruno_Ace'] text-sm text-white shadow-[0_12px_35px_rgba(126,76,255,0.35)] transition hover:scale-[1.01]"
+                                    >
+                                        Wyślij odpowiedź
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    @empty
+                        <div class="rounded-[1.8rem] border border-dashed border-white/20 bg-slate-950/15 px-5 py-8 text-center text-sm text-cyan-50/80">
+                            Nie masz jeszcze odpowiedzi na reklamacje lub zwroty.
+                        </div>
+                    @endforelse
+                </div>
+            </section>
+
+            <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
+                <div class="mb-5 flex items-center justify-between gap-4">
+                    <div>
                         <h2 class="font-['Bruno_Ace'] text-2xl text-white">Reklamacje i zwroty</h2>
                     </div>
                     <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-cyan-100">

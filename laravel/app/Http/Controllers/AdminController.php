@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Carbon\CarbonInterface;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -16,6 +17,8 @@ class AdminController extends Controller
 {
     public function index()
     {
+        $this->refreshTimedOrderStatuses();
+
         $lowStockThreshold = max(0, min(999, (int) request('low_stock_threshold', 5)));
 
         $categoryLabels = [
@@ -75,25 +78,17 @@ class AdminController extends Controller
 
         $activeAccounts = max($customersCount - $bannedAccounts - $suspendedAccounts, 0);
 
-        $activeOrders = Order::query()
-            ->where(function ($query) {
-                $query->whereNull('tracking_status')
-                    ->orWhereRaw("
-                        LOWER(tracking_status) NOT IN (
-                            'delivered',
-                            'completed',
-                            'cancelled',
-                            'canceled',
-                            'dostarczone',
-                            'zrealizowane',
-                            'anulowane',
-                            'zakonczone',
-                            'zakończone',
-                            'odebrane'
-                        )
-                    ");
-            })
-            ->count();
+        $orderStatusStats = [
+            'new' => Order::query()
+                ->whereRaw("LOWER(COALESCE(tracking_status, '')) IN ('', 'nowe', 'new')")
+                ->count(),
+            'in_progress' => Order::query()
+                ->whereRaw("LOWER(COALESCE(tracking_status, '')) IN ('w trakcie', 'w realizacji', 'processing', 'in_progress')")
+                ->count(),
+            'delivered' => Order::query()
+                ->whereRaw("LOWER(COALESCE(tracking_status, '')) IN ('dostarczone', 'delivered', 'completed', 'zrealizowane', 'odebrane')")
+                ->count(),
+        ];
 
        $productsCount = Product::sum('stock_quantity');
 
@@ -136,15 +131,41 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
                 ])->values();
             });
 
+        $complaintNameFilter = trim((string) request('complaint_name', ''));
+        $complaintEmailFilter = trim((string) request('complaint_email', ''));
+        $complaintStatusFilter = request('complaint_status');
+        $complaintTypeFilter = request('complaint_type');
+        $hasComplaintResponseColumns = Schema::hasColumn('complaints', 'admin_response');
+
         $complaints = Complain::query()
             ->leftJoin('orders', 'complaints.order_id', '=', 'orders.id')
             ->leftJoin('users', 'orders.user_id', '=', 'users.id')
+            ->when($complaintNameFilter !== '', function ($query) use ($complaintNameFilter) {
+                $query->whereRaw(
+                    "LOWER(TRIM(COALESCE(users.first_name, '') || ' ' || COALESCE(users.last_name, ''))) LIKE ?",
+                    ['%' . mb_strtolower($complaintNameFilter) . '%']
+                );
+            })
+            ->when($complaintEmailFilter !== '', function ($query) use ($complaintEmailFilter) {
+                $query->whereRaw('LOWER(users.email) LIKE ?', ['%' . mb_strtolower($complaintEmailFilter) . '%']);
+            })
+            ->when(in_array($complaintTypeFilter, ['Reklamacja', 'Zwrot'], true), function ($query) use ($complaintTypeFilter) {
+                $query->where('complaints.reason', $complaintTypeFilter);
+            })
+            ->when(in_array($complaintStatusFilter, ['oczekujące', 'zaakceptowane', 'odrzucone'], true), function ($query) use ($complaintStatusFilter) {
+                $query->where('complaints.status', $complaintStatusFilter);
+            })
             ->select(
                 'complaints.id',
                 'complaints.reason',
                 'complaints.description',
                 'complaints.status',
                 'complaints.order_id',
+                'orders.created_at as order_created_at',
+                $hasComplaintResponseColumns ? 'complaints.admin_response' : DB::raw('NULL as admin_response'),
+                $hasComplaintResponseColumns ? 'complaints.customer_reply' : DB::raw('NULL as customer_reply'),
+                $hasComplaintResponseColumns ? 'complaints.responded_at' : DB::raw('NULL as responded_at'),
+                $hasComplaintResponseColumns ? 'complaints.customer_replied_at' : DB::raw('NULL as customer_replied_at'),
                 'users.first_name',
                 'users.last_name',
                 'users.email'
@@ -155,8 +176,26 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
                 $complaint->customer_name = trim(($complaint->first_name ?? '') . ' ' . ($complaint->last_name ?? ''));
                 $complaint->customer_name = $complaint->customer_name !== '' ? $complaint->customer_name : 'Nieznany użytkownik';
 
+                $complaint->type_label = $complaint->reason === 'Zwrot' ? 'Zwrot' : 'Reklamacja';
+                $complaint->status_label = $this->complaintStatusLabel($complaint->status);
+                $complaint->order_created_at_label = $complaint->order_created_at
+                    ? \Carbon\Carbon::parse($complaint->order_created_at)->format('d.m.Y')
+                    : 'Brak daty';
+                $complaint->responded_at_label = $complaint->responded_at
+                    ? \Carbon\Carbon::parse($complaint->responded_at)->format('d.m.Y H:i')
+                    : null;
+                $complaint->customer_replied_at_label = $complaint->customer_replied_at
+                    ? \Carbon\Carbon::parse($complaint->customer_replied_at)->format('d.m.Y H:i')
+                    : null;
+
                 return $complaint;
             });
+
+        $complaintStats = [
+            'all' => $complaints->count(),
+            'complaints' => $complaints->where('type_label', 'Reklamacja')->count(),
+            'returns' => $complaints->where('type_label', 'Zwrot')->count(),
+        ];
 
         $userNameFilter = trim((string) request('user_name', ''));
         $userEmailFilter = trim((string) request('user_email', ''));
@@ -238,16 +277,57 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
                 'banned' => $bannedAccounts,
             ],
             'shopStats' => [
-                'active_orders' => $activeOrders,
+                'orders_new' => $orderStatusStats['new'],
+                'orders_in_progress' => $orderStatusStats['in_progress'],
+                'orders_delivered' => $orderStatusStats['delivered'],
                 'products' => $productsCount,
             ],
             'categoryChartData' => $categoryChartData,
             'modelChartDataByCategory' => $modelChartDataByCategory,
             'complaints' => $complaints,
+            'complaintStats' => $complaintStats,
             'users' => $users,
             'lowStockProducts' => $lowStockProducts,
             'lowStockThreshold' => $lowStockThreshold,
         ]);
+    }
+
+    public function updateComplaint(Request $request, Complain $complaint)
+    {
+        if (!Schema::hasColumn('complaints', 'admin_response')) {
+            return redirect(route('admin') . '#reklamacje')
+                ->with('admin_error', 'Brakuje kolumn odpowiedzi w tabeli complaints. Uruchom migracje.');
+        }
+
+        $validated = $request->validate([
+            'action_type' => ['required', 'in:respond,accept,reject'],
+            'admin_response' => ['required', 'string', 'max:5000'],
+        ], [
+            'admin_response.required' => 'Wpisz treść decyzji lub odpowiedzi.',
+        ]);
+
+        $status = match ($validated['action_type']) {
+            'accept' => 'zaakceptowane',
+            'reject' => 'odrzucone',
+            default => 'oczekujące',
+        };
+
+        DB::table('complaints')
+            ->where('id', $complaint->id)
+            ->update([
+                'status' => $status,
+                'admin_response' => $validated['admin_response'],
+                'responded_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+        $message = match ($status) {
+            'zaakceptowane' => 'Zgłoszenie zostało zaakceptowane.',
+            'odrzucone' => 'Zgłoszenie zostało odrzucone.',
+            default => 'Odpowiedź została wysłana do klienta.',
+        };
+
+        return redirect(route('admin') . '#reklamacje')->with('admin_status', $message);
     }
 
     public function suspend(User $user)
@@ -372,5 +452,46 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
         return $endTime === null
             || (is_string($endTime)
                 && in_array(strtolower(trim($endTime)), ['infinity', 'infinite'], true));
+    }
+
+    private function complaintStatusLabel(?string $status): string
+    {
+        return match ($status) {
+            'zaakceptowane' => 'Zaakceptowane',
+            'odrzucone' => 'Odrzucone',
+            default => 'Oczekujące',
+        };
+    }
+
+    private function refreshTimedOrderStatuses(): void
+    {
+        if (!Schema::hasTable('orders')) {
+            return;
+        }
+
+        $orders = DB::table('orders')
+            ->whereNotNull('created_at')
+            ->get(['id', 'created_at', 'tracking_status']);
+
+        foreach ($orders as $order) {
+            $currentStatus = mb_strtolower(trim((string) $order->tracking_status));
+
+            if (in_array($currentStatus, ['cancelled', 'canceled', 'anulowane'], true)) {
+                continue;
+            }
+
+            $ageInMinutes = \Carbon\Carbon::parse($order->created_at)->diffInMinutes(now());
+            $nextStatus = match (true) {
+                $ageInMinutes >= 5 => 'Dostarczone',
+                $ageInMinutes >= 1 => 'W trakcie',
+                default => 'Nowe',
+            };
+
+            if ($order->tracking_status !== $nextStatus) {
+                DB::table('orders')
+                    ->where('id', $order->id)
+                    ->update(['tracking_status' => $nextStatus]);
+            }
+        }
     }
 }
