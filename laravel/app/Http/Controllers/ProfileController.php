@@ -25,24 +25,8 @@ class ProfileController extends Controller
             ->reject(fn (array $shipment) => $shipment['is_delivered'])
             ->values();
     
-        $rawProducts = $this->loadObservedProducts($user->id);
-        $items = $rawProducts instanceof Collection ? $rawProducts : Collection::make($rawProducts);
+        $groupedWishlists = $this->loadObservedProducts($user->id);
     
-        $currentPage = LengthAwarePaginator::resolveCurrentPage('observed_page');
-        $perPage = 5;
-        $currentItems = $items->slice(($currentPage - 1) * $perPage, $perPage)->values();
-    
-        $observedProducts = new LengthAwarePaginator(
-            $currentItems,
-            $items->count(),
-            $perPage,
-            $currentPage,
-            [
-                'path' => LengthAwarePaginator::resolveCurrentPath(),
-                'pageName' => 'observed_page',
-            ]
-        );
-
         $orders = \App\Models\Order::where('user_id', $user->id)
         ->with('shippingMethod')
         ->latest()
@@ -60,8 +44,8 @@ class ProfileController extends Controller
             ],
             'shipments' => $shipments,
             'shipmentHistory' => $shipmentHistory,
-            'observedProducts' => $observedProducts,
             'orders' => $orders,
+            'groupedWishlists' => $groupedWishlists,
         ]);
     }
 
@@ -158,69 +142,39 @@ class ProfileController extends Controller
             ->with('success', 'Zgłoszenie zostało zapisane.');
     }
 
-    public function moveObservedToCart(Request $request, int $productId): RedirectResponse
+    public function moveObservedToCart(Request $request, int $wishlistId, int $productId): RedirectResponse
     {
         $userId = $request->user()->id;
-        $wishlistId = $this->findObservedWishlistId($userId);
 
-        if ($wishlistId === null) {
-            return redirect()
-                ->route('profil')
-                ->with('error', 'Nie znaleziono listy obserwowanych produktów.');
+        // Bezpieczeństwo: czy ta wishlista należy do tego usera?
+        $ownsWishlist = DB::table('wishlists')->where('id', $wishlistId)->where('user_id', $userId)->exists();
+        if (!$ownsWishlist) {
+            return redirect()->route('profil')->with('error', 'Odmowa dostępu.');
         }
 
-        $existsOnWishlist = DB::table('wishlist_items')
-            ->where('wishlist_id', $wishlistId)
-            ->where('product_id', $productId)
-            ->exists();
-
-        if (!$existsOnWishlist) {
-            return redirect()
-                ->route('profil')
-                ->with('error', 'Wybrany produkt nie znajduje się już na liście obserwowanych.');
-        }
-
-        $existingCartItem = DB::table('cart_items')
-            ->where('user_id', $userId)
-            ->where('product_id', $productId)
-            ->first(['id']);
+        $existingCartItem = DB::table('cart_items')->where('user_id', $userId)->where('product_id', $productId)->first(['id']);
 
         if ($existingCartItem) {
-            DB::table('cart_items')
-                ->where('id', $existingCartItem->id)
-                ->increment('quantity', 1);
+            DB::table('cart_items')->where('id', $existingCartItem->id)->increment('quantity', 1);
         } else {
-            DB::table('cart_items')->insert([
-                'user_id' => $userId,
-                'product_id' => $productId,
-                'quantity' => 1,
-            ]);
+            DB::table('cart_items')->insert(['user_id' => $userId, 'product_id' => $productId, 'quantity' => 1]);
         }
 
-        DB::table('wishlist_items')
-            ->where('wishlist_id', $wishlistId)
-            ->where('product_id', $productId)
-            ->delete();
+        DB::table('wishlist_items')->where('wishlist_id', $wishlistId)->where('product_id', $productId)->delete();
 
-        return redirect()
-            ->route('profil')
-            ->with('success', 'Produkt został dodany do koszyka i usunięty z obserwowanych.');
+        return redirect()->route('profil')->with('success', 'Produkt został dodany do koszyka i usunięty z listy.');
     }
 
-    public function removeObserved(Request $request, int $productId): RedirectResponse
+    public function removeObserved(Request $request, int $wishlistId, int $productId): RedirectResponse
     {
-        $wishlistId = $this->findObservedWishlistId($request->user()->id);
+        $userId = $request->user()->id;
+        $ownsWishlist = DB::table('wishlists')->where('id', $wishlistId)->where('user_id', $userId)->exists();
 
-        if ($wishlistId !== null) {
-            DB::table('wishlist_items')
-                ->where('wishlist_id', $wishlistId)
-                ->where('product_id', $productId)
-                ->delete();
+        if ($ownsWishlist) {
+            DB::table('wishlist_items')->where('wishlist_id', $wishlistId)->where('product_id', $productId)->delete();
         }
 
-        return redirect()
-            ->route('profil')
-            ->with('success', 'Produkt został usunięty z obserwowanych.');
+        return redirect()->route('profil')->with('success', 'Produkt został usunięty z listy.');
     }
 
     private function loadAddress(int $userId): ?object
@@ -356,43 +310,48 @@ class ProfileController extends Controller
 
     private function loadObservedProducts(int $userId): Collection
     {
-        $wishlistId = $this->findObservedWishlistId($userId);
-
-        if ($wishlistId === null) {
-            return collect();
-        }
-
-        return DB::table('wishlist_items as wi')
+        // Pobieramy wszystkie przedmioty na wishlistach przypisanych do użytkownika
+        $items = DB::table('wishlist_items as wi')
+            ->join('wishlists as w', 'w.id', '=', 'wi.wishlist_id')
             ->join('products as p', 'p.id', '=', 'wi.product_id')
             ->leftJoin('brands as b', 'b.id', '=', 'p.brand_id')
-            ->where('wi.wishlist_id', $wishlistId)
+            ->where('w.user_id', $userId)
+            ->orderBy('w.name') // Sortowanie alfabetyczne po nazwie listy
             ->orderByDesc('p.id')
             ->get([
-                'p.id',
-                'p.name',
+                'w.id as wishlist_id',
+                'w.name as wishlist_name',
+                'p.id as product_id',
+                'p.name as product_name',
                 'p.base_price',
                 'p.promo_price',
                 'p.image_url',
                 'p.stock_quantity',
                 'b.name as brand_name',
             ])
-            ->map(function ($product) {
-                $basePrice = (float) $product->base_price;
-                $promoPrice = $product->promo_price !== null ? (float) $product->promo_price : null;
+            ->map(function ($item) {
+                $basePrice = (float) $item->base_price;
+                $promoPrice = $item->promo_price !== null ? (float) $item->promo_price : null;
                 $hasPromotion = $promoPrice !== null && $promoPrice < $basePrice;
 
                 return [
-                    'id' => (int) $product->id,
-                    'name' => $product->name,
-                    'brand_name' => $product->brand_name,
+                    'wishlist_id' => (int) $item->wishlist_id,
+                    'wishlist_name' => $item->wishlist_name,
+                    'id' => (int) $item->product_id,
+                    'name' => $item->product_name,
+                    'brand_name' => $item->brand_name,
                     'current_price' => number_format($hasPromotion ? $promoPrice : $basePrice, 2, '.', ' '),
                     'original_price' => $hasPromotion ? number_format($basePrice, 2, '.', ' ') : null,
-                    'image_path' => $this->resolveImagePath($product->image_url),
-                    'stock_quantity' => (int) ($product->stock_quantity ?? 0),
+                    'image_path' => $this->resolveImagePath($item->image_url),
+                    'stock_quantity' => (int) ($item->stock_quantity ?? 0),
                 ];
             });
-    }
 
+        // Grupowanie wyników po id i nazwie listy
+        return $items->groupBy(function($item) {
+            return $item['wishlist_id'] . '|' . $item['wishlist_name'];
+        });
+    }
     private function findObservedWishlistId(int $userId): ?int
     {
         $wishlist = DB::table('wishlists')

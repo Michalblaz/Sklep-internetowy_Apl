@@ -33,7 +33,8 @@ use App\Livewire\Admin\ProductForm;
     Route::get('/produkt', [ProductPageController::class, 'show'])->name('product.show');
     Route::get('/produkt/{id}', [ProductPageController::class, 'show'])->whereNumber('id')->name('products.show');
     Route::post('/produkt/{id}/opinie', [ProductPageController::class, 'storeReview'])->whereNumber('id')->middleware('auth')->name('products.reviews.store');
-    Route::post('/produkt/{id}', [ProductPageController::class, 'toggleObserved'])->whereNumber('id')->name('products.favorite.toggle');
+    Route::get('/products/{id}/wishlists', [\App\Http\Controllers\ProductPageController::class, 'getWishlists'])->name('products.wishlists.get');
+    Route::post('/products/{id}/wishlists', [\App\Http\Controllers\ProductPageController::class, 'saveToWishlist'])->name('products.wishlists.save');
 
         //Wyszukiwarka
     Route::get('/wyszukiwanie/podpowiedzi', [WyszukajWitrynaController::class, 'suggestions'])

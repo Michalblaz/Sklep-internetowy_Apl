@@ -116,14 +116,10 @@
 
                         <button
                             type="button"
-                            aria-label="{{ $isObserved ? 'Usuń z obserwowanych' : 'Dodaj do obserwowanych' }}"
-                            data-observed-button
-                            data-observed-active="{{ $isObserved ? 'true' : 'false' }}"
-                            data-observed-endpoint="{{ route('products.favorite.toggle', $product->id) }}"
-                            data-observed-token="{{ csrf_token() }}"
+                            id="open-wishlist-modal-btn"
                             class="flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full border transition {{ $isObserved ? 'border-rose-300/45 bg-rose-500/15 text-rose-300 shadow-[0_0_18px_rgba(244,63,94,0.25)]' : 'border-white/15 bg-white/5 text-white/80 hover:bg-white/10' }}"
                         >
-                            <span class="text-[1.45rem] leading-none" data-observed-icon>{{ $isObserved ? '♥' : '♡' }}</span>
+                            <span class="text-[1.45rem] leading-none" id="wishlist-heart-icon">{{ $isObserved ? '♥' : '♡' }}</span>
                         </button>
                     </div>
                 </div>
@@ -288,6 +284,38 @@
     </section>
 @endif
 
+
+<div id="wishlistModal" style="display: none !important;" class="fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="relative mx-4 w-full max-w-md rounded-2xl border border-gray-700 bg-[#1a202c] p-6 text-white shadow-[0_24px_60px_rgba(0,0,0,0.5)]">
+        <h3 class="mb-4 font-bruno text-xl text-[#8b89ff]">Dodaj do listy obserwowanych</h3>
+        <p class="mb-4 text-sm text-gray-400">Wybierz listę, do której chcesz dodać produkt, lub utwórz nową.</p>
+        
+        <form id="wishlist-form">
+            @csrf
+            <div id="wishlist-options-container" class="mb-5 max-h-48 space-y-2 overflow-y-auto pr-2">
+                <div class="text-sm text-gray-500">Ładowanie list...</div>
+            </div>
+            
+            <div class="mb-6 border-t border-white/10 pt-5">
+                <label class="mb-2 block text-sm font-semibold text-gray-300">...albo stwórz nową listę</label>
+                <input type="text" id="wishlist-new-name" name="new_list_name" placeholder="Np. Sprzęt do biura" 
+                       class="w-full rounded-xl border border-white/20 bg-black/30 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-400">
+            </div>
+            
+            <div class="flex gap-3">
+                <button type="button" onclick="closeWishlistModal()" class="w-1/2 rounded-full border border-white/20 bg-transparent px-4 py-3 text-sm font-bold transition hover:bg-white/10">
+                    Anuluj
+                </button>
+                <button type="submit" class="w-1/2 rounded-full bg-linear-to-r from-indigo-500 to-purple-600 px-4 py-3 text-sm font-bold text-white transition hover:scale-[1.02]">
+                    Zapisz
+                </button>
+            </div>
+        </form>
+
+        <button type="button" onclick="closeWishlistModal()" class="absolute right-4 top-4 text-xl text-gray-400 hover:text-white">✕</button>
+    </div>
+</div>
+
 <div id="cartModal" style="display: none !important;" class="fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-sm">
     <div class="relative mx-4 w-full max-w-4xl rounded-2xl border border-gray-700 bg-[#1a202c] p-6 text-white">
         <div class="mb-6 flex items-center gap-3 font-bruno text-emerald-400">
@@ -421,5 +449,92 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+
+function closeWishlistModal() {
+    const modal = document.getElementById('wishlistModal');
+    if (modal) modal.style.setProperty('display', 'none', 'important');
+}
+    const openWishlistBtn = document.getElementById('open-wishlist-modal-btn');
+    const wishlistModal = document.getElementById('wishlistModal');
+    const wishlistForm = document.getElementById('wishlist-form');
+    const optionsContainer = document.getElementById('wishlist-options-container');
+    const productId = '{{ $product ? $product->id : '' }}';
+
+    if (openWishlistBtn && wishlistModal) {
+        wishlistModal.addEventListener('click', function(e) {
+            if (e.target === this) closeWishlistModal();
+        });
+
+        openWishlistBtn.addEventListener('click', () => {
+            @if(!auth()->check())
+                window.location.href = '{{ route("log_in") }}';
+                return;
+            @endif
+
+            wishlistModal.style.setProperty('display', 'flex', 'important');
+            optionsContainer.innerHTML = '<div class="text-sm text-gray-500">Ładowanie list...</div>';
+            document.getElementById('wishlist-new-name').value = '';
+
+            fetch(`/products/${productId}/wishlists`, {
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    optionsContainer.innerHTML = '';
+                    if (data.wishlists.length > 0) {
+                        data.wishlists.forEach(list => {
+                            const isChecked = data.active_ids.includes(list.id);
+                            optionsContainer.innerHTML += `
+                                <label class="flex cursor-pointer items-center gap-3 rounded-xl border ${isChecked ? 'border-purple-500/50 bg-purple-500/10' : 'border-white/10 bg-white/5'} p-3 hover:border-purple-400/50 transition">
+                                    <input type="radio" name="wishlist_id" value="${list.id}" class="h-4 w-4 accent-purple-500">
+                                    <span class="text-sm font-medium ${isChecked ? 'text-purple-300' : 'text-white'}">
+                                        ${list.name} ${isChecked ? '<span class="text-xs text-purple-400 ml-1 font-normal">- Kliknij zapisz by usunąć</span>' : ''}
+                                    </span>
+                                </label>
+                            `;
+                        });
+                    } else {
+                        optionsContainer.innerHTML = '<div class="text-sm text-purple-300/80">Nie masz jeszcze żadnych list. Utwórz nową poniżej.</div>';
+                    }
+                }
+            });
+        });
+
+        wishlistForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(wishlistForm);
+            
+            fetch(`/products/${productId}/wishlists`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    closeWishlistModal();
+                    
+                    const btn = document.getElementById('open-wishlist-modal-btn');
+                    const icon = document.getElementById('wishlist-heart-icon');
+                    
+                    if (data.isObserved) {
+                        btn.className = 'flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full border transition border-rose-300/45 bg-rose-500/15 text-rose-300 shadow-[0_0_18px_rgba(244,63,94,0.25)]';
+                        icon.innerHTML = '♥';
+                    } else {
+                        btn.className = 'flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full border transition border-white/15 bg-white/5 text-white/80 hover:bg-white/10';
+                        icon.innerHTML = '♡';
+                    }
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+    }
+    
 </script>
 @endsection

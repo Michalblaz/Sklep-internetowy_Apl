@@ -100,12 +100,7 @@
                                         <i class="fa-regular fa-trash-can"></i>
                                     </button>
                                 </form>
-
-                                <button type="button" class="text-xl text-white/55 transition hover:text-purple-300" aria-label="Dodaj do ulubionych">
-                                    <i class="fa-regular fa-heart"></i>
-                                </button>
-
-                                <div class="text-right min-w-[100px]">
+                            <div class="text-right min-w-[100px]">
                                 @if(isset($item['promo_price']) && $item['promo_price'] && $item['promo_price'] < $item['base_price'])
                                     <span class="block text-xs text-white/40 line-through">
                                         {{ number_format($item['base_price'] * $item['quantity'], 2, ',', ' ') }} zł

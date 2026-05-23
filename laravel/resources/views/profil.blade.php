@@ -269,114 +269,95 @@
             </section>
 
             <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
-                <div class="mb-5 flex items-center justify-between gap-4">
-                    <div>
-                        <h2 class="font-['Bruno_Ace'] text-2xl text-white">Obserwowane</h2>
-                    </div>
-                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-cyan-100">
-                        <i class="fa-regular fa-heart text-lg"></i>
-                    </div>
-                </div>
+    <div class="mb-5 flex items-center justify-between gap-4">
+        <div>
+            <h2 class="font-['Bruno_Ace'] text-2xl text-white">Listy zakupowe</h2>
+        </div>
+        <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-cyan-100">
+            <i class="fa-regular fa-heart text-lg"></i>
+        </div>
+    </div>
 
+    <div class="space-y-4">
+        @forelse ($groupedWishlists as $groupKey => $products)
+            @php
+                // Rozbijamy klucz zgrupowany po ID i nazwie listy
+                list($wishlistId, $wishlistName) = explode('|', $groupKey);
+            @endphp
 
-                <div class="space-y-4">
-                    @forelse ($observedProducts as $product)
-                        <div class="grid gap-4 rounded-[1.8rem] border border-white/15 bg-slate-950/15 p-4 md:grid-cols-[120px_minmax(0,1fr)_220px]">
-                            <div class="overflow-hidden rounded-[1.4rem] border border-white/10 bg-white/90">
+            <details class="group rounded-[1.8rem] border border-white/15 bg-slate-950/20 overflow-hidden">
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 transition hover:bg-white/5">
+                    <div class="flex items-center gap-4">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                            <i class="fa-solid fa-list-ul"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-['Bruno_Ace'] text-lg text-white">{{ $wishlistName }}</h3>
+                            <p class="text-xs text-cyan-100/60">{{ $products->count() }} produkt(ów)</p>
+                        </div>
+                    </div>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition group-open:rotate-180">
+                        <i class="fa-solid fa-chevron-down text-sm"></i>
+                    </div>
+                </summary>
+
+                <div class="space-y-3 border-t border-white/10 p-5 bg-black/10">
+                    @foreach ($products as $product)
+                        <div class="grid gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 md:grid-cols-[100px_minmax(0,1fr)_200px] transition hover:border-purple-500/30">
+                            
+                            {{-- Zdjęcie z odnośnikiem do produktu --}}
+                            <a href="{{ route('products.show', $product['id']) }}" class="overflow-hidden rounded-xl bg-white/90">
                                 @if ($product['image_path'])
-                                    <img src="{{ $product['image_path'] }}" alt="{{ $product['name'] }}" class="h-28 w-full object-contain p-3">
+                                    <img src="{{ $product['image_path'] }}" alt="{{ $product['name'] }}" class="h-24 w-full object-contain p-2 hover:scale-105 transition">
                                 @else
-                                    <div class="flex h-28 items-center justify-center text-center text-xs text-slate-500">
-                                        Brak zdjęcia
-                                    </div>
+                                    <div class="flex h-24 items-center justify-center text-center text-[10px] text-slate-500">Brak zdjęcia</div>
                                 @endif
-                            </div>
+                            </a>
 
                             <div class="space-y-2">
-                                <p class="text-xs uppercase tracking-[0.25em] text-cyan-100/60">
+                                <p class="text-[10px] uppercase tracking-[0.25em] text-cyan-100/60">
                                     {{ $product['brand_name'] ?: 'Produkt obserwowany' }}
                                 </p>
-                                <h3 class="font-['Bruno_Ace'] text-xl text-white">{{ $product['name'] }}</h3>
-                                <div class="flex flex-wrap items-center gap-3 text-sm">
-                                    <span class="rounded-full border border-emerald-300/25 bg-emerald-500/10 px-3 py-1 text-emerald-100">
-                                        Cena: {{ $product['current_price'] }} zł
+                                <a href="{{ route('products.show', $product['id']) }}" class="font-['Bruno_Ace'] text-lg text-white hover:text-purple-300 transition">
+                                    {{ $product['name'] }}
+                                </a>
+                                <div class="flex flex-wrap items-center gap-2 text-sm">
+                                    <span class="rounded-lg border border-emerald-300/25 bg-emerald-500/10 px-2 py-1 text-xs text-emerald-100">
+                                        {{ $product['current_price'] }} zł
                                     </span>
                                     @if ($product['original_price'])
-                                        <span class="text-white/55 line-through">{{ $product['original_price'] }} zł</span>
+                                        <span class="text-white/55 line-through text-xs">{{ $product['original_price'] }} zł</span>
                                     @endif
                                 </div>
-                                <p class="text-sm text-cyan-50/75">
-                                    @if ($product['stock_quantity'] > 0)
-                                        Dostępne sztuki: {{ $product['stock_quantity'] }}
-                                    @else
-                                        Brak produktów w magazynie.
-                                    @endif
-                                </p>
                             </div>
 
-                            <div class="flex flex-col justify-center gap-3">
-                                <form method="POST" action="{{ route('profil.saved.move-to-cart', $product['id']) }}">
+                            <div class="flex flex-col justify-center gap-2">
+                                <form method="POST" action="{{ route('profil.saved.move-to-cart', ['wishlistId' => $wishlistId, 'productId' => $product['id']]) }}">
                                     @csrf
-                                    <button
-                                        type="submit"
-                                        class="w-full rounded-full bg-[linear-gradient(90deg,rgba(129,150,255,0.95),rgba(164,66,255,0.95))] px-4 py-3 font-['Bruno_Ace'] text-sm text-white shadow-[0_12px_35px_rgba(126,76,255,0.35)] transition hover:scale-[1.01]"
-                                    >
-                                        Dodaj do koszyka
+                                    <button type="submit" class="w-full rounded-xl bg-[linear-gradient(90deg,rgba(129,150,255,0.9),rgba(164,66,255,0.9))] px-3 py-2 font-['Bruno_Ace'] text-[11px] text-white shadow-[0_5px_15px_rgba(126,76,255,0.25)] transition hover:scale-[1.02]">
+                                        <i class="fa-solid fa-cart-plus mr-1"></i> Do koszyka
                                     </button>
                                 </form>
 
-                                <form method="POST" action="{{ route('profil.saved.remove', $product['id']) }}">
+                                <form method="POST" action="{{ route('profil.saved.remove', ['wishlistId' => $wishlistId, 'productId' => $product['id']]) }}">
                                     @csrf
-                                    <button
-                                        type="submit"
-                                        class="w-full rounded-full border border-white/15 bg-white/5 px-4 py-3 font-['Bruno_Ace'] text-sm text-white/90 transition hover:bg-white/10"
-                                    >
-                                        Usuń z obserwowanych
+                                    <button type="submit" class="w-full rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 font-['Bruno_Ace'] text-[11px] text-rose-200 transition hover:bg-rose-500/20">
+                                        <i class="fa-solid fa-trash mr-1"></i> Usuń
                                     </button>
                                 </form>
                             </div>
                         </div>
-                    @empty
-                        <div class="rounded-[1.8rem] border border-dashed border-white/20 bg-slate-950/15 px-5 py-8 text-center text-sm text-cyan-50/80">
-                            Nie masz jeszcze żadnych obserwowanych produktów.
-                        </div>
-                    @endforelse
-
-                    @if ($observedProducts->total() > 5)
-                        <div class="mt-8 flex justify-center items-center gap-3 font-['Bruno_Ace']">
-                            @if (!$observedProducts->onFirstPage())
-                                <a href="{{ $observedProducts->appends(request()->except('observed_page'))->previousPageUrl() }}&observed_page={{ $observedProducts->currentPage() - 1 }}"
-                                class="text-fuchsia-500 text-2xl hover:scale-110 transition hover:drop-shadow-[0_0_10px_rgba(217,70,239,0.7)]">
-                                    ◀
-                                </a>
-                            @endif
-
-                            <div class="flex gap-2">
-                                @foreach ($observedProducts->getUrlRange(
-                                    max(1, $observedProducts->currentPage() - 2),
-                                    min($observedProducts->lastPage(), $observedProducts->currentPage() + 2)
-                                ) as $page => $url)
-                                    <a href="{{ request()->fullUrlWithQuery(['observed_page' => $page]) }}"
-                                    class="w-10 h-10 flex items-center justify-center rounded-full border text-sm transition-all duration-300
-                                    {{ $page == $observedProducts->currentPage()
-                                            ? 'bg-fuchsia-600 border-fuchsia-400 text-white shadow-[0_0_12px_rgba(217,70,239,0.8)] scale-110'
-                                            : 'border-white/10 text-gray-400 hover:bg-fuchsia-600 hover:text-white hover:scale-110 hover:shadow-[0_0_10px_rgba(217,70,239,0.6)]' }}">
-                                        {{ $page }}
-                                    </a>
-                                @endforeach
-                            </div>
-
-                            @if ($observedProducts->hasMorePages())
-                                <a href="{{ $observedProducts->appends(request()->except('observed_page'))->nextPageUrl() }}&observed_page={{ $observedProducts->currentPage() + 1 }}"
-                                class="text-fuchsia-500 text-2xl hover:scale-110 transition hover:drop-shadow-[0_0_10px_rgba(217,70,239,0.7)]">
-                                    ▶
-                                </a>
-                            @endif
-                        </div>
-                    @endif
+                    @endforeach
                 </div>
-
-            </section>
+            </details>
+        @empty
+            <div class="rounded-[1.8rem] border border-dashed border-white/20 bg-slate-950/15 px-5 py-8 text-center text-sm text-cyan-50/80">
+                Nie stworzyłeś jeszcze żadnej listy obserwowanych produktów. 
+                <br>Przejdź do sklepu i kliknij ikonę serduszka, aby zacząć!
+            </div>
+        @endforelse
+    </div>
+</section>
         </div>
     </div>
 </div>

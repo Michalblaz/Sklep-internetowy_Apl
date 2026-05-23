@@ -117,14 +117,11 @@ class ProductPageController extends Controller
                         'comment',
                     ]);
 
-                $wishlistId = $this->findObservedWishlistId(auth()->id());
-
-                if ($wishlistId !== null) {
-                    $isObserved = DB::table('wishlist_items')
-                        ->where('wishlist_id', $wishlistId)
-                        ->where('product_id', $product->id)
-                        ->exists();
-                }
+               $isObserved = DB::table('wishlist_items')
+                    ->join('wishlists', 'wishlists.id', '=', 'wishlist_items.wishlist_id')
+                    ->where('wishlists.user_id', auth()->id())
+                    ->where('wishlist_items.product_id', $product->id)
+                    ->exists();
             }
         }
 
@@ -199,48 +196,7 @@ class ProductPageController extends Controller
             ->with('success', $existingReview ? 'Opinia została zaktualizowana.' : 'Opinia została dodana.');
     }
 
-    public function toggleObserved(Request $request, int $id): JsonResponse
-    {
-        $product = Product::findOrFail($id);
-
-        if (!$request->user()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Musisz być zalogowany, żeby obserwować produkty.',
-            ], 401);
-        }
-
-        $wishlistId = $this->findOrCreateObservedWishlistId($request->user()->id);
-
-        $existingWishlistItem = DB::table('wishlist_items')
-            ->where('wishlist_id', $wishlistId)
-            ->where('product_id', $product->id)
-            ->exists();
-
-        if ($existingWishlistItem) {
-            DB::table('wishlist_items')
-                ->where('wishlist_id', $wishlistId)
-                ->where('product_id', $product->id)
-                ->delete();
-
-            return response()->json([
-                'success' => true,
-                'isObserved' => false,
-                'message' => 'Produkt został usunięty z obserwowanych.',
-            ]);
-        }
-
-        DB::table('wishlist_items')->insert([
-            'wishlist_id' => $wishlistId,
-            'product_id' => $product->id,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'isObserved' => true,
-            'message' => 'Produkt został dodany do obserwowanych.',
-        ]);
-    }
+    
 
     private function buildRatingSegments(float $rating): array
     {
@@ -256,27 +212,86 @@ class ProductPageController extends Controller
         return $segments;
     }
 
-    private function findObservedWishlistId(int $userId): ?int
+    public function getWishlists(Request $request, int $id): JsonResponse
     {
-        $wishlist = DB::table('wishlists')
-            ->where('user_id', $userId)
-            ->whereRaw('LOWER(name) = ?', ['obserwowane'])
-            ->first(['id']);
-
-        return $wishlist ? (int) $wishlist->id : null;
-    }
-
-    private function findOrCreateObservedWishlistId(int $userId): int
-    {
-        $wishlistId = $this->findObservedWishlistId($userId);
-
-        if ($wishlistId !== null) {
-            return $wishlistId;
+        if (!auth()->check()) {
+            return response()->json(['success' => false, 'message' => 'Zaloguj się.'], 401);
         }
 
-        return (int) DB::table('wishlists')->insertGetId([
-            'user_id' => $userId,
-            'name' => 'Obserwowane',
+        $wishlists = DB::table('wishlists')
+            ->where('user_id', auth()->id())
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
+
+        // Zwraca ID list, na których ten konkretny produkt już się znajduje
+        $activeIds = DB::table('wishlist_items')
+            ->where('product_id', $id)
+            ->whereIn('wishlist_id', $wishlists->pluck('id'))
+            ->pluck('wishlist_id')
+            ->toArray();
+
+        return response()->json([
+            'success' => true,
+            'wishlists' => $wishlists,
+            'active_ids' => $activeIds
+        ]);
+    }
+
+    public function saveToWishlist(Request $request, int $id): JsonResponse
+    {
+        if (!auth()->check()) {
+            return response()->json(['success' => false, 'message' => 'Zaloguj się.'], 401);
+        }
+
+        $request->validate([
+            'wishlist_id' => 'nullable|integer',
+            'new_list_name' => 'nullable|string|max:100',
+        ]);
+
+        $userId = auth()->id();
+        $wishlistId = $request->input('wishlist_id');
+        $newListName = $request->input('new_list_name');
+
+        // Jeśli wpisano nazwę nowej listy, tworzymy ją (lub szukamy istniejącej)
+        if (!empty($newListName)) {
+            $existing = DB::table('wishlists')->where('user_id', $userId)->where('name', $newListName)->first();
+            if ($existing) {
+                $wishlistId = $existing->id;
+            } else {
+                $wishlistId = DB::table('wishlists')->insertGetId([
+                    'user_id' => $userId,
+                    'name' => $newListName
+                ]);
+            }
+        }
+
+        if (!$wishlistId) {
+            return response()->json(['success' => false, 'message' => 'Wybierz lub utwórz listę.'], 400);
+        }
+
+        // Zapis lub usunięcie (przełącznik)
+        $exists = DB::table('wishlist_items')->where('wishlist_id', $wishlistId)->where('product_id', $id)->exists();
+
+        if ($exists) {
+            DB::table('wishlist_items')->where('wishlist_id', $wishlistId)->where('product_id', $id)->delete();
+            $message = 'Usunięto z listy: ' . DB::table('wishlists')->where('id', $wishlistId)->value('name');
+        } else {
+            DB::table('wishlist_items')->insert(['wishlist_id' => $wishlistId, 'product_id' => $id]);
+            $message = 'Dodano do listy!';
+        }
+
+        // Sprawdzamy czy nadal jest w jakiejś liście, żeby wiedzieć, czy serduszko ma być podświetlone
+        $isStillObserved = DB::table('wishlist_items')
+            ->join('wishlists', 'wishlists.id', '=', 'wishlist_items.wishlist_id')
+            ->where('wishlists.user_id', $userId)
+            ->where('wishlist_items.product_id', $id)
+            ->exists();
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'isObserved' => $isStillObserved
         ]);
     }
 }
