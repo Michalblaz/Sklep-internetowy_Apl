@@ -452,9 +452,9 @@
                                     <p class="mt-3 text-xs uppercase tracking-[0.25em] text-gray-500">
                                         Zamówienie #{{ $complaint->order_id ?? 'brak' }}
                                     </p>
-                                    <div class="mt-3 flex flex-wrap gap-2">
-                                        <span class="rounded-full border px-3 py-1 text-xs font-bold uppercase {{ $complaint->type_label === 'Zwrot' ? 'border-fuchsia-300/30 bg-fuchsia-500/15 text-fuchsia-100' : 'border-cyan-300/30 bg-cyan-500/15 text-cyan-100' }}">
-                                            {{ $complaint->type_label }}
+                                   <div class="mt-3 flex flex-wrap items-center gap-2">
+                                       <span class="rounded-full border px-3 py-1 text-xs font-bold uppercase {{ $complaint->type_label === 'Zwrot' ? 'border-fuchsia-300/30 bg-fuchsia-500/15 text-fuchsia-100' : 'border-cyan-300/30 bg-cyan-500/15 text-cyan-100' }}">
+                                           {{ $complaint->type_label }}
                                         </span>
                                         <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-gray-300">
                                             {{ $complaint->order_created_at_label }}
@@ -477,24 +477,79 @@
                                         <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">Opis</p>
                                         <p class="text-gray-200 whitespace-pre-line">{{ $complaint->description ?: 'Brak opisu reklamacji.' }}</p>
                                     </div>
-
-                                    @if($complaint->admin_response)
-                                        <div class="rounded-2xl border border-cyan-400/15 bg-cyan-500/10 p-4 md:col-span-2">
+                                    @if($complaint->latest_message)
+                                        <div class="mt-4 rounded-2xl border border-cyan-400/15 bg-cyan-500/10 p-4">
                                             <p class="text-xs uppercase tracking-[0.25em] text-cyan-200/70 mb-2">
-                                                Odpowiedź sklepu @if($complaint->responded_at_label) · {{ $complaint->responded_at_label }} @endif
+                                                Ostatnia wiadomość
                                             </p>
-                                            <p class="text-cyan-50 whitespace-pre-line">{{ $complaint->admin_response }}</p>
+
+                                            <p class="text-cyan-50 whitespace-pre-line">
+                                                {{ $complaint->latest_message['message'] }}
+                                            </p>
                                         </div>
                                     @endif
 
-                                    @if($complaint->customer_reply)
-                                        <div class="rounded-2xl border border-fuchsia-400/15 bg-fuchsia-500/10 p-4 md:col-span-2">
-                                            <p class="text-xs uppercase tracking-[0.25em] text-fuchsia-200/70 mb-2">
-                                                Odpowiedź klienta @if($complaint->customer_replied_at_label) · {{ $complaint->customer_replied_at_label }} @endif
+                                    <div
+                                        id="chat-history-{{ $complaint->id }}"
+                                        class="hidden mt-4 space-y-3"
+                                    >
+
+                                        <div class="rounded-2xl border border-white/10 bg-black/20 p-4">
+                                            <p class="text-xs uppercase tracking-[0.25em] text-gray-500 mb-4">
+                                                Historia konwersacji
                                             </p>
-                                            <p class="text-fuchsia-50 whitespace-pre-line">{{ $complaint->customer_reply }}</p>
+
+                                            <div class="space-y-3">
+
+                                                @forelse($complaint->messages as $message)
+
+                                                    <div class="
+                                                        rounded-2xl p-4 border
+                                                        {{ $message['sender_type'] === 'admin'
+                                                            ? 'ml-8 border-cyan-400/20 bg-cyan-500/10'
+                                                            : 'mr-8 border-fuchsia-400/20 bg-fuchsia-500/10'
+                                                        }}
+                                                    ">
+
+                                                        <div class="flex items-center justify-between gap-3 mb-2">
+
+                                                            <span class="
+                                                                text-xs uppercase tracking-[0.25em]
+                                                                {{ $message['sender_type'] === 'admin'
+                                                                    ? 'text-cyan-200'
+                                                                    : 'text-fuchsia-200'
+                                                                }}
+                                                            ">
+                                                                {{ $message['sender_type'] === 'admin'
+                                                                    ? 'Administrator'
+                                                                    : 'Klient'
+                                                                }}
+                                                            </span>
+
+                                                            <span class="text-[11px] text-gray-400">
+                                                                {{ $message['created_at'] }}
+                                                            </span>
+
+                                                        </div>
+
+                                                        <p class="text-white whitespace-pre-line">
+                                                            {{ $message['message'] }}
+                                                        </p>
+
+                                                    </div>
+
+                                                @empty
+
+                                                    <div class="text-sm text-gray-500">
+                                                        Brak wiadomości.
+                                                    </div>
+
+                                                @endforelse
+
+                                            </div>
                                         </div>
-                                    @endif
+                                    </div>
+
                                 </div>
 
                                 <div class="flex lg:flex-col gap-3 lg:w-44">
@@ -530,6 +585,13 @@
                                         class="flex-1 rounded-xl border border-red-400/20 px-4 py-2 text-sm text-red-200 bg-red-500/10 transition hover:bg-red-500/20"
                                     >
                                         Odrzuć
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onclick="toggleChatHistory({{ $complaint->id }})"
+                                        class="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-200 transition hover:bg-cyan-500/20"
+                                    >
+                                        Historia czatu
                                     </button>
                                 </div>
 
@@ -788,4 +850,19 @@
         </div>
     </div>
 </div>
+
+<script>
+
+function toggleChatHistory(id)
+{
+    const element = document.getElementById('chat-history-' + id);
+
+    if (!element) {
+        return;
+    }
+
+    element.classList.toggle('hidden');
+}
+
+</script>
 @endsection

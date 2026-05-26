@@ -32,7 +32,7 @@ class WyszukajWitrynaController extends Controller
                     });
             })
             ->orderBy('name')
-            ->limit(50)
+            ->limit(5)
             ->pluck('name');
 
         return response()->json($suggestions);

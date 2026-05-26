@@ -86,7 +86,10 @@ use App\Livewire\Admin\ProductForm;
         Route::post('/profil/lista/{productId}/do-koszyka', [ProfileController::class, 'moveObservedToCart'])
             ->whereNumber('productId')
             ->name('profil.saved.move-to-cart');
-        Route::post('/profil/lista/{productId}/usun', [ProfileController::class, 'removeObserved'])
-            ->whereNumber('productId')
+        Route::post('/profil/lista/{wishlistId}/{productId}/usun', [ProfileController::class, 'removeObserved'])
+            ->where(['wishlistId' => '[0-9]+', 'productId' => '[0-9]+'])
             ->name('profil.saved.remove');
-    });
+        Route::post('/profil/lista/{wishlistId}/{productId}/do-koszyka', [ProfileController::class, 'moveObservedToCart'])
+            ->whereNumber(['wishlistId', 'productId'])
+            ->name('profil.saved.move-to-cart');
+        });

@@ -173,9 +173,10 @@ class ConfiguratorController extends Controller
                 }
                 else {
                     // Standardowe filtrowanie atrybutów
-                    foreach ($valIds as $valId) {
-                        $query->whereHas('attributeValues', function($q) use ($valId) {
-                            $q->where('product_attributes.attribute_value_id', $valId);
+                    // Znalazłem błąd z wyborem wielu filtrów pętla "foreach ($valIds as $valId)" pętla nakładała AND
+                    if (!empty($valIds)) {
+                        $query->whereHas('attributeValues', function($q) use ($valIds) {
+                            $q->whereIn('product_attributes.attribute_value_id', $valIds);
                         });
                     }
                 }
@@ -636,8 +637,6 @@ class ConfiguratorController extends Controller
             // Zapisujemy zaktualizowaną tablicę koszyka z powrotem do sesji
             session(['cart' => $cart]);
         }
-
-        session()->forget('configurator_build');
 
         return redirect()->route('cart.index')->with('success', 'Cały zestaw został pomyślnie dodany do Twojego koszyka!');
     }

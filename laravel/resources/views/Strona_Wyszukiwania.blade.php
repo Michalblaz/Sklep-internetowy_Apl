@@ -156,7 +156,7 @@
                                     <input type="hidden" name="product_id" value="{{ $product->id }}">
                                     <input type="hidden" name="quantity" value="1">
 
-                                <button type="submit" class="{{ $buttonClass }} add-to-cart-btn relative z-10 w-full shrink-0 py-3 text-base">Dodaj do koszyka</button>
+                                <button type="submit" class="{{ $buttonClass }} add-to-cart-btn relative z-10 w-full+ shrink-0 py-3 text-base">Dodaj do koszyka</button>
                                 </form>
                             </div>
                         </div>
@@ -281,7 +281,7 @@
 
 <div id="cartModal" style="display: none !important;" class="fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-sm">
     <div class="bg-[#1a202c] border border-gray-700 p-6 rounded-2xl max-w-4xl w-full mx-4 relative text-white">
-        
+
         <div class="flex items-center gap-3 mb-6 text-emerald-400 font-bruno">
             <span class="flex h-3 w-3 relative">
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -305,7 +305,7 @@
             <h4 class="text-sm font-bruno text-purple-300 uppercase tracking-wider mb-4">
                 Polecamy również:
             </h4>
-            
+
             <div id="modal-recommendations" class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 </div>
         </div>

@@ -18,42 +18,23 @@ class ProfileController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
-        app(OrderStatusUpdater::class)->update();
-
         $this->refreshTimedOrderStatuses($user->id);
+        app(OrderStatusUpdater::class)->update();
 
         $address = $this->loadAddress($user->id);
         $shipmentHistory = $this->loadShipments($user->id);
+        $complaintReplies = $this->loadComplaintReplies($user->id);
+
         $shipments = $shipmentHistory
             ->reject(fn (array $shipment) => $shipment['is_delivered'])
             ->values();
-        $complaintReplies = $this->loadComplaintReplies($user->id);
 
-        $rawProducts = $this->loadObservedProducts($user->id);
-        $items = $rawProducts instanceof Collection ? $rawProducts : Collection::make($rawProducts);
-
-        $currentPage = LengthAwarePaginator::resolveCurrentPage('observed_page');
-        $perPage = 5;
-        $currentItems = $items->slice(($currentPage - 1) * $perPage, $perPage)->values();
-
-        $observedProducts = new LengthAwarePaginator(
-            $currentItems,
-            $items->count(),
-            $perPage,
-            $currentPage,
-            [
-                'path' => LengthAwarePaginator::resolveCurrentPath(),
-                'pageName' => 'observed_page',
-            ]
-        );
-
-    
         $groupedWishlists = $this->loadObservedProducts($user->id);
-    
+
         $orders = \App\Models\Order::where('user_id', $user->id)
-        ->with('shippingMethod')
-        ->latest()
-        ->get();
+            ->with('shippingMethod')
+            ->latest()
+            ->get();
 
         return view('profil', [
             'userData' => [
@@ -66,14 +47,12 @@ class ProfileController extends Controller
                 'address_city' => $address->city ?? '',
             ],
             'shipments' => $shipments,
-            'shipmentHistory' => $shipmentHistory,
             'complaintReplies' => $complaintReplies,
-            'observedProducts' => $observedProducts,
+            'shipmentHistory' => $shipmentHistory,
             'orders' => $orders,
             'groupedWishlists' => $groupedWishlists,
         ]);
     }
-
 
     public function update(Request $request): RedirectResponse
     {
@@ -150,23 +129,28 @@ class ProfileController extends Controller
             : 'złożenie reklamacji';
 
         DB::transaction(function () use ($order, $validated, $pendingStatus) {
-            DB::table('complaints')->insert([
+
+            $complaintId = DB::table('complaints')->insertGetId([
                 'order_id' => $order->id,
                 'reason' => $validated['reason'],
                 'description' => $validated['description'] ?? '',
-                'status' => 'złożone',
+                'status' => 'oczekujące',
+                'updated_at' => now(),
+            ]);
+
+            DB::table('complaint_messages')->insert([
+                'complaint_id' => $complaintId,
+                'sender_type' => 'customer',
+                'message' => $validated['description'] ?? 'Utworzono zgłoszenie.',
+                'created_at' => now(),
             ]);
 
             DB::table('orders')
                 ->where('id', $order->id)
-                ->update(['tracking_status' => $pendingStatus]);
+                ->update([
+                    'tracking_status' => $pendingStatus
+                ]);
         });
-        DB::table('complaints')->insert([
-            'order_id' => $order->id,
-            'reason' => $validated['reason'],
-            'description' => $validated['description'] ?? '',
-            'status' => 'oczekujące',
-        ]);
 
         return redirect()
             ->route('profil')
@@ -177,23 +161,25 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        if (!Schema::hasColumn('complaints', 'customer_reply')) {
-            return redirect()
-                ->route('profil')
-                ->with('error', 'Brakuje kolumn odpowiedzi w tabeli complaints. Uruchom migracje.');
-        }
-
-        $validated = $request->validate([
-            'customer_reply' => ['required', 'string', 'max:5000'],
+       $validated = $request->validate([
+            'customer_reply' => 'required|string'
         ], [
-            'customer_reply.required' => 'Wpisz treść odpowiedzi.',
+            'customer_reply.required' => 'Wpisz treść odpowiedzi.'
+        ]);
+
+        DB::table('complaint_messages')->insert([
+            'complaint_id' => $complaintId,
+            'sender_type' => 'customer',
+            'message' => $validated['customer_reply'],
+            'created_at' => now(),
         ]);
 
         $complaint = DB::table('complaints as c')
             ->join('orders as o', 'o.id', '=', 'c.order_id')
             ->where('c.id', $complaintId)
             ->where('o.user_id', $user->id)
-            ->first(['c.id']);
+            ->select('c.id')
+            ->first();
 
         if (!$complaint) {
             return redirect()
@@ -202,10 +188,8 @@ class ProfileController extends Controller
         }
 
         DB::table('complaints')
-            ->where('id', $complaint->id)
+            ->where('id', $complaintId)
             ->update([
-                'customer_reply' => $validated['customer_reply'],
-                'customer_replied_at' => now(),
                 'status' => 'oczekujące',
                 'updated_at' => now(),
             ]);
@@ -215,39 +199,25 @@ class ProfileController extends Controller
             ->with('success', 'Twoja odpowiedź została wysłana do obsługi sklepu.');
     }
 
-    public function moveObservedToCart(Request $request, int $wishlistId, int $productId): RedirectResponse
-    {
-        $userId = $request->user()->id;
-
-        // Bezpieczeństwo: czy ta wishlista należy do tego usera?
-        $ownsWishlist = DB::table('wishlists')->where('id', $wishlistId)->where('user_id', $userId)->exists();
-        if (!$ownsWishlist) {
-            return redirect()->route('profil')->with('error', 'Odmowa dostępu.');
-        }
-
-        $existingCartItem = DB::table('cart_items')->where('user_id', $userId)->where('product_id', $productId)->first(['id']);
-
-        if ($existingCartItem) {
-            DB::table('cart_items')->where('id', $existingCartItem->id)->increment('quantity', 1);
-        } else {
-            DB::table('cart_items')->insert(['user_id' => $userId, 'product_id' => $productId, 'quantity' => 1]);
-        }
-
-        DB::table('wishlist_items')->where('wishlist_id', $wishlistId)->where('product_id', $productId)->delete();
-
-        return redirect()->route('profil')->with('success', 'Produkt został dodany do koszyka i usunięty z listy.');
-    }
-
     public function removeObserved(Request $request, int $wishlistId, int $productId): RedirectResponse
     {
         $userId = $request->user()->id;
-        $ownsWishlist = DB::table('wishlists')->where('id', $wishlistId)->where('user_id', $userId)->exists();
+
+        $ownsWishlist = DB::table('wishlists')
+            ->where('id', $wishlistId)
+            ->where('user_id', $userId)
+            ->exists();
 
         if ($ownsWishlist) {
-            DB::table('wishlist_items')->where('wishlist_id', $wishlistId)->where('product_id', $productId)->delete();
+            DB::table('wishlist_items')
+                ->where('wishlist_id', $wishlistId)
+                ->where('product_id', $productId)
+                ->delete();
         }
 
-        return redirect()->route('profil')->with('success', 'Produkt został usunięty z listy.');
+        return redirect()
+            ->route('profil')
+            ->with('success', 'Produkt został usunięty z listy.');
     }
 
     private function loadAddress(int $userId): ?object
@@ -261,7 +231,9 @@ class ProfileController extends Controller
 
     private function upsertAddress(int $userId, array $addressData): void
     {
-        $hasAnyAddressValue = collect($addressData)->contains(fn ($value) => filled($value));
+        $hasAnyAddressValue = collect($addressData)
+            ->contains(fn ($value) => filled($value));
+
         $existingAddress = $this->loadAddress($userId);
 
         if (!$hasAnyAddressValue && !$existingAddress) {
@@ -291,45 +263,41 @@ class ProfileController extends Controller
 
     private function loadShipments(int $userId): Collection
     {
-        $orderColumns = [
-            'o.id',
-            'o.tracking_status',
-            'o.shipping_cost',
-            'o.created_at',
-            'o.shipping_street',
-            'o.shipping_city',
-            'o.shipping_postal_code',
-            'o.shipping_first_name',
-            'o.shipping_last_name',
-            'o.shipping_phone',
-        ];
-
-        foreach (['payment_method', 'pickup_point_info'] as $optionalColumn) {
-            $orderColumns[] = Schema::hasColumn('orders', $optionalColumn)
-                ? "o.{$optionalColumn}"
-                : DB::raw("NULL as {$optionalColumn}");
-        }
-
-        $orderColumns[] = 'sm.name as shipping_method_name';
-
         $orders = DB::table('orders as o')
             ->leftJoin('shipping_methods as sm', 'sm.id', '=', 'o.shipping_method_id')
             ->where('o.user_id', $userId)
             ->orderByDesc('o.created_at')
-            ->get($orderColumns);
+            ->get([
+                'o.id',
+                'o.tracking_status',
+                'o.shipping_cost',
+                'o.created_at',
+                'o.shipping_street',
+                'o.shipping_city',
+                'o.shipping_postal_code',
+                'o.shipping_first_name',
+                'o.shipping_last_name',
+                'o.shipping_phone',
+                'o.payment_method',
+                'o.pickup_point_info',
+                'sm.name as shipping_method_name',
+            ]);
 
         if ($orders->isEmpty()) {
             return collect();
         }
 
         $orderIds = $orders->pluck('id');
+
         $displayIdsByOrder = $orders
             ->sortBy([
                 ['created_at', 'asc'],
                 ['id', 'asc'],
             ])
             ->values()
-            ->mapWithKeys(fn ($order, int $index) => [(int) $order->id => $index + 1]);
+            ->mapWithKeys(fn ($order, int $index) => [
+                (int) $order->id => $index + 1
+            ]);
 
         $itemsByOrder = DB::table('order_items as oi')
             ->join('products as p', 'p.id', '=', 'oi.product_id')
@@ -348,15 +316,31 @@ class ProfileController extends Controller
         $complaintsByOrder = DB::table('complaints')
             ->whereIn('order_id', $orderIds)
             ->orderByDesc('id')
-            ->get(['order_id', 'reason', 'status'])
+            ->get([
+                'order_id',
+                'reason',
+                'status'
+            ])
             ->groupBy('order_id');
 
-        return $orders->map(function ($order) use ($itemsByOrder, $complaintsByOrder, $displayIdsByOrder) {
+        return $orders->map(function ($order) use (
+            $itemsByOrder,
+            $complaintsByOrder,
+            $displayIdsByOrder
+        ) {
+
             $items = $itemsByOrder->get($order->id, collect());
+
             $firstItem = $items->first();
-            $itemsTotal = $items->sum(fn ($item) => (float) $item->unit_price * (int) $item->quantity);
+
+            $itemsTotal = $items->sum(
+                fn ($item) => (float) $item->unit_price * (int) $item->quantity
+            );
+
             $total = $itemsTotal + (float) ($order->shipping_cost ?? 0);
+
             $status = trim((string) ($order->tracking_status ?? ''));
+
             $complaint = $complaintsByOrder->get($order->id)?->first();
 
             return [
@@ -365,16 +349,24 @@ class ProfileController extends Controller
                 'status' => $status !== '' ? $status : 'W realizacji',
                 'is_delivered' => $this->isDeliveredStatus($status),
                 'shipping_method' => $order->shipping_method_name ?: 'Brak danych',
-                'created_at' => $order->created_at ? \Carbon\Carbon::parse($order->created_at)->format('d.m.Y') : null,
+                'created_at' => $order->created_at
+                    ? \Carbon\Carbon::parse($order->created_at)->format('d.m.Y')
+                    : null,
                 'total' => number_format($total, 2, '.', ' '),
                 'items_count' => $items->sum('quantity'),
                 'image_path' => $this->resolveImagePath($firstItem->image_url ?? null),
                 'first_product_name' => $firstItem->name ?? 'Zamówienie',
                 'address' => trim(implode(', ', array_filter([
                     $order->shipping_street,
-                    trim(implode(' ', array_filter([$order->shipping_postal_code, $order->shipping_city]))),
+                    trim(implode(' ', array_filter([
+                        $order->shipping_postal_code,
+                        $order->shipping_city
+                    ]))),
                 ]))),
-                'recipient' => trim(implode(' ', array_filter([$order->shipping_first_name, $order->shipping_last_name]))),
+                'recipient' => trim(implode(' ', array_filter([
+                    $order->shipping_first_name,
+                    $order->shipping_last_name
+                ]))),
                 'phone' => $order->shipping_phone,
                 'payment_method' => match ($order->payment_method) {
                     'blik' => 'BLIK',
@@ -383,7 +375,9 @@ class ProfileController extends Controller
                     default => $order->payment_method ?: 'Brak danych',
                 },
                 'pickup_point' => $order->pickup_point_info,
-                'complaint_label' => $complaint ? ($complaint->reason . ' - ' . ($complaint->status ?? 'oczekujące')) : null,
+                'complaint_label' => $complaint
+                    ? ($complaint->reason . ' - ' . ($complaint->status ?? 'oczekujące'))
+                    : null,
             ];
         });
     }
@@ -394,9 +388,7 @@ class ProfileController extends Controller
             return collect();
         }
 
-        $hasResponseColumns = Schema::hasColumn('complaints', 'admin_response');
-
-        return DB::table('complaints as c')
+        $complaints = DB::table('complaints as c')
             ->join('orders as o', 'o.id', '=', 'c.order_id')
             ->where('o.user_id', $userId)
             ->orderByDesc('c.id')
@@ -407,44 +399,48 @@ class ProfileController extends Controller
                 'c.description',
                 'c.status',
                 'o.created_at as order_created_at',
-                $hasResponseColumns ? 'c.admin_response' : DB::raw('NULL as admin_response'),
-                $hasResponseColumns ? 'c.customer_reply' : DB::raw('NULL as customer_reply'),
-                $hasResponseColumns ? 'c.responded_at' : DB::raw('NULL as responded_at'),
-                $hasResponseColumns ? 'c.customer_replied_at' : DB::raw('NULL as customer_replied_at'),
-            ])
-            ->map(function ($complaint) {
-                return [
-                    'id' => (int) $complaint->id,
-                    'order_id' => (int) $complaint->order_id,
-                    'reason' => $complaint->reason ?: 'Zgłoszenie',
-                    'description' => $complaint->description ?: 'Brak opisu zgłoszenia.',
-                    'status' => $complaint->status ?: 'oczekujące',
-                    'status_label' => $this->complaintStatusLabel($complaint->status),
-                    'order_created_at' => $complaint->order_created_at
-                        ? \Carbon\Carbon::parse($complaint->order_created_at)->format('d.m.Y')
-                        : 'Brak daty',
-                    'admin_response' => $complaint->admin_response,
-                    'customer_reply' => $complaint->customer_reply,
-                    'responded_at' => $complaint->responded_at
-                        ? \Carbon\Carbon::parse($complaint->responded_at)->format('d.m.Y H:i')
-                        : null,
-                    'customer_replied_at' => $complaint->customer_replied_at
-                        ? \Carbon\Carbon::parse($complaint->customer_replied_at)->format('d.m.Y H:i')
-                        : null,
-                    'can_reply' => $complaint->status === 'oczekujące' && filled($complaint->admin_response),
-                ];
-            });
+            ]);
+
+        return $complaints->map(function ($complaint) {
+
+            $messages = DB::table('complaint_messages')
+                ->where('complaint_id', $complaint->id)
+                ->orderBy('created_at')
+                ->get()
+                ->map(function ($message) {
+                    return [
+                        'sender_type' => $message->sender_type,
+                        'message' => $message->message,
+                        'created_at' => $message->created_at
+                            ? \Carbon\Carbon::parse($message->created_at)->format('d.m.Y H:i')
+                            : null,
+                    ];
+                });
+
+            return [
+                'id' => (int) $complaint->id,
+                'order_id' => (int) $complaint->order_id,
+                'reason' => $complaint->reason ?: 'Zgłoszenie',
+                'description' => $complaint->description ?: 'Brak opisu zgłoszenia.',
+                'status' => $complaint->status ?: 'oczekujące',
+                'status_label' => $this->complaintStatusLabel($complaint->status),
+                'order_created_at' => $complaint->order_created_at
+                    ? \Carbon\Carbon::parse($complaint->order_created_at)->format('d.m.Y')
+                    : 'Brak daty',
+                'messages' => $messages,
+                'can_reply' => $complaint->status === 'oczekujące',
+            ];
+        });
     }
 
-    private function loadComplaintReplies(int $userId): Collection
+    private function loadObservedProducts(int $userId): Collection
     {
-        // Pobieramy wszystkie przedmioty na wishlistach przypisanych do użytkownika
         $items = DB::table('wishlist_items as wi')
             ->join('wishlists as w', 'w.id', '=', 'wi.wishlist_id')
             ->join('products as p', 'p.id', '=', 'wi.product_id')
             ->leftJoin('brands as b', 'b.id', '=', 'p.brand_id')
             ->where('w.user_id', $userId)
-            ->orderBy('w.name') // Sortowanie alfabetyczne po nazwie listy
+            ->orderBy('w.name')
             ->orderByDesc('p.id')
             ->get([
                 'w.id as wishlist_id',
@@ -458,9 +454,15 @@ class ProfileController extends Controller
                 'b.name as brand_name',
             ])
             ->map(function ($item) {
+
                 $basePrice = (float) $item->base_price;
-                $promoPrice = $item->promo_price !== null ? (float) $item->promo_price : null;
-                $hasPromotion = $promoPrice !== null && $promoPrice < $basePrice;
+
+                $promoPrice = $item->promo_price !== null
+                    ? (float) $item->promo_price
+                    : null;
+
+                $hasPromotion = $promoPrice !== null
+                    && $promoPrice < $basePrice;
 
                 return [
                     'wishlist_id' => (int) $item->wishlist_id,
@@ -468,18 +470,25 @@ class ProfileController extends Controller
                     'id' => (int) $item->product_id,
                     'name' => $item->product_name,
                     'brand_name' => $item->brand_name,
-                    'current_price' => number_format($hasPromotion ? $promoPrice : $basePrice, 2, '.', ' '),
-                    'original_price' => $hasPromotion ? number_format($basePrice, 2, '.', ' ') : null,
+                    'current_price' => number_format(
+                        $hasPromotion ? $promoPrice : $basePrice,
+                        2,
+                        '.',
+                        ' '
+                    ),
+                    'original_price' => $hasPromotion
+                        ? number_format($basePrice, 2, '.', ' ')
+                        : null,
                     'image_path' => $this->resolveImagePath($item->image_url),
                     'stock_quantity' => (int) ($item->stock_quantity ?? 0),
                 ];
             });
 
-        // Grupowanie wyników po id i nazwie listy
-        return $items->groupBy(function($item) {
+        return $items->groupBy(function ($item) {
             return $item['wishlist_id'] . '|' . $item['wishlist_name'];
         });
     }
+
     private function findObservedWishlistId(int $userId): ?int
     {
         $wishlist = DB::table('wishlists')
@@ -530,16 +539,27 @@ class ProfileController extends Controller
         $orders = DB::table('orders')
             ->when($userId !== null, fn ($query) => $query->where('user_id', $userId))
             ->whereNotNull('created_at')
-            ->get(['id', 'created_at', 'tracking_status']);
+            ->get([
+                'id',
+                'created_at',
+                'tracking_status'
+            ]);
 
         foreach ($orders as $order) {
+
             $currentStatus = mb_strtolower(trim((string) $order->tracking_status));
 
-            if (in_array($currentStatus, ['cancelled', 'canceled', 'anulowane'], true)) {
+            if (in_array($currentStatus, [
+                'cancelled',
+                'canceled',
+                'anulowane'
+            ], true)) {
                 continue;
             }
 
-            $ageInMinutes = \Carbon\Carbon::parse($order->created_at)->diffInMinutes(now());
+            $ageInMinutes = \Carbon\Carbon::parse($order->created_at)
+                ->diffInMinutes(now());
+
             $nextStatus = match (true) {
                 $ageInMinutes >= 5 => 'Dostarczone',
                 $ageInMinutes >= 1 => 'W trakcie',
@@ -549,7 +569,9 @@ class ProfileController extends Controller
             if ($order->tracking_status !== $nextStatus) {
                 DB::table('orders')
                     ->where('id', $order->id)
-                    ->update(['tracking_status' => $nextStatus]);
+                    ->update([
+                        'tracking_status' => $nextStatus
+                    ]);
             }
         }
     }

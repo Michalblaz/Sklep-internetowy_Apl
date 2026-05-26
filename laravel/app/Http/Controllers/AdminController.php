@@ -181,12 +181,24 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
                 $complaint->order_created_at_label = $complaint->order_created_at
                     ? \Carbon\Carbon::parse($complaint->order_created_at)->format('d.m.Y')
                     : 'Brak daty';
-                $complaint->responded_at_label = $complaint->responded_at
-                    ? \Carbon\Carbon::parse($complaint->responded_at)->format('d.m.Y H:i')
-                    : null;
-                $complaint->customer_replied_at_label = $complaint->customer_replied_at
-                    ? \Carbon\Carbon::parse($complaint->customer_replied_at)->format('d.m.Y H:i')
-                    : null;
+               $messages = DB::table('complaint_messages')
+                    ->where('complaint_id', $complaint->id)
+                    ->orderBy('created_at')
+                    ->get()
+                    ->map(function ($message) {
+
+                        return [
+                            'sender_type' => $message->sender_type,
+                            'message' => $message->message,
+                            'created_at' => $message->created_at
+                                ? \Carbon\Carbon::parse($message->created_at)->format('d.m.Y H:i')
+                                : null,
+                        ];
+                    });
+
+                $complaint->messages = $messages;
+
+                $complaint->latest_message = $messages->last();
 
                 return $complaint;
             });
@@ -294,16 +306,11 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
 
     public function updateComplaint(Request $request, Complain $complaint)
     {
-        if (!Schema::hasColumn('complaints', 'admin_response')) {
-            return redirect(route('admin') . '#reklamacje')
-                ->with('admin_error', 'Brakuje kolumn odpowiedzi w tabeli complaints. Uruchom migracje.');
-        }
-
         $validated = $request->validate([
             'action_type' => ['required', 'in:respond,accept,reject'],
             'admin_response' => ['required', 'string', 'max:5000'],
         ], [
-            'admin_response.required' => 'Wpisz treść decyzji lub odpowiedzi.',
+            'admin_response.required' => 'Wpisz treść odpowiedzi.',
         ]);
 
         $status = match ($validated['action_type']) {
@@ -316,18 +323,23 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             ->where('id', $complaint->id)
             ->update([
                 'status' => $status,
-                'admin_response' => $validated['admin_response'],
-                'responded_at' => now(),
-                'updated_at' => now(),
             ]);
+
+        DB::table('complaint_messages')->insert([
+            'complaint_id' => $complaint->id,
+            'sender_type' => 'admin',
+            'message' => $validated['admin_response'],
+            'created_at' => now(),
+        ]);
 
         $message = match ($status) {
             'zaakceptowane' => 'Zgłoszenie zostało zaakceptowane.',
             'odrzucone' => 'Zgłoszenie zostało odrzucone.',
-            default => 'Odpowiedź została wysłana do klienta.',
+            default => 'Odpowiedź została wysłana.',
         };
 
-        return redirect(route('admin') . '#reklamacje')->with('admin_status', $message);
+        return redirect(route('admin') . '#reklamacje')
+            ->with('admin_status', $message);
     }
 
     public function suspend(User $user)
