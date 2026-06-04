@@ -109,7 +109,7 @@
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
                             <input type="hidden" name="quantity" value="1">
 
-                            <button type="submit" class="{{ $buttonClass }} add-to-cart-btn relative z-10 w-full shrink-0 py-3 text-base">
+                            <button type="submit" class="{{ $buttonClass }} profile-direct-cart-btn relative z-10 w-full shrink-0 py-3 text-base">
                                 Do koszyka
                             </button>
                         </form>
@@ -290,19 +290,19 @@
     <div class="relative mx-4 w-full max-w-md rounded-2xl border border-gray-700 bg-[#1a202c] p-6 text-white shadow-[0_24px_60px_rgba(0,0,0,0.5)]">
         <h3 class="mb-4 font-bruno text-xl text-[#8b89ff]">Dodaj do listy obserwowanych</h3>
         <p class="mb-4 text-sm text-gray-400">Wybierz listę, do której chcesz dodać produkt, lub utwórz nową.</p>
-        
+
         <form id="wishlist-form">
             @csrf
             <div id="wishlist-options-container" class="mb-5 max-h-48 space-y-2 overflow-y-auto pr-2">
                 <div class="text-sm text-gray-500">Ładowanie list...</div>
             </div>
-            
+
             <div class="mb-6 border-t border-white/10 pt-5">
-                <label class="mb-2 block text-sm font-semibold text-gray-300">albo utwórz nową listę</label>
-                <input type="text" id="wishlist-new-name" name="new_list_name" placeholder="Np. Sprzęt do biura" 
+                <label class="mb-2 block text-sm font-semibold text-gray-300">...albo stwórz nową listę</label>
+                <input type="text" id="wishlist-new-name" name="new_list_name" placeholder="Np. Sprzęt do biura"
                        class="w-full rounded-xl border border-white/20 bg-black/30 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-400">
             </div>
-            
+
             <div class="flex gap-3">
                 <button type="button" onclick="closeWishlistModal()" class="w-1/2 rounded-full border border-white/20 bg-transparent px-4 py-3 text-sm font-bold transition hover:bg-white/10">
                     Anuluj
@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    document.querySelectorAll('.add-to-cart-btn').forEach((button) => {
+    document.querySelectorAll('.profile-direct-cart-btn').forEach((button) => {
         button.addEventListener('click', function (event) {
             event.preventDefault();
 
@@ -506,7 +506,7 @@ function closeWishlistModal() {
         wishlistForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const formData = new FormData(wishlistForm);
-            
+
             fetch(`/products/${productId}/wishlists`, {
                 method: 'POST',
                 headers: {
@@ -519,10 +519,10 @@ function closeWishlistModal() {
             .then(data => {
                 if (data.success) {
                     closeWishlistModal();
-                    
+
                     const btn = document.getElementById('open-wishlist-modal-btn');
                     const icon = document.getElementById('wishlist-heart-icon');
-                    
+
                     if (data.isObserved) {
                         btn.className = 'flex h-[3.2rem] w-[3.2rem] shrink-0 items-center justify-center rounded-full border transition border-rose-300/45 bg-rose-500/15 text-rose-300 shadow-[0_0_18px_rgba(244,63,94,0.25)]';
                         icon.innerHTML = '♥';
@@ -536,6 +536,6 @@ function closeWishlistModal() {
             });
         });
     }
-    
+
 </script>
 @endsection

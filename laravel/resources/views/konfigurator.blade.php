@@ -404,8 +404,16 @@
                             @endphp
                             <x-product-card :product="$product" :discount="$discount" :replaceIndex="request('replace_index')" />
                         @empty
-                            <div class="col-span-full py-20 text-center">
-                                <p class="text-text-muted font-bruno uppercase tracking-widest">Brak produktów spełniających kryteria</p>
+                           <div class="col-span-full py-16">
+                                <div class="mx-auto max-w-2xl rounded-[1.8rem] border border-dashed border-purple-500/30 bg-purple-900/10 px-5 py-12 text-center shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+                                    <i class="fa-solid fa-magnifying-glass-minus text-4xl text-purple-400 mb-4 opacity-75"></i>
+                                    <p class="font-bruno text-lg uppercase tracking-widest text-purple-200">
+                                        Brak produktów
+                                    </p>
+                                    <p class="mt-2 text-sm text-purple-300/60 font-sans tracking-normal">
+                                        Przepraszamy, nie mamy produktów spełniających wybrane kryteria. Spróbuj zmienić filtry.
+                                    </p>
+                                </div>
                             </div>
                         @endforelse
                     </div>
@@ -497,6 +505,17 @@
         const filterForm = document.getElementById('filter-form');
         const filterPanel = document.getElementById('filter-panel');
 
+        // 1. Blokowanie pozycji
+        const savedScrollPosition = sessionStorage.getItem('configurator_scroll_pos');
+        if (savedScrollPosition) {
+            window.scrollTo({
+                top: parseInt(savedScrollPosition, 10),
+                behavior: 'instant' // 'instant' sprawia, że użytkownik nawet nie zauważy mignięcia/skoku
+            });
+            // Czyścimy pamięć sesji, żeby przy zwykłym odświeżeniu F5 nie blokować użytkownika
+            sessionStorage.removeItem('configurator_scroll_pos');
+        }
+
         if (filterForm && filterPanel) {
             // Flaga informująca, czy użytkownik dokonał jakiejkolwiek zmiany w filtrach
             let filtersChanged = false;
@@ -517,10 +536,12 @@
                 });
             });
 
-            // 3. Obsługa opuszczania panelu myszką jeśli zmieniliśmy jakieś filtry 
+            // 3. Obsługa opuszczania panelu myszką jeśli zmieniliśmy jakieś filtry
             filterPanel.addEventListener('mouseleave', function() {
                 if (filtersChanged) {
                     console.log('Myszka opuściła panel i filtry zostały zmienione -> Wysyłam formularz');
+                    // Zapamiętanie pozycji
+                    sessionStorage.setItem('configurator_scroll_pos', window.scrollY);
                     filterForm.submit();
                 } else {
                     console.log('Myszka opuściła panel, ale nic nie zmieniono -> Brak akcji');

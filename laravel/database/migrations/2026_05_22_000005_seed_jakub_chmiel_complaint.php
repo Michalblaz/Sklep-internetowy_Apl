@@ -57,10 +57,6 @@ return new class extends Migration
                 'reason' => 'Reklamacja',
                 'description' => 'Testowa reklamacja dla konta Jakub Chmiel. Produkt po dostawie wymaga sprawdzenia przez serwis.',
                 'status' => 'oczekujące',
-                'admin_response' => null,
-                'customer_reply' => null,
-                'responded_at' => null,
-                'customer_replied_at' => null,
                 'updated_at' => now(),
             ]
         );

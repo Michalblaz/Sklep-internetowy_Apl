@@ -179,7 +179,7 @@
                 </details>
             </section>
 
-            <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
+               <section class="rounded-[2rem] border border-cyan-300/30 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),rgba(96,165,250,0.18),rgba(99,102,241,0.22))] p-6 shadow-[0_0_45px_rgba(80,180,255,0.12)]">
                 <div class="mb-5 flex items-center justify-between gap-4">
                     <div>
                         <h2 class="font-['Bruno_Ace'] text-2xl text-white">Odpowiedzi sklepu</h2>
@@ -206,37 +206,45 @@
                                 </span>
                             </div>
 
-                            <div class="grid gap-4 lg:grid-cols-2">
-                                <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                                    <p class="mb-2 text-xs uppercase tracking-[0.25em] text-cyan-100/60">Twoje zgłoszenie</p>
-                                    <p class="whitespace-pre-line text-sm text-cyan-50/85">{{ $complaint['description'] }}</p>
-                                </div>
+                           <div class="mt-4 space-y-3">
+                                @forelse ($complaint['messages'] as $message)
+                                    <div class="@if($message['sender_type'] === 'admin') ml-0 mr-10 border-cyan-300/20 bg-cyan-500/10 @else ml-10 mr-0 border-fuchsia-300/20 bg-fuchsia-500/10 @endif rounded-2xl border p-4">
 
-                                <div class="rounded-2xl border border-cyan-300/20 bg-cyan-500/10 p-4">
-                                    <p class="mb-2 text-xs uppercase tracking-[0.25em] text-cyan-100/70">
-                                        Decyzja sklepu @if($complaint['responded_at']) · {{ $complaint['responded_at'] }} @endif
-                                    </p>
-                                    <p class="whitespace-pre-line text-sm text-cyan-50">
-                                        {{ $complaint['admin_response'] ?: 'Obsługa sklepu jeszcze nie dodała odpowiedzi.' }}
-                                    </p>
-                                </div>
+                                        <div class="mb-2 flex items-center justify-between">
+                                            <p class="text-xs uppercase tracking-[0.25em]
+                                                @if($message['sender_type'] === 'admin')
+                                                    text-cyan-100/70
+                                                @else
+                                                    text-fuchsia-100/70
+                                                @endif
+                                            ">
+                                                {{ $message['sender_type'] === 'admin' ? 'Obsługa sklepu' : 'Ty' }}
+                                            </p>
+
+                                            <span class="text-xs text-white/50">
+                                                {{ $message['created_at'] }}
+                                            </span>
+                                        </div>
+
+                                        <p class="whitespace-pre-line text-sm text-white">
+                                            {{ $message['message'] }}
+                                        </p>
+                                    </div>
+                                @empty
+                                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/60">
+                                        Brak wiadomości w tej reklamacji.
+                                    </div>
+                                @endforelse
                             </div>
-
-                            @if ($complaint['customer_reply'])
-                                <div class="mt-4 rounded-2xl border border-fuchsia-300/20 bg-fuchsia-500/10 p-4">
-                                    <p class="mb-2 text-xs uppercase tracking-[0.25em] text-fuchsia-100/70">
-                                        Twoja odpowiedź @if($complaint['customer_replied_at']) · {{ $complaint['customer_replied_at'] }} @endif
-                                    </p>
-                                    <p class="whitespace-pre-line text-sm text-fuchsia-50">{{ $complaint['customer_reply'] }}</p>
-                                </div>
-                            @endif
 
                             @if ($complaint['can_reply'])
                                 <form method="POST" action="{{ route('profil.complaints.reply', $complaint['id']) }}" class="mt-4 space-y-3">
                                     @csrf
+
                                     <label for="customer_reply_{{ $complaint['id'] }}" class="block text-sm text-cyan-50">
                                         Odpowiedz obsłudze
                                     </label>
+
                                     <textarea
                                         id="customer_reply_{{ $complaint['id'] }}"
                                         name="customer_reply"
@@ -245,6 +253,7 @@
                                         class="w-full rounded-[1.4rem] border border-white/15 bg-slate-950/20 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/30"
                                         placeholder="Napisz wiadomość do obsługi sklepu..."
                                     ></textarea>
+
                                     <button
                                         type="submit"
                                         class="rounded-full bg-[linear-gradient(90deg,rgba(129,150,255,0.95),rgba(164,66,255,0.95))] px-5 py-3 font-['Bruno_Ace'] text-sm text-white shadow-[0_12px_35px_rgba(126,76,255,0.35)] transition hover:scale-[1.01]"
@@ -393,7 +402,7 @@
                 <div class="space-y-3 border-t border-white/10 p-5 bg-black/10">
                     @foreach ($products as $product)
                         <div class="grid gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 md:grid-cols-[100px_minmax(0,1fr)_200px] transition hover:border-purple-500/30">
-                            
+
                             {{-- Zdjęcie z odnośnikiem do produktu --}}
                             <a href="{{ route('products.show', $product['id']) }}" class="overflow-hidden rounded-xl bg-white/90">
                                 @if ($product['image_path'])
@@ -421,9 +430,12 @@
                             </div>
 
                             <div class="flex flex-col justify-center gap-2">
-                                <form method="POST" action="{{ route('profil.saved.move-to-cart', ['wishlistId' => $wishlistId, 'productId' => $product['id']]) }}">
+                               <form method="POST" action="{{ route('cart.add') }}" class="ajax-cart-form">
                                     @csrf
-                                    <button type="submit" class="w-full rounded-xl bg-[linear-gradient(90deg,rgba(129,150,255,0.9),rgba(164,66,255,0.9))] px-3 py-2 font-['Bruno_Ace'] text-[11px] text-white shadow-[0_5px_15px_rgba(126,76,255,0.25)] transition hover:scale-[1.02]">
+                                    <input type="hidden" name="product_id" value="{{ $product['id'] }}">
+                                    <input type="hidden" name="quantity" value="1">
+
+                                    <button type="submit" class="mt-2 block w-full rounded-lg border border-purple-500/30 bg-purple-900/40 py-1.5 text-center text-[10px] font-bold text-purple-300 transition duration-200 hover:border-purple-500 hover:bg-purple-600 hover:text-white">
                                         <i class="fa-solid fa-cart-plus mr-1"></i> Do koszyka
                                     </button>
                                 </form>
@@ -441,7 +453,7 @@
             </details>
         @empty
             <div class="rounded-[1.8rem] border border-dashed border-white/20 bg-slate-950/15 px-5 py-8 text-center text-sm text-cyan-50/80">
-                Nie stworzyłeś jeszcze żadnej listy obserwowanych produktów. 
+                Nie stworzyłeś jeszcze żadnej listy obserwowanych produktów.
                 <br>Przejdź do sklepu i kliknij ikonę serduszka, aby zacząć!
             </div>
         @endforelse
@@ -456,4 +468,110 @@
         {!! $profilePageScript !!}
     </script>
 @endif
+
+
+
+<div id="cartModal" style="display: none !important;" class="fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="relative mx-4 w-full max-w-4xl rounded-2xl border border-gray-700 bg-[#1a202c] p-6 text-white">
+        <div class="mb-6 flex items-center gap-3 font-bruno text-emerald-400">
+            <span class="relative flex h-3 w-3">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex h-3 w-3 rounded-full bg-emerald-500"></span>
+            </span>
+            Pomyślnie dodano produkt do koszyka!
+        </div>
+
+        <div class="mb-8 flex gap-4">
+            <button onclick="closeModal()" class="rounded-xl bg-gray-700 px-6 py-2 text-xs font-bold uppercase transition hover:bg-gray-600">
+                Kontynuuj zakupy
+            </button>
+            <a href="/koszyk" class="rounded-xl bg-purple-600 px-6 py-2 text-center text-xs font-bold uppercase transition hover:bg-purple-500">
+                Przejdź do koszyka
+            </a>
+        </div>
+
+        <hr class="mb-6 border-white/10">
+
+        <div>
+            <h4 class="mb-4 text-sm uppercase tracking-wider text-purple-300">
+                Polecamy również:
+            </h4>
+
+            <div id="modal-recommendations" class="grid grid-cols-2 gap-4 md:grid-cols-4"></div>
+        </div>
+
+        <button onclick="closeModal()" class="absolute right-4 top-4 text-xl text-gray-400 hover:text-white">✕</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const forms = document.querySelectorAll('.ajax-cart-form');
+    const modal = document.getElementById('cartModal');
+    const recContainer = document.getElementById('modal-recommendations');
+
+    forms.forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Zatrzymujemy domyślne przeładowanie / otwarcie JSON-a
+
+            const formData = new FormData(this);
+
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Czyszczenie poprzednich rekomendacji w modalu
+                    recContainer.innerHTML = '';
+
+                    // Generowanie kafelków dla produktów rekomendowanych
+                    if (data.recommended && data.recommended.length > 0) {
+                        data.recommended.forEach(item => {
+                            const basePrice = parseFloat(item.base_price);
+                            const promoPrice = item.promo_price ? parseFloat(item.promo_price) : null;
+                            const hasPromotion = promoPrice !== null;
+                            const imageSrc = item.image_url ? `/images/${item.image_url}` : '/images/placeholder.jpg';
+
+                            const cardHtml = `
+                                <div class="rounded-xl border border-white/5 bg-white/5 p-3 transition duration-200 hover:border-purple-500/40">
+                                    <div class="mb-2 flex h-20 items-center justify-center rounded-lg bg-white/90 p-1">
+                                        <img src="${imageSrc}" alt="${item.name}" class="max-h-full max-w-full object-contain">
+                                    </div>
+                                    <p class="truncate text-center text-xs font-medium text-gray-300" title="${item.name}">
+                                        ${item.name}
+                                    </p>
+                                    <div class="mt-2 text-center text-xs">
+                                        ${hasPromotion ? `
+                                            <span class="font-black text-green-400">${promoPrice.toFixed(2)} zł</span>
+                                            <span class="block text-[10px] text-gray-500 line-through">${basePrice.toFixed(2)} zł</span>
+                                        ` : `
+                                            <span class="font-black text-white">${basePrice.toFixed(2)} zł</span>
+                                        `}
+                                    </div>
+                                    <a href="/produkt/${item.id}" class="mt-2 block w-full rounded-lg border border-purple-500/30 bg-purple-900/40 py-1.5 text-center text-[10px] font-bold text-purple-300 transition duration-200 hover:border-purple-500 hover:bg-purple-600 hover:text-white">
+                                        Zobacz produkt
+                                    </a>
+                                </div>
+                            `;
+                            recContainer.insertAdjacentHTML('beforeend', cardHtml);
+                        });
+                    }
+
+                    // Wyświetlenie modala
+                    if (modal) {
+                        modal.style.setProperty('display', 'flex', 'important');
+                    }
+                }
+            })
+            .catch(error => console.error('Błąd koszyka:', error));
+        });
+    });
+});
+</script>
 @endsection
