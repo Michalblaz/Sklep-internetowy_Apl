@@ -259,12 +259,13 @@
                     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                         <div class="flex items-center gap-2" data-rating-stars>
                             @for ($i = 0; $i < 5; $i++)
+                                @php($ratingValue = $i + 1)
                                 <button
                                     type="button"
                                     class="text-4xl leading-none text-white/45 transition hover:scale-105"
                                     data-rating-star
-                                    data-value="{{ $i + 1 }}"
-                                    aria-label="Oceń na {{ $i + 1 }} gwiazdek"
+                                    data-value="{{ $ratingValue }}"
+                                    aria-label="Oceń na {{ $ratingValue }} {{ $ratingValue === 1 ? 'gwiazdkę' : ($ratingValue < 5 ? 'gwiazdki' : 'gwiazdek') }}"
                                 >&#9734;</button>
                             @endfor
                         </div>
@@ -297,7 +298,7 @@
             </div>
             
             <div class="mb-6 border-t border-white/10 pt-5">
-                <label class="mb-2 block text-sm font-semibold text-gray-300">...albo stwórz nową listę</label>
+                <label class="mb-2 block text-sm font-semibold text-gray-300">albo utwórz nową listę</label>
                 <input type="text" id="wishlist-new-name" name="new_list_name" placeholder="Np. Sprzęt do biura" 
                        class="w-full rounded-xl border border-white/20 bg-black/30 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-400">
             </div>

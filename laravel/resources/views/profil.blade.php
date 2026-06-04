@@ -366,6 +366,12 @@
             @php
                 // Rozbijamy klucz zgrupowany po ID i nazwie listy
                 list($wishlistId, $wishlistName) = explode('|', $groupKey);
+                $productCount = $products->count();
+                $productLabel = $productCount === 1
+                    ? 'produkt'
+                    : (($productCount % 10 >= 2 && $productCount % 10 <= 4 && ($productCount % 100 < 12 || $productCount % 100 > 14))
+                        ? 'produkty'
+                        : 'produktów');
             @endphp
 
             <details class="group rounded-[1.8rem] border border-white/15 bg-slate-950/20 overflow-hidden">
@@ -376,7 +382,7 @@
                         </div>
                         <div>
                             <h3 class="font-['Bruno_Ace'] text-lg text-white">{{ $wishlistName }}</h3>
-                            <p class="text-xs text-cyan-100/60">{{ $products->count() }} produkt(ów)</p>
+                            <p class="text-xs text-cyan-100/60">{{ $productCount }} {{ $productLabel }}</p>
                         </div>
                     </div>
                     <div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition group-open:rotate-180">
