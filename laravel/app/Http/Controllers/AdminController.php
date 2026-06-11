@@ -12,14 +12,34 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $filters = $request->validate([
+            'action' => ['nullable', Rule::in(['add-product'])],
+            'edit_id' => ['nullable', 'integer', 'exists:products,id'],
+            'stock_view' => ['nullable', Rule::in(['low', 'archived'])],
+            'low_stock_threshold' => ['nullable', 'integer', 'min:0', 'max:999'],
+            'archival_date' => ['nullable', Rule::in(['all', 'today', '7', '30', '90'])],
+            'stock_search' => ['nullable', 'string', 'max:100'],
+            'complaint_name' => ['nullable', 'string', 'max:100'],
+            'complaint_email' => ['nullable', 'string', 'max:254'],
+            'complaint_status' => ['nullable', Rule::in(['oczekujące', 'zaakceptowane', 'odrzucone'])],
+            'complaint_type' => ['nullable', Rule::in(['Reklamacja', 'Zwrot'])],
+            'user_name' => ['nullable', 'string', 'max:100'],
+            'user_email' => ['nullable', 'string', 'max:254'],
+            'user_status' => ['nullable', Rule::in(['aktywny', 'zawieszony', 'zbanowany'])],
+        ]);
+
         $this->refreshTimedOrderStatuses();
 
-        $lowStockThreshold = max(0, min(999, (int) request('low_stock_threshold', 5)));
+        $stockView = $filters['stock_view'] ?? 'low';
+        $lowStockThreshold = (int) ($filters['low_stock_threshold'] ?? 5);
+        $archivalDateFilter = $filters['archival_date'] ?? 'all';
+        $stockSearch = trim($filters['stock_search'] ?? '');
 
         $categoryLabels = [
             1 => 'Procesory',
@@ -97,6 +117,7 @@ class AdminController extends Controller
         'products.category_id',
         DB::raw('SUM(products.stock_quantity) as product_count')
     )
+    ->where('products.isarchival', 0)
     ->whereNotNull('products.category_id')
     ->groupBy('products.category_id')
     ->get()
@@ -117,6 +138,7 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
                 'products.name',
                 'products.stock_quantity'
             )
+            ->where('products.isarchival', 0)
             ->whereNotNull('products.category_id')
             ->orderBy('products.category_id')
             ->orderByDesc('products.stock_quantity')
@@ -131,10 +153,10 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
                 ])->values();
             });
 
-        $complaintNameFilter = trim((string) request('complaint_name', ''));
-        $complaintEmailFilter = trim((string) request('complaint_email', ''));
-        $complaintStatusFilter = request('complaint_status');
-        $complaintTypeFilter = request('complaint_type');
+        $complaintNameFilter = trim($filters['complaint_name'] ?? '');
+        $complaintEmailFilter = trim($filters['complaint_email'] ?? '');
+        $complaintStatusFilter = $filters['complaint_status'] ?? null;
+        $complaintTypeFilter = $filters['complaint_type'] ?? null;
         $hasComplaintResponseColumns = Schema::hasColumn('complaints', 'admin_response');
 
         $complaints = Complain::query()
@@ -143,11 +165,11 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             ->when($complaintNameFilter !== '', function ($query) use ($complaintNameFilter) {
                 $query->whereRaw(
                     "LOWER(TRIM(COALESCE(users.first_name, '') || ' ' || COALESCE(users.last_name, ''))) LIKE ?",
-                    ['%' . mb_strtolower($complaintNameFilter) . '%']
+                    [$this->likePattern($complaintNameFilter)]
                 );
             })
             ->when($complaintEmailFilter !== '', function ($query) use ($complaintEmailFilter) {
-                $query->whereRaw('LOWER(users.email) LIKE ?', ['%' . mb_strtolower($complaintEmailFilter) . '%']);
+                $query->whereRaw('LOWER(users.email) LIKE ?', [$this->likePattern($complaintEmailFilter)]);
             })
             ->when(in_array($complaintTypeFilter, ['Reklamacja', 'Zwrot'], true), function ($query) use ($complaintTypeFilter) {
                 $query->where('complaints.reason', $complaintTypeFilter);
@@ -209,9 +231,9 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             'returns' => $complaints->where('type_label', 'Zwrot')->count(),
         ];
 
-        $userNameFilter = trim((string) request('user_name', ''));
-        $userEmailFilter = trim((string) request('user_email', ''));
-        $userStatusFilter = request('user_status');
+        $userNameFilter = trim($filters['user_name'] ?? '');
+        $userEmailFilter = trim($filters['user_email'] ?? '');
+        $userStatusFilter = $filters['user_status'] ?? null;
 
         $users = User::query()
             ->where(function ($query) {
@@ -224,11 +246,11 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             ->when($userNameFilter !== '', function ($query) use ($userNameFilter) {
                 $query->whereRaw(
                     "LOWER(TRIM(COALESCE(users.first_name, '') || ' ' || COALESCE(users.last_name, ''))) LIKE ?",
-                    ['%' . mb_strtolower($userNameFilter) . '%']
+                    [$this->likePattern($userNameFilter)]
                 );
             })
             ->when($userEmailFilter !== '', function ($query) use ($userEmailFilter) {
-                $query->whereRaw('LOWER(users.email) LIKE ?', ['%' . mb_strtolower($userEmailFilter) . '%']);
+                $query->whereRaw('LOWER(users.email) LIKE ?', [$this->likePattern($userEmailFilter)]);
             })
             ->when(in_array($userStatusFilter, ['aktywny', 'zawieszony', 'zbanowany'], true), function ($query) use ($userStatusFilter) {
                 match ($userStatusFilter) {
@@ -270,11 +292,31 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
                 return $user;
             });
 
-        $lowStockProducts = Product::query()
+        $stockProducts = Product::withoutGlobalScope('active')
             ->with(['brand', 'category'])
-            ->where('stock_quantity', '<=', $lowStockThreshold)
-            ->orderBy('stock_quantity')
-            ->orderBy('name')
+            ->when($stockSearch !== '', function ($query) use ($stockSearch) {
+                $searchPattern = $this->likePattern($stockSearch);
+
+                $query->where(function ($query) use ($searchPattern) {
+                    $query->whereRaw('LOWER(products.name) LIKE ?', [$searchPattern])
+                        ->orWhereHas('category', function ($categoryQuery) use ($searchPattern) {
+                            $categoryQuery->whereRaw('LOWER(categories.name) LIKE ?', [$searchPattern]);
+                        });
+                });
+            })
+            ->when($stockView === 'archived', function ($query) use ($archivalDateFilter) {
+                $query->where('products.isarchival', 1)
+                    ->when($archivalDateFilter === 'today', fn ($query) => $query->whereDate('products.archivaldate', today()))
+                    ->when(in_array($archivalDateFilter, ['7', '30', '90'], true), function ($query) use ($archivalDateFilter) {
+                        $query->where('products.archivaldate', '>=', now()->subDays((int) $archivalDateFilter));
+                    })
+                    ->orderByDesc('products.archivaldate');
+            }, function ($query) use ($lowStockThreshold) {
+                $query->where('products.isarchival', 0)
+                    ->where('products.stock_quantity', '<=', $lowStockThreshold)
+                    ->orderBy('products.stock_quantity');
+            })
+            ->orderBy('products.name')
             ->get();
 
         return view('Admin', [
@@ -299,13 +341,66 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             'complaints' => $complaints,
             'complaintStats' => $complaintStats,
             'users' => $users,
-            'lowStockProducts' => $lowStockProducts,
+            'stockProducts' => $stockProducts,
+            'lowStockProducts' => $stockProducts,
+            'stockView' => $stockView,
             'lowStockThreshold' => $lowStockThreshold,
+            'archivalDateFilter' => $archivalDateFilter,
+            'stockSearch' => $stockSearch,
         ]);
+    }
+
+    public function archiveProduct(Request $request, int $product)
+    {
+        $this->validateStockRedirectInput($request);
+        $model = Product::withoutGlobalScope('active')->findOrFail($product);
+
+        if ($model->isarchival) {
+            return $this->stockPanelRedirect($request, 'archived')
+                ->with('admin_error', 'Ten produkt jest już archiwalny.');
+        }
+
+        DB::transaction(function () use ($model) {
+            $model->forceFill([
+                'isarchival' => 1,
+                'archivaldate' => now(),
+            ])->save();
+
+            DB::table('cart_items')->where('product_id', $model->id)->delete();
+            DB::table('wishlist_items')->where('product_id', $model->id)->delete();
+        });
+
+        return $this->stockPanelRedirect($request, 'low')
+            ->with('admin_status', "Produkt {$model->name} został przeniesiony do archiwum.");
+    }
+
+    public function restoreProduct(Request $request, int $product)
+    {
+        $this->validateStockRedirectInput($request);
+        $model = Product::withoutGlobalScope('active')->findOrFail($product);
+
+        if (! $model->isarchival) {
+            return $this->stockPanelRedirect($request, 'low')
+                ->with('admin_error', 'Ten produkt jest już aktywny.');
+        }
+
+        $model->forceFill([
+            'isarchival' => 0,
+            'archivaldate' => null,
+        ])->save();
+
+        return $this->stockPanelRedirect($request, 'archived')
+            ->with('admin_status', "Produkt {$model->name} został przywrócony.");
     }
 
     public function updateComplaint(Request $request, Complain $complaint)
     {
+        $request->merge([
+            'admin_response' => is_string($request->input('admin_response'))
+                ? trim($request->input('admin_response'))
+                : $request->input('admin_response'),
+        ]);
+
         $validated = $request->validate([
             'action_type' => ['required', 'in:respond,accept,reject'],
             'admin_response' => ['required', 'string', 'max:5000'],
@@ -319,18 +414,20 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             default => 'oczekujące',
         };
 
-        DB::table('complaints')
-            ->where('id', $complaint->id)
-            ->update([
-                'status' => $status,
-            ]);
+        DB::transaction(function () use ($complaint, $status, $validated) {
+            DB::table('complaints')
+                ->where('id', $complaint->id)
+                ->update([
+                    'status' => $status,
+                ]);
 
-        DB::table('complaint_messages')->insert([
-            'complaint_id' => $complaint->id,
-            'sender_type' => 'admin',
-            'message' => $validated['admin_response'],
-            'created_at' => now(),
-        ]);
+            DB::table('complaint_messages')->insert([
+                'complaint_id' => $complaint->id,
+                'sender_type' => 'admin',
+                'message' => $validated['admin_response'],
+                'created_at' => now(),
+            ]);
+        });
 
         $message = match ($status) {
             'zaakceptowane' => 'Zgłoszenie zostało zaakceptowane.',
@@ -414,6 +511,33 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
         ]);
 
         return $this->usersPanelRedirect()->with('admin_status', "Konto {$user->email} zostało odblokowane.");
+    }
+
+    private function stockPanelRedirect(Request $request, string $stockView)
+    {
+        $query = array_filter([
+            'stock_view' => $stockView,
+            'low_stock_threshold' => $request->input('low_stock_threshold'),
+            'archival_date' => $request->input('archival_date'),
+            'stock_search' => $request->input('stock_search'),
+        ], fn ($value) => $value !== null && $value !== '');
+
+        return redirect(route('admin', $query) . '#stany-magazynowe');
+    }
+
+    private function validateStockRedirectInput(Request $request): void
+    {
+        $request->validate([
+            'stock_view' => ['nullable', Rule::in(['low', 'archived'])],
+            'low_stock_threshold' => ['nullable', 'integer', 'min:0', 'max:999'],
+            'archival_date' => ['nullable', Rule::in(['all', 'today', '7', '30', '90'])],
+            'stock_search' => ['nullable', 'string', 'max:100'],
+        ]);
+    }
+
+    private function likePattern(string $value): string
+    {
+        return '%' . addcslashes(mb_strtolower($value), '\\%_') . '%';
     }
 
     private function usersPanelRedirect()

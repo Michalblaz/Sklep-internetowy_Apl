@@ -440,6 +440,7 @@ class ProfileController extends Controller
             ->join('products as p', 'p.id', '=', 'wi.product_id')
             ->leftJoin('brands as b', 'b.id', '=', 'p.brand_id')
             ->where('w.user_id', $userId)
+            ->where('p.isarchival', 0)
             ->orderBy('w.name')
             ->orderByDesc('p.id')
             ->get([

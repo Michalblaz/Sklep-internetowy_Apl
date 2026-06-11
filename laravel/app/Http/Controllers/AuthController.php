@@ -2,53 +2,79 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    // FORMULARZE
-    public function showLoginForm()
+    public function showLoginForm(): View
     {
         return view('auth.log_in');
     }
 
-    public function showSinginForm()
+    public function showSinginForm(): View
     {
         return view('auth.sing_in');
     }
 
-    // LOGIN
-    public function login(Request $request)
+    public function login(Request $request): RedirectResponse
     {
-        $data = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ], [
-            'email.required' => 'Email jest wymagany',
-            'email.email' => 'Podaj poprawny adres email',
-            'password.required' => 'Hasło jest wymagane',
+        $email = $request->input('email');
+
+        $request->merge([
+            'email' => is_string($email) ? Str::lower(trim($email)) : $email,
         ]);
+
+        $data = $request->validate([
+            'email' => ['required', 'string', 'email:rfc', 'max:254'],
+            'password' => ['required', 'string', 'max:255'],
+        ], [
+            'email.required' => 'Email jest wymagany.',
+            'email.email' => 'Podaj poprawny adres email.',
+            'password.required' => 'Hasło jest wymagane.',
+        ]);
+
+        $throttleKey = $this->loginThrottleKey($data['email'], $request->ip());
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            throw ValidationException::withMessages([
+                'email' => "Zbyt wiele prób logowania. Spróbuj ponownie za {$seconds} sekund.",
+            ]);
+        }
 
         $user = User::where('email', $data['email'])->first();
 
-        if (!$user || !Hash::check($data['password'], $user->password_hash)) {
+        if (! $user || ! Hash::check($data['password'], $user->password_hash)) {
+            RateLimiter::hit($throttleKey, 60);
+
             return back()
-                ->withErrors(['email' => 'Nieprawidłowy email lub hasło'])
-                ->withInput();
+                ->withErrors(['email' => 'Nieprawidłowy email lub hasło.'])
+                ->withInput($request->only('email'));
         }
 
         $blockedAccountMessage = $this->blockedAccountMessage($user);
 
         if ($blockedAccountMessage !== null) {
+            RateLimiter::hit($throttleKey, 60);
+
             return back()
                 ->withErrors(['account' => $blockedAccountMessage])
                 ->withInput($request->only('email'));
         }
 
+        RateLimiter::clear($throttleKey);
         Auth::login($user);
         $request->session()->regenerate();
 
@@ -56,48 +82,56 @@ class AuthController extends Controller
             ->with('success', 'Zalogowano pomyślnie!');
     }
 
-    // REGISTER
-    public function register(Request $request)
+    public function register(Request $request): RedirectResponse
     {
-        $data = $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users'],
-            'phone' => ['nullable', 'string'],
-            'password' => ['required', 'min:6', 'confirmed'],
-        ], [
-            'first_name.required' => 'Imię jest wymagane',
-            'first_name.max' => 'Imię może mieć maksymalnie 255 znaków',
+        $email = $request->input('email');
+        $firstName = $request->input('first_name');
+        $lastName = $request->input('last_name');
+        $phone = $request->input('phone');
 
-            'last_name.required' => 'Nazwisko jest wymagane',
-            'last_name.max' => 'Nazwisko może mieć maksymalnie 255 znaków',
-
-            'email.required' => 'Email jest wymagany',
-            'email.email' => 'Podaj poprawny adres email',
-            'email.unique' => 'Ten email jest już zajęty',
-
-            'password.required' => 'Hasło jest wymagane',
-            'password.min' => 'Hasło musi mieć minimum 6 znaków',
-            'password.confirmed' => 'Hasła muszą być takie same',
+        $request->merge([
+            'email' => is_string($email) ? Str::lower(trim($email)) : $email,
+            'first_name' => is_string($firstName) ? trim($firstName) : $firstName,
+            'last_name' => is_string($lastName) ? trim($lastName) : $lastName,
+            'phone' => is_string($phone) && trim($phone) !== '' ? trim($phone) : null,
         ]);
 
-        $user = User::create([
+        $data = $request->validate([
+            'first_name' => ['required', 'string', 'min:2', 'max:100', "regex:/^[\\pL\\pM '\\-]+$/u"],
+            'last_name' => ['required', 'string', 'min:2', 'max:100', "regex:/^[\\pL\\pM '\\-]+$/u"],
+            'email' => ['required', 'string', 'email:rfc', 'max:254', 'unique:users,email'],
+            'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+() .-]+$/'],
+            'password' => ['required', 'string', 'confirmed', 'max:255', Password::min(8)->letters()->numbers()],
+        ], [
+            'first_name.required' => 'Imię jest wymagane.',
+            'first_name.regex' => 'Imię zawiera niedozwolone znaki.',
+            'last_name.required' => 'Nazwisko jest wymagane.',
+            'last_name.regex' => 'Nazwisko zawiera niedozwolone znaki.',
+            'email.required' => 'Email jest wymagany.',
+            'email.email' => 'Podaj poprawny adres email.',
+            'email.unique' => 'Ten email jest już zajęty.',
+            'phone.regex' => 'Podaj poprawny numer telefonu.',
+            'password.required' => 'Hasło jest wymagane.',
+            'password.confirmed' => 'Hasła muszą być takie same.',
+        ]);
+
+        $user = DB::transaction(fn () => User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
-            'phone' => $data['phone'] ?? null,
+            'phone' => $data['phone'] ?: null,
             'password_hash' => Hash::make($data['password']),
             'is_Admin' => false,
-        ]);
+        ]));
 
         Auth::login($user);
+        $request->session()->regenerate();
 
         return redirect('/')
             ->with('success', 'Konto zostało utworzone!');
     }
 
-    // LOGOUT
-    public function logout(Request $request)
+    public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
 
@@ -114,7 +148,7 @@ class AuthController extends Controller
             ->orderByDesc('id')
             ->first(['end_time']);
 
-        if (!$latestBan) {
+        if (! $latestBan) {
             return null;
         }
 
@@ -128,13 +162,18 @@ class AuthController extends Controller
         }
 
         try {
-            if (now()->lt(\Carbon\Carbon::parse($endTime))) {
+            if (now()->lt(Carbon::parse($endTime))) {
                 return 'Konto jest zawieszone.';
             }
-        } catch (\Throwable $exception) {
+        } catch (\Throwable) {
             return null;
         }
 
         return null;
+    }
+
+    private function loginThrottleKey(string $email, string $ip): string
+    {
+        return 'login|' . Str::transliterate(Str::lower($email)) . '|' . $ip;
     }
 }

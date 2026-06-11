@@ -36,6 +36,8 @@
                     maxlength="100"
                     autocomplete="off"
                     data-suggestions-url="{{ route('wyszukaj.suggestions') }}"
+                    data-minimum-length="2"
+                    data-request-delay="1000"
                     class="w-full px-4 py-2 rounded-full bg-purple-900/40 border border-purple-500/40 text-white placeholder:text-white/40 focus:border-purple-400 outline-none"
                 >
                 <div

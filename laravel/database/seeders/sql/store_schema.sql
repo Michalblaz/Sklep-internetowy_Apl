@@ -525,7 +525,9 @@ CREATE TABLE public.products (
     promo_price numeric(10,2),
     stock_quantity integer DEFAULT 0,
     power_draw_w integer DEFAULT 0,
-    image_url text
+    image_url text,
+    isarchival smallint DEFAULT 0 NOT NULL,
+    archivaldate timestamp without time zone
 );
 
 

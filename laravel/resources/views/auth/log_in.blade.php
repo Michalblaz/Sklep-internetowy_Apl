@@ -29,7 +29,7 @@
             </div>
         @endif
 
-        <form class="w-full flex flex-col gap-6 -ml-30" action="/log_in" method="POST">
+        <form class="w-full flex flex-col gap-6 -ml-30" action="{{ route('log_in') }}" method="POST">
             @csrf
 
             <div class="flex items-center">
@@ -38,6 +38,8 @@
                 </label>
                 <input type="email" id="email" name="email"
                        value="{{ old('email') }}"
+                       maxlength="254"
+                       autocomplete="email"
                        class="flex-1 bg-gray-200 text-gray-900 rounded-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-blue-500 font-sans"
                        required>
             </div>
@@ -47,6 +49,8 @@
                     Hasło:
                 </label>
                 <input type="password" id="password" name="password"
+                       maxlength="255"
+                       autocomplete="current-password"
                        class="flex-1 bg-gray-200 text-gray-900 rounded-sm px-4 py-3 focus:outline-none focus:ring-1 focus:ring-blue-500 font-sans"
                        required>
             </div>
@@ -61,7 +65,7 @@
                     ZALOGUJ
                 </button>
 
-                <a href="/sing_in"
+                <a href="{{ route('sing_in') }}"
                 class="font-sci-fi text-white text-center text-sm bg-purple-900/40 border-2 border-purple-500/50 rounded-xl
                         px-10 py-4 min-w-[180px]
                         shadow-[0_0_25px_rgba(168,85,247,0.5)]

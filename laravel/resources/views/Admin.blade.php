@@ -249,36 +249,86 @@
             ></div>
             @if(request('action') !== 'add-product')
             <section id="stany-magazynowe" class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div class="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
                     <div>
-                        <h2 class="text-purple-400 text-xl font-bruno">Kończące się modele</h2>
-                        <p class="text-sm text-gray-400">Produkty, których stan magazynowy spadł do ustawionego progu lub mniej.</p>
+                        <h2 class="text-purple-400 text-xl font-bruno">
+                            {{ $stockView === 'archived' ? 'Archiwalne modele' : 'Kończące się modele' }}
+                        </h2>
+                        <p class="text-sm text-gray-400">
+                            {{ $stockView === 'archived'
+                                ? 'Produkty wyłączone z publicznej oferty sklepu.'
+                                : 'Produkty, których stan magazynowy spadł do ustawionego progu lub mniej.' }}
+                        </p>
                     </div>
-                    <form action="{{ route('admin') }}#stany-magazynowe" method="GET" class="flex flex-wrap items-end gap-3">
-                        <div>
-                            <label for="low_stock_threshold" class="mb-2 block text-[10px] uppercase tracking-[0.25em] text-gray-500">
-                                Próg bazowy: 5 szt.
-                            </label>
-                            <input
-                                id="low_stock_threshold"
-                                name="low_stock_threshold"
-                                type="number"
-                                min="0"
-                                max="999"
-                                value="{{ $lowStockThreshold }}"
-                                class="w-28 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white outline-none focus:border-amber-300/60"
-                            >
-                        </div>
-                        <button
-                            type="submit"
-                            class="rounded-xl border border-amber-300/25 bg-amber-500/10 px-4 py-2 text-sm text-amber-200 transition hover:bg-amber-500/20"
+
+                    <div class="flex rounded-2xl border border-white/10 bg-black/30 p-1">
+                        <a
+                            href="{{ route('admin', ['stock_view' => 'low', 'low_stock_threshold' => $lowStockThreshold, 'stock_search' => $stockSearch]) }}#stany-magazynowe"
+                            class="rounded-xl px-4 py-2 text-sm font-bold transition {{ $stockView === 'low' ? 'bg-amber-500/20 text-amber-200 shadow-[0_0_18px_rgba(245,158,11,0.18)]' : 'text-gray-400 hover:bg-white/5 hover:text-white' }}"
                         >
-                            Zmień próg
-                        </button>
-                    </form>
+                            Kończące się
+                        </a>
+                        <a
+                            href="{{ route('admin', ['stock_view' => 'archived', 'archival_date' => $archivalDateFilter, 'stock_search' => $stockSearch]) }}#stany-magazynowe"
+                            class="rounded-xl px-4 py-2 text-sm font-bold transition {{ $stockView === 'archived' ? 'bg-purple-500/20 text-purple-200 shadow-[0_0_18px_rgba(168,85,247,0.2)]' : 'text-gray-400 hover:bg-white/5 hover:text-white' }}"
+                        >
+                            Archiwalne
+                        </a>
+                    </div>
                 </div>
 
-                @if($lowStockProducts->isEmpty())
+                <form action="{{ route('admin') }}#stany-magazynowe" method="GET" class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                    <input type="hidden" name="stock_view" value="{{ $stockView }}">
+
+                    <div class="grid gap-4 lg:grid-cols-[1fr_0.7fr_auto_auto] lg:items-end">
+                        <div>
+                            <label for="stock_search" class="mb-2 block text-[10px] uppercase tracking-[0.25em] text-gray-500">
+                                Nazwa produktu lub kategoria
+                            </label>
+                            <input
+                                id="stock_search"
+                                name="stock_search"
+                                type="search"
+                                maxlength="100"
+                                value="{{ $stockSearch }}"
+                                placeholder="np. Ryzen lub Procesory"
+                                class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-cyan-300/60 focus:bg-cyan-400/5"
+                            >
+                        </div>
+
+                        @if($stockView === 'archived')
+                            <div>
+                                <label for="archival_date" class="mb-2 block text-[10px] uppercase tracking-[0.25em] text-gray-500">Data archiwizacji</label>
+                                <select id="archival_date" name="archival_date" class="admin-filter-select w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none transition focus:border-purple-300/60">
+                                    <option value="all" @selected($archivalDateFilter === 'all')>Wszystkie daty</option>
+                                    <option value="today" @selected($archivalDateFilter === 'today')>Dzisiaj</option>
+                                    <option value="7" @selected($archivalDateFilter === '7')>Ostatnie 7 dni</option>
+                                    <option value="30" @selected($archivalDateFilter === '30')>Ostatnie 30 dni</option>
+                                    <option value="90" @selected($archivalDateFilter === '90')>Ostatnie 90 dni</option>
+                                </select>
+                            </div>
+                        @else
+                            <div>
+                                <label for="low_stock_threshold_new" class="mb-2 block text-[10px] uppercase tracking-[0.25em] text-gray-500">Próg bazowy: 5 szt.</label>
+                                <input id="low_stock_threshold_new" name="low_stock_threshold" type="number" min="0" max="999" value="{{ $lowStockThreshold }}" class="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none focus:border-amber-300/60">
+                            </div>
+                        @endif
+
+                        <button type="submit" class="rounded-xl border border-purple-300/25 bg-purple-600/40 px-5 py-3 text-sm font-bold text-white transition hover:bg-purple-500/60">
+                            Szukaj
+                        </button>
+
+                        <a href="{{ route('admin', ['stock_view' => $stockView]) }}#stany-magazynowe" class="rounded-xl border border-cyan-300/20 bg-cyan-500/10 px-5 py-3 text-center text-sm font-bold text-cyan-200 transition hover:bg-cyan-500/20">
+                            Reset
+                        </a>
+                    </div>
+                </form>
+
+                @if($lowStockProducts->isEmpty() && $stockView === 'archived')
+                    <div class="rounded-2xl border border-purple-400/20 bg-purple-500/10 p-8 text-center text-purple-200">
+                        Nie znaleziono produktów archiwalnych dla wybranych filtrów.
+                    </div>
+                @elseif($lowStockProducts->isEmpty())
                     <div class="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-8 text-center text-emerald-200">
                         Wszystkie modele mają bezpieczny stan magazynowy.
                     </div>
@@ -287,9 +337,10 @@
                         @foreach($lowStockProducts as $product)
                             @php
                                 $isOutOfStock = (int) $product->stock_quantity === 0;
+                                $isArchived = (bool) $product->isarchival;
                             @endphp
 
-                            <div class="rounded-2xl border {{ $isOutOfStock ? 'border-red-400/25 bg-red-500/10' : 'border-amber-400/25 bg-amber-500/10' }} p-5">
+                            <div class="rounded-2xl border {{ $isArchived ? 'border-purple-400/25 bg-purple-500/10' : ($isOutOfStock ? 'border-red-400/25 bg-red-500/10' : 'border-amber-400/25 bg-amber-500/10') }} p-5">
                                 <div class="flex items-start justify-between gap-4">
                                     <div>
                                         <p class="text-white font-semibold leading-snug">{{ $product->name }}</p>
@@ -301,21 +352,50 @@
                                         </p>
                                     </div>
 
-                                    <span class="shrink-0 rounded-full border px-3 py-1 text-xs font-bold uppercase {{ $isOutOfStock ? 'border-red-300/30 text-red-200 bg-red-500/15' : 'border-amber-300/30 text-amber-200 bg-amber-500/15' }}">
+                                    @if($isArchived)
+                                        <span class="shrink-0 rounded-full border border-purple-300/30 bg-purple-500/15 px-3 py-1 text-xs font-bold uppercase text-purple-200">
+                                            Archiwalny
+                                        </span>
+                                    @endif
+                                    <span class="{{ $isArchived ? 'hidden' : '' }} shrink-0 rounded-full border px-3 py-1 text-xs font-bold uppercase {{ $isOutOfStock ? 'border-red-300/30 text-red-200 bg-red-500/15' : 'border-amber-300/30 text-amber-200 bg-amber-500/15' }}">
                                         {{ $isOutOfStock ? 'Brak' : 'Mało' }}
                                     </span>
                                 </div>
 
                                 <div class="mt-5 flex items-end justify-between gap-4">
                                     <div>
-                                        <p class="text-xs uppercase tracking-[0.25em] text-gray-500">Na stanie</p>
-                                        <p class="text-3xl text-white">{{ number_format($product->stock_quantity) }}</p>
+                                        @if($isArchived)
+                                            <p class="text-xs uppercase tracking-[0.2em] text-gray-500">Data archiwizacji</p>
+                                            <p class="mt-1 text-sm font-bold text-purple-200">{{ $product->archivaldate?->format('d.m.Y H:i') ?? 'Brak daty' }}</p>
+                                        @else
+                                            <p class="text-xs uppercase tracking-[0.25em] text-gray-500">Na stanie</p>
+                                            <p class="text-3xl text-white">{{ number_format($product->stock_quantity) }}</p>
+                                        @endif
                                     </div>
 
-                                    <a href="{{ route('admin', ['action' => 'add-product', 'edit_id' => $product->id]) }}"
-                                       class="rounded-xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-200 transition hover:bg-cyan-500/20">
-                                        Edytuj
-                                    </a>
+                                    <div class="flex flex-wrap justify-end gap-2">
+                                        <a href="{{ route('admin', ['action' => 'add-product', 'edit_id' => $product->id]) }}"
+                                           class="rounded-xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-200 transition hover:bg-cyan-500/20">
+                                            Edytuj
+                                        </a>
+
+                                        <form
+                                            action="{{ $isArchived ? route('admin.products.restore', $product->id) : route('admin.products.archive', $product->id) }}"
+                                            method="POST"
+                                            data-admin-confirm
+                                            data-confirm-title="{{ $isArchived ? 'Przywrócić produkt?' : 'Przenieść produkt do archiwum?' }}"
+                                            data-confirm-message="{{ $isArchived ? 'Produkt ponownie pojawi się w publicznej ofercie sklepu.' : 'Produkt zniknie z publicznej oferty, koszyków i list obserwowanych.' }}"
+                                        >
+                                            @csrf
+                                            <input type="hidden" name="stock_view" value="{{ $stockView }}">
+                                            <input type="hidden" name="low_stock_threshold" value="{{ $lowStockThreshold }}">
+                                            <input type="hidden" name="archival_date" value="{{ $archivalDateFilter }}">
+                                            <input type="hidden" name="stock_search" value="{{ $stockSearch }}">
+                                            <button type="submit" class="rounded-xl border px-4 py-2 text-sm transition {{ $isArchived ? 'border-emerald-400/25 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20' : 'border-purple-400/25 bg-purple-500/10 text-purple-200 hover:bg-purple-500/20' }}">
+                                                {{ $isArchived ? 'Przywróć' : 'Archiwizuj' }}
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach

@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class WyszukajWitrynaController extends Controller
 {
@@ -18,21 +19,22 @@ class WyszukajWitrynaController extends Controller
 
         $search = trim($validated['search'] ?? '');
 
-        if ($search === '') {
+        if (mb_strlen($search) < 2) {
             return response()->json([]);
         }
 
+        $searchPattern = $this->likePattern($search);
         $likeOperator = config('database.default') === 'pgsql' ? 'ILIKE' : 'LIKE';
 
         $suggestions = Product::query()
-            ->where(function ($query) use ($search, $likeOperator) {
-                $query->where('name', $likeOperator, "%{$search}%")
-                    ->orWhereHas('category', function ($categoryQuery) use ($search, $likeOperator) {
-                        $categoryQuery->where('name', $likeOperator, "%{$search}%");
+            ->where(function ($query) use ($searchPattern, $likeOperator) {
+                $query->where('name', $likeOperator, $searchPattern)
+                    ->orWhereHas('category', function ($categoryQuery) use ($searchPattern, $likeOperator) {
+                        $categoryQuery->where('name', $likeOperator, $searchPattern);
                     });
             })
             ->orderBy('name')
-            ->limit(5)
+            ->limit(10)
             ->pluck('name');
 
         return response()->json($suggestions);
@@ -41,16 +43,16 @@ class WyszukajWitrynaController extends Controller
     public function PrzeniesNaStrone(Request $request)
     {
         $validated = $request->validate([ // validacja ogracznica typy danych  blokuje xss oraz dziwne typy , okreslamy trukre jaki moga byc typy przekzane
-            'search' => ['nullable', 'string', 'max:100'],
+            'search' => ['nullable', 'string', 'min:2', 'max:100'],
             'sort' => ['nullable', Rule::in(['newest', 'price_asc', 'price_desc', 'name_asc'])],
-            'brands' => ['nullable', 'array'],
-            'brands.*' => ['integer', 'exists:brands,id'],
-            'attrs' => ['nullable', 'array'],
-            'attrs.*' => ['nullable', 'array'],
-            'attrs.*.*' => ['integer', 'exists:attribute_values,id'],
-            'min_price' => ['nullable', 'numeric', 'min:0'],
-            'max_price' => ['nullable', 'numeric', 'min:0'],
-            'page' => ['nullable', 'integer', 'min:1'],
+            'brands' => ['nullable', 'array', 'max:50'],
+            'brands.*' => ['integer', 'distinct', 'exists:brands,id'],
+            'attrs' => ['nullable', 'array', 'max:100'],
+            'attrs.*' => ['nullable', 'array', 'max:100'],
+            'attrs.*.*' => ['integer', 'distinct', 'exists:attribute_values,id'],
+            'min_price' => ['nullable', 'numeric', 'min:0', 'max:99999999'],
+            'max_price' => ['nullable', 'numeric', 'min:0', 'max:99999999'],
+            'page' => ['nullable', 'integer', 'min:1', 'max:10000'],
         ]);
 
         if (
@@ -64,7 +66,16 @@ class WyszukajWitrynaController extends Controller
 
         $search = trim($validated['search'] ?? '');
         $selectedBrands = $validated['brands'] ?? [];
-        $selectedAttrs = $validated['attrs'] ?? [];
+        $rawSelectedAttrs = $validated['attrs'] ?? [];
+        $selectedAttrs = collect($rawSelectedAttrs)
+            ->filter(fn ($values, $attributeId) => ctype_digit((string) $attributeId))
+            ->all();
+
+        if (count($selectedAttrs) !== count($rawSelectedAttrs)) {
+            throw ValidationException::withMessages([
+                'attrs' => 'Filtry atrybutów mają nieprawidłowy format.',
+            ]);
+        }
         $sort = $validated['sort'] ?? 'newest';
         $likeOperator = config('database.default') === 'pgsql' ? 'ILIKE' : 'LIKE';
 
@@ -156,17 +167,24 @@ class WyszukajWitrynaController extends Controller
             return;
         }
 
-        $query->where(function ($q) use ($search, $likeOperator) {
-            $q->where('name', $likeOperator, "%{$search}%")
-                ->orWhereHas('brand', function ($brandQuery) use ($search, $likeOperator) { // laravel budowanie sql a nie podaje recznie
-                    $brandQuery->where('name', $likeOperator, "%{$search}%");
+        $searchPattern = $this->likePattern($search);
+
+        $query->where(function ($q) use ($searchPattern, $likeOperator) {
+            $q->where('name', $likeOperator, $searchPattern)
+                ->orWhereHas('brand', function ($brandQuery) use ($searchPattern, $likeOperator) { // laravel budowanie sql a nie podaje recznie
+                    $brandQuery->where('name', $likeOperator, $searchPattern);
                 })
-                ->orWhereHas('category', function ($categoryQuery) use ($search, $likeOperator) {
-                    $categoryQuery->where('name', $likeOperator, "%{$search}%");
+                ->orWhereHas('category', function ($categoryQuery) use ($searchPattern, $likeOperator) {
+                    $categoryQuery->where('name', $likeOperator, $searchPattern);
                 })
-                ->orWhereHas('attributeValues', function ($attributeQuery) use ($search, $likeOperator) {
-                    $attributeQuery->where('value', $likeOperator, "%{$search}%");
+                ->orWhereHas('attributeValues', function ($attributeQuery) use ($searchPattern, $likeOperator) {
+                    $attributeQuery->where('value', $likeOperator, $searchPattern);
                 });
         });
+    }
+
+    private function likePattern(string $search): string
+    {
+        return '%' . addcslashes($search, '\\%_') . '%';
     }
 }

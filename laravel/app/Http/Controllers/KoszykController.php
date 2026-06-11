@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use App\Models\Product;
 
 class KoszykController extends Controller
@@ -23,8 +24,12 @@ class KoszykController extends Controller
     public function add(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|integer|exists:products,id',
-            'quantity' => 'integer|min:1'
+            'product_id' => [
+                'required',
+                'integer',
+                Rule::exists('products', 'id')->where(fn ($query) => $query->where('isarchival', 0)),
+            ],
+            'quantity' => 'integer|min:1',
         ]);
         $recommended = \App\Models\Product::getPersonalizedRecommendations(4);
         $productId = $request->input('product_id');
@@ -81,6 +86,7 @@ class KoszykController extends Controller
             $items = DB::table('cart_items')
                 ->join('products', 'cart_items.product_id', '=', 'products.id')
                 ->where('cart_items.user_id', auth()->id())
+                ->where('products.isarchival', 0)
                 ->select(
                     'products.id',
                     'products.name',
@@ -118,6 +124,7 @@ class KoszykController extends Controller
             $productIds = array_keys($cart);
             $products = \DB::table('products')
                 ->whereIn('id', $productIds)
+                ->where('isarchival', 0)
                 ->select('id', 'name', 'base_price', 'promo_price', 'image_url', 'stock_quantity as stock')
                 ->get()
                 ->keyBy('id');
@@ -136,8 +143,11 @@ class KoszykController extends Controller
                     $item['price']       = $effectivePrice;
                     $item['stock']       = (int) $p->stock;
                     $item['image_url']   = $p->image_url;
+                } else {
+                    unset($cart[$productId]);
                 }
             }
+            unset($item);
             session(['cart' => $cart]);
         }
         return $cart;
@@ -197,7 +207,10 @@ class KoszykController extends Controller
         $quantity = (int) $request->input('quantity');
 
         // Sprawdzamy dostępność w magazynie
-        $product = DB::table('products')->where('id', $productId)->first();
+        $product = DB::table('products')
+            ->where('id', $productId)
+            ->where('isarchival', 0)
+            ->first();
         if (!$product) {
             return response()->json(['error' => 'Produkt nie istnieje'], 404);
         }

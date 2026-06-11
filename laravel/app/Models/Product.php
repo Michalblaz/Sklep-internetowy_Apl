@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Auth;
@@ -21,8 +22,25 @@ class Product extends Model
         'promo_price',
         'stock_quantity',
         'power_draw_w',
-        'image_url'
+        'image_url',
+        'isarchival',
+        'archivaldate',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'isarchival' => 'boolean',
+            'archivaldate' => 'datetime',
+        ];
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('active', function (Builder $builder) {
+            $builder->where($builder->qualifyColumn('isarchival'), 0);
+        });
+    }
 
     public static function attributeCategoryPivotColumn(): string
     {
@@ -77,6 +95,7 @@ class Product extends Model
             $recentCategories = DB::table('product_browsing_history')
                 ->join('products', 'product_browsing_history.product_id', '=', 'products.id')
                 ->where('product_browsing_history.user_id', $user->id)
+                ->where('products.isarchival', 0)
                 ->latest('product_browsing_history.viewed_at')
                 ->take(20)
                 ->pluck('products.category_id');

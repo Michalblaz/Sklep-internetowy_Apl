@@ -52,10 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     input.addEventListener('input', () => {
         clearTimeout(timeoutId);
+        controller?.abort();
 
         const phrase = input.value.trim();
+        const minimumLength = Number(input.dataset.minimumLength || 2);
+        const requestDelay = Number(input.dataset.requestDelay || 1000);
 
-        if (phrase.length < 1) {
+        if (phrase.length < minimumLength) {
             hideSuggestions(box);
             return;
         }
@@ -85,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     hideSuggestions(box);
                 }
             }
-        }, 180);
+        }, requestDelay);
     });
 
     input.addEventListener('keydown', (event) => {
