@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -64,7 +65,13 @@ class AuthController extends Controller
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users'],
             'phone' => ['nullable', 'string'],
-            'password' => ['required', 'min:6', 'confirmed'],
+            'password' => [
+                'required',
+                'string',
+                'max:255',
+                'confirmed',
+                Password::min(8)->mixedCase()->numbers(),
+            ],
         ], [
             'first_name.required' => 'Imię jest wymagane',
             'first_name.max' => 'Imię może mieć maksymalnie 255 znaków',
@@ -77,7 +84,10 @@ class AuthController extends Controller
             'email.unique' => 'Ten email jest już zajęty',
 
             'password.required' => 'Hasło jest wymagane',
-            'password.min' => 'Hasło musi mieć minimum 6 znaków',
+            'password.min' => 'Hasło musi mieć minimum 8 znaków',
+            'password.max' => 'Hasło może mieć maksymalnie 255 znaków',
+            'password.mixed' => 'Hasło musi zawierać małą i wielką literę',
+            'password.numbers' => 'Hasło musi zawierać co najmniej jedną cyfrę',
             'password.confirmed' => 'Hasła muszą być takie same',
         ]);
 
@@ -91,6 +101,7 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
+        $request->session()->regenerate();
 
         return redirect('/')
             ->with('success', 'Konto zostało utworzone!');

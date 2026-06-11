@@ -68,20 +68,21 @@ use App\Livewire\Admin\ProductForm;
 
      // Logowanie / Rejestracja
     Route::get('/log_in', [AuthController::class, 'showLoginForm'])->name('log_in');
-    Route::post('/log_in', [AuthController::class, 'login']);
+    Route::post('/log_in', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
     Route::get('/sing_in', [AuthController::class, 'showSinginForm'])->name('sing_in');
-    Route::post('/sing_in', [AuthController::class, 'register']);
+    Route::post('/sing_in', [AuthController::class, 'register'])->middleware('throttle:5,1');
 
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
 
     // Profil
     Route::middleware(['auth'])->group(function () {
         Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
-        Route::post('/profil', [ProfileController::class, 'update'])->name('profil.update');
+        Route::post('/profil', [ProfileController::class, 'update'])->middleware('throttle:10,1')->name('profil.update');
         Route::post('/profil/reklamacje', [ProfileController::class, 'storeComplaint'])->name('profil.complaints.store');
         Route::post('/profil/reklamacje/{complaintId}/odpowiedz', [ProfileController::class, 'replyComplaint'])
             ->whereNumber('complaintId')
+            ->middleware('throttle:10,1')
             ->name('profil.complaints.reply');
         Route::post('/profil/lista/{productId}/do-koszyka', [ProfileController::class, 'moveObservedToCart'])
             ->whereNumber('productId')
