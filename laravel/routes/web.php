@@ -71,14 +71,10 @@ use App\Livewire\Admin\ProductForm;
      });
 
      // Logowanie / Rejestracja
-    Route::get('/log_in', [AuthController::class, 'showLoginForm'])->name('log_in');
-    Route::post('/log_in', [AuthController::class, 'login'])->middleware('throttle:5,1');
     Route::middleware('guest')->group(function () {
         Route::get('/log_in', [AuthController::class, 'showLoginForm'])->name('log_in');
-        Route::post('/log_in', [AuthController::class, 'login'])->middleware('throttle:20,1');
+        Route::post('/log_in', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
-    Route::get('/sing_in', [AuthController::class, 'showSinginForm'])->name('sing_in');
-    Route::post('/sing_in', [AuthController::class, 'register'])->middleware('throttle:5,1');
         Route::get('/sing_in', [AuthController::class, 'showSinginForm'])->name('sing_in');
         Route::post('/sing_in', [AuthController::class, 'register'])->middleware('throttle:10,1');
     });
@@ -94,13 +90,7 @@ use App\Livewire\Admin\ProductForm;
             ->whereNumber('complaintId')
             ->middleware('throttle:10,1')
             ->name('profil.complaints.reply');
-        Route::post('/profil/lista/{productId}/do-koszyka', [ProfileController::class, 'moveObservedToCart'])
-            ->whereNumber('productId')
-            ->name('profil.saved.move-to-cart');
         Route::post('/profil/lista/{wishlistId}/{productId}/usun', [ProfileController::class, 'removeObserved'])
             ->where(['wishlistId' => '[0-9]+', 'productId' => '[0-9]+'])
             ->name('profil.saved.remove');
-        Route::post('/profil/lista/{wishlistId}/{productId}/do-koszyka', [ProfileController::class, 'moveObservedToCart'])
-            ->whereNumber(['wishlistId', 'productId'])
-            ->name('profil.saved.move-to-cart');
         });
