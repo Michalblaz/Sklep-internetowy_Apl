@@ -86,8 +86,22 @@
 
 
                 <div id="password-section" class="hidden rounded-[1.8rem] border border-white/20 bg-slate-950/15 p-4">
-                    <h3 class="mb-4 font-['Bruno_Ace'] text-xl text-white">Zmień hasło</h3>
+                    <h3 class="mb-4 font-['Bruno_Ace'] text-xl text-white">Zabezpieczenia konta</h3>
                     <div class="space-y-4">
+                        <div>
+                            <label for="current_password" class="mb-2 block text-sm text-cyan-50">
+                                Aktualne hasło
+                                <span class="text-white/55">(wymagane przy zmianie hasła lub e-maila)</span>
+                            </label>
+                            <input
+                                id="current_password"
+                                name="current_password"
+                                type="password"
+                                autocomplete="current-password"
+                                class="w-full rounded-full border border-white/15 bg-[linear-gradient(90deg,rgba(123,97,255,0.55),rgba(142,65,255,0.8))] px-4 py-3 text-sm text-white placeholder:text-white/55 outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/30"
+                            >
+                        </div>
+
                         <div>
                             <label for="password" class="mb-2 block text-sm text-cyan-50">Nowe hasło</label>
                             <input
@@ -97,6 +111,7 @@
                                 autocomplete="new-password"
                                 class="w-full rounded-full border border-white/15 bg-[linear-gradient(90deg,rgba(123,97,255,0.55),rgba(142,65,255,0.8))] px-4 py-3 text-sm text-white placeholder:text-white/55 outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/30"
                             >
+                            <p class="mt-2 text-xs text-white/55">Minimum 8 znaków, mała i wielka litera oraz cyfra.</p>
                         </div>
 
                         <div>
