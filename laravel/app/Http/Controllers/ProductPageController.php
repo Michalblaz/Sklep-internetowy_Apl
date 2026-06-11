@@ -163,11 +163,14 @@ class ProductPageController extends Controller
 
         $validated = $request->validate([
             'rating' => ['required', 'integer', 'between:1,5'],
-            'comment' => ['nullable', 'string'],
+            'comment' => ['nullable', 'string', 'max:' . ReviewComment::MAX_LENGTH],
         ], [
             'rating.required' => 'Wybierz ocenę.',
             'rating.between' => 'Ocena musi być w zakresie od 1 do 5.',
+            'comment.max' => 'Opinia może mieć maksymalnie ' . ReviewComment::MAX_LENGTH . ' znaków.',
         ]);
+
+        $comment = ReviewComment::normalize($validated['comment'] ?? null);
 
         $existingReview = DB::table('reviews')
             ->where('product_id', $product->id)
@@ -179,7 +182,7 @@ class ProductPageController extends Controller
                 ->where('id', $existingReview->id)
                 ->update([
                     'rating' => $validated['rating'],
-                    'comment' => $validated['comment'] ?? '',
+                    'comment' => $comment,
                     'created_at' => now(),
                 ]);
         } else {
@@ -187,7 +190,7 @@ class ProductPageController extends Controller
                 'product_id' => $product->id,
                 'user_id' => $request->user()->id,
                 'rating' => $validated['rating'],
-                'comment' => $validated['comment'] ?? '',
+                'comment' => $comment,
                 'created_at' => now(),
             ]);
         }
