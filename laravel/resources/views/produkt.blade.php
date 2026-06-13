@@ -29,7 +29,7 @@
     <section
         class="mx-auto flex w-full max-w-6xl flex-col gap-6 text-[#f2f4ff] max-md:text-[14px]"
         data-review-widget
-        data-reviews='@json($reviews)'
+        data-reviews="{{ \Illuminate\Support\Js::encode($reviews) }}"
     >
         @if (session('success'))
             <div class="rounded-[1.8rem] border border-emerald-400/40 bg-emerald-500/10 px-5 py-4 text-sm text-emerald-100" data-page-flash-success>
@@ -250,6 +250,7 @@
                     <textarea
                         name="comment"
                         rows="6"
+                        maxlength="{{ \App\Support\ReviewComment::MAX_LENGTH }}"
                         placeholder="Treść opinii..."
                         class="w-full rounded-xl border border-white/25 bg-white/4 px-4 py-3 text-white placeholder:text-white/45 focus:outline-none"
                     >{{ old('comment', $currentUserReview->comment ?? '') }}</textarea>

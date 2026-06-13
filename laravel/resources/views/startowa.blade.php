@@ -93,7 +93,7 @@
             type="button"
             data-carousel="promo"
             data-carousel-direction="-1"
-            class="absolute left-4 top-1/2 -translate-y-1/2 text-red-500 text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#ef4444] active:scale-90"
+            class="absolute left-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90"
             aria-label="Poprzednie promocje"
         >
             &#9664;
@@ -104,7 +104,7 @@
             type="button"
             data-carousel="promo"
             data-carousel-direction="1"
-            class="absolute right-4 top-1/2 -translate-y-1/2 text-red-500 text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#ef4444] active:scale-90"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-neon-blue text-5xl opacity-40 transition-all duration-300 hover:scale-110 hover:opacity-100 hover:drop-shadow-[0_0_10px_#22d3ee] active:scale-90"
             aria-label="Następne promocje"
         >
             &#9654;

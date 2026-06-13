@@ -93,13 +93,11 @@ function renderRecommendation(item) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const isSearchPage = document.getElementById('filter-form')
-        || document.getElementById('cartModal')
-        || document.getElementById('recommended-track');
+    const isSearchPage = document.getElementById('filter-form');
 
     if (!isSearchPage) return;
 
-    document.querySelectorAll('[data-carousel]').forEach((button) => {
+    document.querySelectorAll('[data-carousel][data-direction]').forEach((button) => {
         button.addEventListener('click', () => {
             moveCarousel(button.dataset.carousel, Number(button.dataset.direction || 0));
         });

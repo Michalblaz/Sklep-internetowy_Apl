@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -57,25 +58,51 @@ class ProfileController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $user = $request->user();
+        $passwordChanged = $request->filled('password');
+        $emailChanged = $request->input('email') !== $user->email;
+        $requiresCurrentPassword = $passwordChanged || $emailChanged;
 
         $validated = $request->validate([
             'first_name' => ['required', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
-            'phone' => ['nullable', 'string', 'max:20'],
+            'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\s()-]{7,20}$/'],
             'address_street' => ['nullable', 'string', 'max:255'],
-            'address_postal_code' => ['nullable', 'string', 'max:20'],
+            'address_postal_code' => ['nullable', 'string', 'regex:/^\d{2}-\d{3}$/'],
             'address_city' => ['nullable', 'string', 'max:100'],
-            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
+            'current_password' => [
+                Rule::requiredIf($requiresCurrentPassword),
+                'nullable',
+                'string',
+                'current_password:web',
+            ],
+            'password' => [
+                'nullable',
+                'string',
+                'max:255',
+                'confirmed',
+                Password::min(8)->mixedCase()->numbers(),
+            ],
         ], [
             'first_name.required' => 'Imię jest wymagane.',
             'last_name.required' => 'Nazwisko jest wymagane.',
             'email.required' => 'Adres e-mail jest wymagany.',
             'email.email' => 'Podaj poprawny adres e-mail.',
             'email.unique' => 'Ten adres e-mail jest już zajęty.',
-            'password.min' => 'Hasło musi mieć co najmniej 6 znaków.',
+            'phone.regex' => 'Podaj poprawny numer telefonu.',
+            'address_postal_code.regex' => 'Kod pocztowy musi mieć format 00-000.',
+            'current_password.required' => 'Podaj aktualne hasło, aby zmienić hasło lub adres e-mail.',
+            'current_password.current_password' => 'Aktualne hasło jest nieprawidłowe.',
+            'password.min' => 'Hasło musi mieć co najmniej 8 znaków.',
+            'password.max' => 'Hasło może mieć maksymalnie 255 znaków.',
+            'password.mixed' => 'Hasło musi zawierać małą i wielką literę.',
+            'password.numbers' => 'Hasło musi zawierać co najmniej jedną cyfrę.',
             'password.confirmed' => 'Hasło i powtórzone hasło muszą być takie same.',
         ]);
+
+        $passwordHash = $passwordChanged
+            ? Hash::make($validated['password'])
+            : $user->password_hash;
 
         DB::table('users')
             ->where('id', $user->id)
@@ -84,9 +111,7 @@ class ProfileController extends Controller
                 'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
                 'phone' => $validated['phone'] ?: null,
-                'password_hash' => filled($validated['password'] ?? null)
-                    ? Hash::make($validated['password'])
-                    : $user->password_hash,
+                'password_hash' => $passwordHash,
             ]);
 
         $this->upsertAddress($user->id, [
@@ -94,6 +119,11 @@ class ProfileController extends Controller
             'postal_code' => $validated['address_postal_code'] ?: null,
             'city' => $validated['address_city'] ?: null,
         ]);
+
+        if ($passwordChanged) {
+            $user->password_hash = $passwordHash;
+            $request->session()->regenerate();
+        }
 
         return redirect()
             ->route('profil')
@@ -161,24 +191,18 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-       $validated = $request->validate([
-            'customer_reply' => 'required|string'
+        $validated = $request->validate([
+            'customer_reply' => ['required', 'string', 'max:5000'],
         ], [
-            'customer_reply.required' => 'Wpisz treść odpowiedzi.'
-        ]);
-
-        DB::table('complaint_messages')->insert([
-            'complaint_id' => $complaintId,
-            'sender_type' => 'customer',
-            'message' => $validated['customer_reply'],
-            'created_at' => now(),
+            'customer_reply.required' => 'Wpisz treść odpowiedzi.',
+            'customer_reply.max' => 'Odpowiedź może mieć maksymalnie 5000 znaków.',
         ]);
 
         $complaint = DB::table('complaints as c')
             ->join('orders as o', 'o.id', '=', 'c.order_id')
             ->where('c.id', $complaintId)
             ->where('o.user_id', $user->id)
-            ->select('c.id')
+            ->select(['c.id', 'c.status'])
             ->first();
 
         if (!$complaint) {
@@ -187,12 +211,27 @@ class ProfileController extends Controller
                 ->with('error', 'Nie znaleziono zgłoszenia do odpowiedzi.');
         }
 
-        DB::table('complaints')
-            ->where('id', $complaintId)
-            ->update([
-                'status' => 'oczekujące',
-                'updated_at' => now(),
+        if ($complaint->status !== 'oczekujące') {
+            return redirect()
+                ->route('profil')
+                ->with('error', 'Nie można odpowiedzieć na zakończone zgłoszenie.');
+        }
+
+        DB::transaction(function () use ($complaintId, $validated) {
+            DB::table('complaint_messages')->insert([
+                'complaint_id' => $complaintId,
+                'sender_type' => 'customer',
+                'message' => $validated['customer_reply'],
+                'created_at' => now(),
             ]);
+
+            DB::table('complaints')
+                ->where('id', $complaintId)
+                ->update([
+                    'status' => 'oczekujące',
+                    'updated_at' => now(),
+                ]);
+        });
 
         return redirect()
             ->route('profil')
@@ -440,6 +479,7 @@ class ProfileController extends Controller
             ->join('products as p', 'p.id', '=', 'wi.product_id')
             ->leftJoin('brands as b', 'b.id', '=', 'p.brand_id')
             ->where('w.user_id', $userId)
+            ->where('p.isarchival', 0)
             ->orderBy('w.name')
             ->orderByDesc('p.id')
             ->get([

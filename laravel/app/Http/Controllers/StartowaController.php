@@ -10,14 +10,50 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class StartowaController extends Controller
 {
     public function startowa(Request $request)
     {
-        $selectedCategory = $request->query('category_id', $request->query('category'));
-        $selectedBrands = $request->input('brands', []);
-        $selectedAttrs = $request->input('attrs', []);
+        $validated = $request->validate([
+            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'category' => ['nullable', 'integer', 'exists:categories,id'],
+            'brands' => ['nullable', 'array', 'max:50'],
+            'brands.*' => ['integer', 'distinct', 'exists:brands,id'],
+            'attrs' => ['nullable', 'array', 'max:100'],
+            'attrs.*' => ['nullable', 'array', 'max:100'],
+            'attrs.*.*' => ['integer', 'distinct', 'exists:attribute_values,id'],
+            'min_price' => ['nullable', 'numeric', 'min:0', 'max:99999999'],
+            'max_price' => ['nullable', 'numeric', 'min:0', 'max:99999999'],
+            'min_rating' => ['nullable', Rule::in(['1', '2', '3', '4', '5'])],
+            'availability' => ['nullable', Rule::in(['in_stock', 'low_stock', 'out_of_stock'])],
+            'sort' => ['nullable', Rule::in(['newest', 'price_asc', 'price_desc', 'name_asc', 'rating_desc', 'stock_desc'])],
+            'page' => ['nullable', 'integer', 'min:1', 'max:10000'],
+        ]);
+
+        if (
+            isset($validated['min_price'], $validated['max_price'])
+            && (float) $validated['max_price'] < (float) $validated['min_price']
+        ) {
+            return back()
+                ->withErrors(['max_price' => 'Cena maksymalna nie może być mniejsza od minimalnej.'])
+                ->withInput();
+        }
+
+        $selectedCategory = $validated['category_id'] ?? $validated['category'] ?? null;
+        $selectedBrands = $validated['brands'] ?? [];
+        $rawSelectedAttrs = $validated['attrs'] ?? [];
+        $selectedAttrs = collect($rawSelectedAttrs)
+            ->filter(fn ($values, $attributeId) => ctype_digit((string) $attributeId))
+            ->all();
+
+        if (count($selectedAttrs) !== count($rawSelectedAttrs)) {
+            throw ValidationException::withMessages([
+                'attrs' => 'Filtry atrybutów mają nieprawidłowy format.',
+            ]);
+        }
 
         $products = Product::getPersonalizedRecommendations(20)
             ->sort(function ($firstProduct, $secondProduct) {
@@ -69,6 +105,7 @@ class StartowaController extends Controller
         }])->get();
         $brandsByCategory = Brand::query()
             ->join('products', 'brands.id', '=', 'products.brand_id')
+            ->where('products.isarchival', 0)
             ->select('brands.id', 'brands.name', 'products.category_id')
             ->distinct()
             ->orderBy('brands.name')
@@ -159,18 +196,18 @@ class StartowaController extends Controller
             $all_products->whereIn('brand_id', $selectedBrands);
         }
 
-        if ($request->filled('min_price')) {
-            $all_products->where('base_price', '>=', $request->min_price);
+        if (array_key_exists('min_price', $validated) && $validated['min_price'] !== null) {
+            $all_products->where('base_price', '>=', $validated['min_price']);
         }
 
-        if ($request->filled('max_price')) {
-            $all_products->where('base_price', '<=', $request->max_price);
+        if (array_key_exists('max_price', $validated) && $validated['max_price'] !== null) {
+            $all_products->where('base_price', '<=', $validated['max_price']);
         }
 
         $selectedRating = null;
 
-        if ($request->filled('min_rating')) {
-            $selectedRating = max(1, min(5, (float) $request->min_rating));
+        if (isset($validated['min_rating'])) {
+            $selectedRating = (float) $validated['min_rating'];
 
             $all_products->whereRaw(
                 '(SELECT AVG(reviews.rating) FROM reviews WHERE reviews.product_id = products.id) >= ?',
@@ -178,7 +215,7 @@ class StartowaController extends Controller
             );
         }
 
-        match ($request->query('availability')) {
+        match ($validated['availability'] ?? null) {
             'in_stock' => $all_products->where('stock_quantity', '>', 0),
             'low_stock' => $all_products->whereBetween('stock_quantity', [1, 3]),
             'out_of_stock' => $all_products->where('stock_quantity', '<=', 0),
@@ -206,7 +243,7 @@ class StartowaController extends Controller
         } else {
             $all_products->orderByRaw('CASE WHEN (SELECT AVG(reviews.rating) FROM reviews WHERE reviews.product_id = products.id) IS NULL THEN 1 ELSE 0 END');
 
-            switch ($request->query('sort')) {
+            switch ($validated['sort'] ?? 'newest') {
                 case 'price_asc':
                     $all_products->orderBy('base_price', 'asc');
                     break;

@@ -12,8 +12,10 @@ use App\Http\Controllers\AdminController;
 use App\Livewire\Admin\ProductForm;
 
         //Strona startowa
-    Route::get('/', [StartowaController::class, 'startowa'])->name('home');
-    Route::post('/statystyki/wyswietlenie', [StartowaController::class, 'recordPageView'])->name('home.views.record');
+    Route::get('/', [StartowaController::class, 'startowa'])->middleware('throttle:120,1')->name('home');
+    Route::post('/statystyki/wyswietlenie', [StartowaController::class, 'recordPageView'])
+        ->middleware('throttle:20,1')
+        ->name('home.views.record');
 
 
         // Konfigurator
@@ -27,22 +29,20 @@ use App\Livewire\Admin\ProductForm;
             ->name('konfigurator.remove');
     });
 
-        // Logowanie / Rejestracja
-    Route::get('/log_in', [AuthController::class, 'showLoginForm'])->name('log_in');
-    Route::get('/sing_in', [AuthController::class, 'showSinginForm'])->name('sing_in');
-
         // Strona Produktu
     Route::get('/produkt', [ProductPageController::class, 'show'])->name('product.show');
     Route::get('/produkt/{id}', [ProductPageController::class, 'show'])->whereNumber('id')->name('products.show');
-    Route::post('/produkt/{id}/opinie', [ProductPageController::class, 'storeReview'])->whereNumber('id')->middleware('auth')->name('products.reviews.store');
+    Route::post('/produkt/{id}/opinie', [ProductPageController::class, 'storeReview'])->whereNumber('id')->middleware(['auth', 'throttle:10,1'])->name('products.reviews.store');
     Route::get('/products/{id}/wishlists', [\App\Http\Controllers\ProductPageController::class, 'getWishlists'])->name('products.wishlists.get');
     Route::post('/products/{id}/wishlists', [\App\Http\Controllers\ProductPageController::class, 'saveToWishlist'])->name('products.wishlists.save');
 
         //Wyszukiwarka
     Route::get('/wyszukiwanie/podpowiedzi', [WyszukajWitrynaController::class, 'suggestions'])
+    ->middleware('throttle:30,1')
     ->name('wyszukaj.suggestions');
 
     Route::get('/wyszukiwanie', [WyszukajWitrynaController::class, 'PrzeniesNaStrone'])
+    ->middleware('throttle:60,1')
     ->name('wyszukaj');
 
 
@@ -61,37 +61,38 @@ use App\Livewire\Admin\ProductForm;
 
 
      // Admin
-     Route::get('/admin', [AdminController::class, 'index'])->name('admin');
-     Route::get('/admin/products/create', ProductForm::class)->name('admin.products.create');
-     Route::post('/admin/users/{user}/suspend', [AdminController::class, 'suspend'])->name('admin.users.suspend');
-     Route::post('/admin/users/{user}/ban', [AdminController::class, 'ban'])->name('admin.users.ban');
-     Route::post('/admin/users/{user}/unban', [AdminController::class, 'unban'])->name('admin.users.unban');
-     Route::post('/admin/reklamacje/{complaint}/decyzja', [AdminController::class, 'updateComplaint'])->name('admin.complaints.update');
+     Route::middleware(['auth', 'admin', 'throttle:120,1'])->group(function () {
+         Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+         Route::get('/admin/products/create', ProductForm::class)->name('admin.products.create');
+         Route::post('/admin/users/{user}/suspend', [AdminController::class, 'suspend'])->middleware('throttle:30,1')->whereNumber('user')->name('admin.users.suspend');
+         Route::post('/admin/users/{user}/ban', [AdminController::class, 'ban'])->middleware('throttle:30,1')->whereNumber('user')->name('admin.users.ban');
+         Route::post('/admin/users/{user}/unban', [AdminController::class, 'unban'])->middleware('throttle:30,1')->whereNumber('user')->name('admin.users.unban');
+         Route::post('/admin/reklamacje/{complaint}/decyzja', [AdminController::class, 'updateComplaint'])->middleware('throttle:30,1')->whereNumber('complaint')->name('admin.complaints.update');
+         Route::post('/admin/products/{product}/archive', [AdminController::class, 'archiveProduct'])->middleware('throttle:30,1')->whereNumber('product')->name('admin.products.archive');
+         Route::post('/admin/products/{product}/restore', [AdminController::class, 'restoreProduct'])->middleware('throttle:30,1')->whereNumber('product')->name('admin.products.restore');
+     });
 
      // Logowanie / Rejestracja
-    Route::get('/log_in', [AuthController::class, 'showLoginForm'])->name('log_in');
-    Route::post('/log_in', [AuthController::class, 'login']);
+    Route::middleware('guest')->group(function () {
+        Route::get('/log_in', [AuthController::class, 'showLoginForm'])->name('log_in');
+        Route::post('/log_in', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
-    Route::get('/sing_in', [AuthController::class, 'showSinginForm'])->name('sing_in');
-    Route::post('/sing_in', [AuthController::class, 'register']);
+        Route::get('/sing_in', [AuthController::class, 'showSinginForm'])->name('sing_in');
+        Route::post('/sing_in', [AuthController::class, 'register'])->middleware('throttle:10,1');
+    });
 
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
 
     // Profil
     Route::middleware(['auth'])->group(function () {
         Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
-        Route::post('/profil', [ProfileController::class, 'update'])->name('profil.update');
+        Route::post('/profil', [ProfileController::class, 'update'])->middleware('throttle:10,1')->name('profil.update');
         Route::post('/profil/reklamacje', [ProfileController::class, 'storeComplaint'])->name('profil.complaints.store');
         Route::post('/profil/reklamacje/{complaintId}/odpowiedz', [ProfileController::class, 'replyComplaint'])
             ->whereNumber('complaintId')
+            ->middleware('throttle:10,1')
             ->name('profil.complaints.reply');
-        Route::post('/profil/lista/{productId}/do-koszyka', [ProfileController::class, 'moveObservedToCart'])
-            ->whereNumber('productId')
-            ->name('profil.saved.move-to-cart');
         Route::post('/profil/lista/{wishlistId}/{productId}/usun', [ProfileController::class, 'removeObserved'])
             ->where(['wishlistId' => '[0-9]+', 'productId' => '[0-9]+'])
             ->name('profil.saved.remove');
-        Route::post('/profil/lista/{wishlistId}/{productId}/do-koszyka', [ProfileController::class, 'moveObservedToCart'])
-            ->whereNumber(['wishlistId', 'productId'])
-            ->name('profil.saved.move-to-cart');
         });

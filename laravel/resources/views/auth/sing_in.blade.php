@@ -30,13 +30,16 @@
             </div>
         @endif
 
-        <form class="w-full flex flex-col gap-6 -ml-30" action="/sing_in" method="POST">
+        <form class="w-full flex flex-col gap-6 -ml-30" action="{{ route('sing_in') }}" method="POST">
             @csrf
 
             <div class="flex items-center">
                 <label class="font-sci-fi text-white text-lg w-48 text-right mr-4 uppercase">Email :</label>
                 <input type="email" name="email"
                        value="{{ old('email') }}"
+                       maxlength="254"
+                       autocomplete="email"
+                       required
                        class="flex-1 bg-gray-200 text-gray-900 rounded-sm px-4 py-3">
             </div>
 
@@ -44,6 +47,10 @@
                 <label class="font-sci-fi text-white text-lg w-48 text-right mr-4 uppercase">Imię :</label>
                 <input type="text" name="first_name"
                        value="{{ old('first_name') }}"
+                       minlength="2"
+                       maxlength="100"
+                       autocomplete="given-name"
+                       required
                        class="flex-1 bg-gray-200 text-gray-900 rounded-sm px-4 py-3">
             </div>
 
@@ -51,6 +58,10 @@
                 <label class="font-sci-fi text-white text-lg w-48 text-right mr-4 uppercase">Nazwisko :</label>
                 <input type="text" name="last_name"
                        value="{{ old('last_name') }}"
+                       minlength="2"
+                       maxlength="100"
+                       autocomplete="family-name"
+                       required
                        class="flex-1 bg-gray-200 text-gray-900 rounded-sm px-4 py-3">
             </div>
 
@@ -58,18 +69,28 @@
                 <label class="font-sci-fi text-white text-lg w-48 text-right mr-4 uppercase">Telefon :</label>
                 <input type="text" name="phone"
                        value="{{ old('phone') }}"
+                       maxlength="20"
+                       autocomplete="tel"
                        class="flex-1 bg-gray-200 text-gray-900 rounded-sm px-4 py-3">
             </div>
 
             <div class="flex items-center">
                 <label class="font-sci-fi text-white text-lg w-48 text-right mr-4 uppercase">Hasło :</label>
                 <input type="password" name="password"
+                       minlength="8"
+                       maxlength="255"
+                       autocomplete="new-password"
+                       required
                        class="flex-1 bg-gray-200 text-gray-900 rounded-sm px-4 py-3">
             </div>
 
             <div class="flex items-center">
                 <label class="font-sci-fi text-white text-lg w-48 text-right mr-4 uppercase">Powtórz :</label>
                 <input type="password" name="password_confirmation"
+                       minlength="8"
+                       maxlength="255"
+                       autocomplete="new-password"
+                       required
                        class="flex-1 bg-gray-200 text-gray-900 rounded-sm px-4 py-3">
             </div>
 
@@ -83,7 +104,7 @@
                     UTWÓRZ KONTO
                 </button>
 
-                <a href="/log_in"
+                <a href="{{ route('log_in') }}"
                    class="font-sci-fi text-white text-center text-sm bg-purple-900/40 border-2 border-purple-500/50 rounded-xl
                    px-10 py-4 min-w-45
                    shadow-[0_0_25px_rgba(168,85,247,0.5)]
