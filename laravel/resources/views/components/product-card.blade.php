@@ -72,8 +72,6 @@
             @csrf
             <input type="hidden" name="product_id" value="{{ $product->id }}">
             <input type="hidden" name="category_id" value="{{ $product->category_id }}">
-            <input type="hidden" name="price" value="{{ $discount > 0 ? $product->promo_price : $product->base_price }}">
-            <input type="hidden" name="name" value="{{ $product->name }}">
             <input type="hidden" name="replace_index" value="{{ $replaceIndex }}">
 
             <button type="submit" 

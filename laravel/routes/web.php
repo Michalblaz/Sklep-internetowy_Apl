@@ -22,7 +22,9 @@ use App\Livewire\Admin\ProductForm;
         Route::post('/select', [ConfiguratorController::class, 'selectProduct'])->name('configurator.select');
         Route::post('/reset', [ConfiguratorController::class, 'resetBuild'])->name('configurator.reset');
         Route::post('/do-koszyka', [App\Http\Controllers\ConfiguratorController::class, 'moveToCart'])->name('konfigurator.moveToCart');
-        Route::get('/remove/{category}/{index}', [ConfiguratorController::class, 'removeFromBuild'])->name('konfigurator.remove');
+        Route::delete('/remove/{category}/{index}', [ConfiguratorController::class, 'removeFromBuild'])
+            ->whereNumber(['category', 'index'])
+            ->name('konfigurator.remove');
     });
 
         // Logowanie / Rejestracja

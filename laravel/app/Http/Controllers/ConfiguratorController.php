@@ -12,9 +12,26 @@ class ConfiguratorController extends Controller
 {
     public function index(Request $request)
     {
-        $categoryId = $request->query('category_id');
-        $selectedBrands = $request->input('brands', []);
-        $selectedAttrs = $request->input('attrs', []);
+        $validated = $request->validate([
+            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'brands' => ['nullable', 'array'],
+            'brands.*' => ['integer', 'exists:brands,id'],
+            'attrs' => ['nullable', 'array'],
+            'attrs.*' => ['array'],
+            'attrs.*.*' => ['integer', 'exists:attribute_values,id'],
+            'min_price' => ['nullable', 'numeric', 'min:0'],
+            'max_price' => ['nullable', 'numeric', 'min:0', 'gte:min_price'],
+            'sort' => ['nullable', 'in:newest,price_asc,price_desc,name_asc,rating_desc,stock_desc'],
+            'change' => ['nullable', 'in:1'],
+            'replace_index' => ['nullable', 'integer', 'min:0'],
+        ]);
+
+        $categoryId = isset($validated['category_id']) ? (int) $validated['category_id'] : null;
+        $selectedBrands = $this->sanitizeIdArray($validated['brands'] ?? []);
+        $selectedAttrs = $this->sanitizeAttributeFilters($validated['attrs'] ?? []);
+        $minPrice = $validated['min_price'] ?? null;
+        $maxPrice = $validated['max_price'] ?? null;
+        $sort = $validated['sort'] ?? null;
         $build = session('configurator_build', []);
 
         if (!$categoryId) {
@@ -37,7 +54,7 @@ class ConfiguratorController extends Controller
             ->withAvg('reviews', 'rating');
 
         // --- LOGIKA KOMPATYBILNOŚCI ---
-        $currentCategoryAttributeIds = $category->attributes->pluck('id')->toArray();
+        $currentCategoryAttributeIds = $category->attributes->pluck('id')->map(fn ($id) => (int) $id)->toArray();
 
         foreach ($build as $builtCategoryId => $builtItem) {
 
@@ -55,12 +72,13 @@ class ConfiguratorController extends Controller
             }
 
             foreach ($item['attributes'] as $attrId => $attrValueIds) {
+                $attrId = (int) $attrId;
 
-                $valueIds = is_array($attrValueIds)
+                $valueIds = $this->sanitizeIdArray(is_array($attrValueIds)
                     ? $attrValueIds
-                    : [$attrValueIds];
+                    : [$attrValueIds]);
 
-                if (in_array($attrId, $currentCategoryAttributeIds)) {
+                if (!empty($valueIds) && in_array($attrId, $currentCategoryAttributeIds, true)) {
 
                     $query->whereHas('attributeValues', function ($q) use ($attrId, $valueIds) {
 
@@ -149,6 +167,8 @@ class ConfiguratorController extends Controller
         // FILTRY
         if (!empty($selectedAttrs)) {
             foreach ($selectedAttrs as $attrId => $valIds) {
+                $attrId = (int) $attrId;
+
                 // Logika "od tej wartości w górę" dla Obudów
                 if (($attrId == 24 || $attrId == 25 || $attrId == 50) && $categoryId == 7) {
                     $values = \DB::table('attribute_values')->whereIn('id', $valIds)->pluck('value');
@@ -190,12 +210,12 @@ class ConfiguratorController extends Controller
         }
 
         // Filtry ceny
-        if ($request->filled('min_price')) {
-            $query->where('base_price', '>=', $request->min_price);
+        if ($minPrice !== null) {
+            $query->where('base_price', '>=', $minPrice);
         }
 
-        if ($request->filled('max_price')) {
-            $query->where('base_price', '<=', $request->max_price);
+        if ($maxPrice !== null) {
+            $query->where('base_price', '<=', $maxPrice);
         }
 
         // Filtry Producentów
@@ -204,7 +224,7 @@ class ConfiguratorController extends Controller
         })->get();
 
         // Sortowanie
-        switch ($request->query('sort')) {
+        switch ($sort) {
             case 'price_asc':
                 $query->orderBy('base_price', 'asc');
                 break;
@@ -253,7 +273,7 @@ class ConfiguratorController extends Controller
             ? $selectedInThisCategory[0]
             : $selectedInThisCategory;
 
-        $isChanging = $request->query('change') == '1';
+        $isChanging = ($validated['change'] ?? null) == '1';
 
         $selectedProductModel = $selectedItemData
             ? Product::with(['attributeValues.attribute'])->find($selectedItemData['id'])
@@ -286,8 +306,8 @@ class ConfiguratorController extends Controller
         if (is_numeric($productOrId)) {
             $val = \DB::table('product_attributes')
                 ->join('attribute_values', 'product_attributes.attribute_value_id', '=', 'attribute_values.id')
-                ->where('product_attributes.product_id', $productOrId)
-                ->where('product_attributes.attribute_category_id', $attrCategoryId)
+                ->where('product_attributes.product_id', (int) $productOrId)
+                ->where('product_attributes.attribute_category_id', (int) $attrCategoryId)
                 ->value('attribute_values.value');
         } else {
             $val = $productOrId->attributeValues->where('pivot.attribute_category_id', $attrCategoryId)->first()?->value;
@@ -307,7 +327,11 @@ class ConfiguratorController extends Controller
         $valIds = $builtItem['attributes'][$attrCategoryId];
         $valId = is_array($valIds) ? $valIds[0] : $valIds;
 
-        $val = \DB::table('attribute_values')->where('id', $valId)->value('value');
+        if (!is_numeric($valId)) {
+            return null;
+        }
+
+        $val = \DB::table('attribute_values')->where('id', (int) $valId)->value('value');
 
         $cleanVal = preg_replace('/[^0-9.]/', '', $val);
 
@@ -330,10 +354,25 @@ class ConfiguratorController extends Controller
         //Zapisujemy wybrany produkt w sesji
     public function selectProduct(Request $request)
     {
-        $categoryId = (int) $request->input('category_id');
-        $replaceIndex = $request->input('replace_index');
+        $validated = $request->validate([
+            'product_id' => ['required', 'integer', 'exists:products,id'],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'replace_index' => ['nullable', 'integer', 'min:0'],
+        ]);
 
-        $product = Product::with('attributeValues')->findOrFail($request->input('product_id'));
+        $categoryId = (int) $validated['category_id'];
+        $replaceIndex = isset($validated['replace_index']) ? (int) $validated['replace_index'] : null;
+
+        $product = Product::with('attributeValues')->findOrFail($validated['product_id']);
+
+        if ((int) $product->category_id !== $categoryId) {
+            return back()->with('error', 'Wybrany produkt nie nalezy do tej kategorii.');
+        }
+
+        if ((int) $product->stock_quantity <= 0) {
+            return back()->with('error', 'Wybrany produkt jest niedostepny.');
+        }
+
         $category = Category::with(['attributes' => function ($q) {
             $q->wherePivot('is_required', true);
         }])->findOrFail($categoryId);
@@ -546,10 +585,14 @@ class ConfiguratorController extends Controller
         // Wyciąga pierwszą napotkaną cyfrę z ciągu znaków
     private function getNumberFromAttr($productId, $attrCategoryId)
     {
+        if (!is_numeric($productId) || !is_numeric($attrCategoryId)) {
+            return 0;
+        }
+
         $val = \DB::table('product_attributes')
             ->join('attribute_values', 'product_attributes.attribute_value_id', '=', 'attribute_values.id')
-            ->where('product_attributes.product_id', $productId)
-            ->where('product_attributes.attribute_category_id', $attrCategoryId)
+            ->where('product_attributes.product_id', (int) $productId)
+            ->where('product_attributes.attribute_category_id', (int) $attrCategoryId)
             ->value('attribute_values.value');
 
         if (!$val) return 0;
@@ -645,10 +688,14 @@ class ConfiguratorController extends Controller
 
     private function addProductToDatabaseCart($userId, $productId)
     {
+        if (!is_numeric($productId) || !Product::whereKey((int) $productId)->exists()) {
+            return;
+        }
+
         // Sprawdzamy, czy ten użytkownik ma już ten sam produkt w koszyku
         $existingItem = DB::table('cart_items')
-            ->where('user_id', $userId)
-            ->where('product_id', $productId)
+            ->where('user_id', (int) $userId)
+            ->where('product_id', (int) $productId)
             ->first();
 
         if ($existingItem) {
@@ -659,8 +706,8 @@ class ConfiguratorController extends Controller
         } else {
             // Jeśli produktu nie ma, tworzymy nowy rekord w koszyku bazy danych
             DB::table('cart_items')->insert([
-                'user_id'    => $userId,
-                'product_id' => $productId,
+                'user_id'    => (int) $userId,
+                'product_id' => (int) $productId,
                 'quantity'   => 1,
             ]);
         }
@@ -669,20 +716,24 @@ class ConfiguratorController extends Controller
     // Metoda pomocnicza: Zapis produktu do tradycyjnej sesji (dla gości)
     private function addProductToSessionCart(&$cart, $product)
     {
-        $productId = $product['id'];
+        if (!isset($product['id']) || !is_numeric($product['id']) || !Product::whereKey((int) $product['id'])->exists()) {
+            return;
+        }
+
+        $productId = (int) $product['id'];
 
         if (isset($cart[$productId])) {
             $cart[$productId]['quantity'] += 1;
         } else {
             $cart[$productId] = [
-                'id'       => $product['id'],
+                'id'       => $productId,
                 'name'     => $product['name'],
                 'price'    => (float) $product['price'],
                 'quantity' => 1,
             ];
         }
     }
-    public function removeFromBuild($categoryId, $index)
+    public function removeFromBuild(int $categoryId, int $index)
     {
         $build = session('configurator_build', []);
 
@@ -704,5 +755,34 @@ class ConfiguratorController extends Controller
 
         session(['configurator_build' => $build]);
         return redirect()->back();
+    }
+
+    private function sanitizeIdArray(array $values): array
+    {
+        return collect($values)
+            ->filter(fn ($value) => is_numeric($value) && (int) $value > 0)
+            ->map(fn ($value) => (int) $value)
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    private function sanitizeAttributeFilters(array $attrs): array
+    {
+        $sanitized = [];
+
+        foreach ($attrs as $attrId => $valueIds) {
+            if (!is_numeric($attrId) || !is_array($valueIds)) {
+                continue;
+            }
+
+            $cleanValueIds = $this->sanitizeIdArray($valueIds);
+
+            if (!empty($cleanValueIds)) {
+                $sanitized[(int) $attrId] = $cleanValueIds;
+            }
+        }
+
+        return $sanitized;
     }
 }
