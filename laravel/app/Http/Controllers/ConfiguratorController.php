@@ -33,6 +33,20 @@ class ConfiguratorController extends Controller
         $maxPrice = $validated['max_price'] ?? null;
         $sort = $validated['sort'] ?? null;
         $build = session('configurator_build', []);
+        $isChanging = ($validated['change'] ?? null) == '1';
+        $replaceIndex = $validated['replace_index'] ?? null;
+        $summary = $this->buildSummary($build);
+        $buildStatus = $this->buildStatus($build);
+        $buttonClass = 'w-60 py-3 bg-linear-to-r from-purple-800 to-indigo-900 hover:from-purple-700 hover:to-indigo-800 text-white font-bold rounded-full transition-all duration-200 active:scale-95 shadow-md hover:shadow-lg';
+        $filterState = [
+            'sort' => $sort,
+            'min_price' => $minPrice,
+            'max_price' => $maxPrice,
+            'brands' => $selectedBrands,
+            'attrs' => $selectedAttrs,
+            'change' => $isChanging,
+            'replace_index' => $replaceIndex,
+        ];
 
         if (!$categoryId) {
             return view('konfigurator', [
@@ -41,6 +55,17 @@ class ConfiguratorController extends Controller
                 'brands' => collect(),
                 'availableValueIds' => [],
                 'attributeValuesMap' => [],
+                'buildStatus' => $buildStatus,
+                'buttonClass' => $buttonClass,
+                'filterQueryParams' => [],
+                'resetFilterParams' => [],
+                'filterState' => $filterState,
+                'filterValueStates' => [],
+                'isChanging' => $isChanging,
+                'isMultiCategory' => false,
+                'replaceIndex' => $replaceIndex,
+                'selectedCategoryItems' => [],
+                'summary' => $summary,
             ]);
         }
 
@@ -254,6 +279,11 @@ class ConfiguratorController extends Controller
             ->toArray();
 
          $products = $query->paginate(8)->withQueryString();
+         $products->getCollection()->transform(function (Product $product) {
+            $product->configurator_discount = $this->calculateDiscount($product);
+
+            return $product;
+         });
 
          $buildLimits = [
             'gpu_len'       => $this->getNumericValueFromSession($build[2] ?? null, 40),
@@ -267,36 +297,30 @@ class ConfiguratorController extends Controller
 
 
 
-        $selectedInThisCategory = $build[$category->id] ?? null;
-
-        $selectedItemData = is_array($selectedInThisCategory) && isset($selectedInThisCategory[0])
-            ? $selectedInThisCategory[0]
-            : $selectedInThisCategory;
-
-        $isChanging = ($validated['change'] ?? null) == '1';
-
-        $selectedProductModel = $selectedItemData
-            ? Product::with(['attributeValues.attribute'])->find($selectedItemData['id'])
-            : null;
-
-        $selectedProductAttributes = $selectedProductModel
-            ? $selectedProductModel->attributeValues
-                ->take(6)
-                ->map(fn ($attrVal) => [
-                    'value' => $attrVal->value,
-                ])
-            : collect();
+        $requiredValueIds = $this->requiredValueIdsForBuild($build, $category->id);
+        $filterValueStates = $this->filterValueStates($category, $availableValueIds, $requiredValueIds, $selectedAttrs, $buildLimits);
+        $isMultiCategory = in_array((int) $category->id, [4, 5], true);
+        $selectedCategoryItems = $this->selectedCategoryItems($category, $build);
+        $filterQueryParams = $this->filterQueryParams($category->id, $filterState);
+        $resetFilterParams = $this->resetFilterParams($category->id, $filterState);
 
         return view('konfigurator', compact(
             'products',
             'category',
             'brands',
             'availableValueIds',
+            'buildStatus',
             'buildLimits',
-            'selectedItemData',
+            'buttonClass',
+            'filterQueryParams',
+            'filterState',
+            'filterValueStates',
             'isChanging',
-            'selectedProductModel',
-            'selectedProductAttributes'
+            'isMultiCategory',
+            'replaceIndex',
+            'resetFilterParams',
+            'selectedCategoryItems',
+            'summary'
         ));
     }
 
@@ -755,6 +779,254 @@ class ConfiguratorController extends Controller
 
         session(['configurator_build' => $build]);
         return redirect()->back();
+    }
+
+    private function buildSummary(array $build): array
+    {
+        $items = $this->flattenBuildItems($build);
+        $productIds = collect($items)->pluck('id')->filter()->unique()->values();
+        $powerDrawByProductId = $productIds->isEmpty()
+            ? collect()
+            : Product::whereIn('id', $productIds)->pluck('power_draw_w', 'id');
+
+        $totalPrice = 0;
+        $totalPowerDraw = 0;
+
+        foreach ($items as $item) {
+            $productId = (int) ($item['id'] ?? 0);
+            $totalPrice += (float) ($item['price'] ?? 0);
+            $totalPowerDraw += (int) ($item['power_draw_w'] ?? $powerDrawByProductId[$productId] ?? 0);
+        }
+
+        $minPsuWatts = $totalPowerDraw > 0 ? ceil(($totalPowerDraw * 1.10) / 50) * 50 : 0;
+        $recommendedPsuWatts = $totalPowerDraw > 0 ? ceil(($totalPowerDraw * 1.30) / 50) * 50 : 0;
+
+        return [
+            'totalPrice' => $totalPrice,
+            'totalPowerDraw' => $totalPowerDraw,
+            'minPsuWatts' => $minPsuWatts,
+            'recommendedPsuWatts' => $recommendedPsuWatts,
+            'selectedPsuWatts' => $this->getNumericValueFromSession($build[6] ?? null, 20) ?? 0,
+        ];
+    }
+
+    private function buildStatus(array $build): array
+    {
+        $cpuSelection = $build[1] ?? null;
+        $cpuRequiresGpu = (bool) ($cpuSelection['requires_gpu'] ?? false);
+        $cpuRequiresCooler = (bool) ($cpuSelection['requires_cooler'] ?? false);
+
+        if ($cpuSelection && (!array_key_exists('requires_gpu', $cpuSelection) || !array_key_exists('requires_cooler', $cpuSelection))) {
+            $cpuFlags = DB::table('product_attributes')
+                ->join('attribute_values', 'product_attributes.attribute_value_id', '=', 'attribute_values.id')
+                ->where('product_attributes.product_id', (int) $cpuSelection['id'])
+                ->whereIn('product_attributes.attribute_category_id', [7, 38])
+                ->pluck('attribute_values.value', 'product_attributes.attribute_category_id');
+
+            $cpuRequiresGpu = strtolower((string) ($cpuFlags[7] ?? 'true')) === 'false';
+            $cpuRequiresCooler = strtolower((string) ($cpuFlags[38] ?? 'true')) === 'false';
+        }
+
+        return [
+            'gpuMissing' => $cpuRequiresGpu && !isset($build[2]),
+            'coolerMissing' => $cpuRequiresCooler && !isset($build[12]),
+        ];
+    }
+
+    private function selectedCategoryItems(Category $category, array $build): array
+    {
+        $selected = $build[$category->id] ?? null;
+
+        if (!$selected) {
+            return [];
+        }
+
+        $items = is_array($selected) && isset($selected[0]) ? $selected : [$selected];
+        $productIds = collect($items)->pluck('id')->filter()->unique()->values();
+        $products = Product::with(['attributeValues.attribute'])
+            ->whereIn('id', $productIds)
+            ->get()
+            ->keyBy('id');
+
+        return collect($items)->map(function (array $item) use ($products) {
+            $product = $products[(int) ($item['id'] ?? 0)] ?? null;
+            $modelDiscount = $product ? $this->calculateDiscount($product) : 0;
+            $discount = (int) ($item['discount'] ?? $modelDiscount);
+            $basePrice = (float) ($item['base_price'] ?? $product?->base_price ?? $item['price'] ?? 0);
+            $promoPrice = $item['promo_price'] ?? ($modelDiscount > 0 ? $product?->promo_price : null);
+
+            return [
+                'data' => $item,
+                'name' => $item['name'] ?? $product?->name ?? '',
+                'image_url' => $product?->image_url,
+                'price' => (float) ($item['price'] ?? $product?->base_price ?? 0),
+                'base_price' => $basePrice,
+                'promo_price' => $promoPrice,
+                'discount' => $discount,
+                'attributes' => $product
+                    ? $product->attributeValues->map(fn ($attrVal) => [
+                        'label' => ucfirst(str_replace('_', ' ', $attrVal->attribute->name ?? 'Parametr')),
+                        'value' => $attrVal->value,
+                        'display_value' => $this->displayValue($attrVal->value),
+                    ])->all()
+                    : [],
+            ];
+        })->all();
+    }
+
+    private function requiredValueIdsForBuild(array $build, int $currentCategoryId): array
+    {
+        $requiredValueIds = [];
+
+        foreach ($build as $categoryId => $item) {
+            if ((int) $categoryId === $currentCategoryId) {
+                continue;
+            }
+
+            $itemData = isset($item[0]) ? $item[0] : $item;
+
+            foreach (($itemData['attributes'] ?? []) as $attrId => $valueIds) {
+                $valueIds = is_array($valueIds) ? $valueIds : [$valueIds];
+                $cleanValueIds = $this->sanitizeIdArray($valueIds);
+
+                if (!empty($cleanValueIds)) {
+                    $requiredValueIds[(int) $attrId] = $cleanValueIds[0];
+                }
+            }
+        }
+
+        return $requiredValueIds;
+    }
+
+    private function filterValueStates(Category $category, array $availableValueIds, array $requiredValueIds, array $selectedAttrs, array $buildLimits): array
+    {
+        $availableValueIds = $this->sanitizeIdArray($availableValueIds);
+        $constraintsMap = [
+            24 => ['val' => $buildLimits['gpu_len'],      'type' => 'min'],
+            25 => ['val' => $buildLimits['cooler_h'],     'type' => 'min'],
+            50 => ['val' => $buildLimits['radiator_s'],   'type' => 'min'],
+            40 => ['val' => $buildLimits['case_gpu'],     'type' => 'max'],
+            41 => ['val' => $buildLimits['case_cooler'],  'type' => 'max'],
+            49 => ['val' => $buildLimits['case_radiator'], 'type' => 'max'],
+        ];
+        $states = [];
+
+        foreach ($category->attributes as $attribute) {
+            $attributeId = (int) $attribute->id;
+            $forcedValueId = $requiredValueIds[$attributeId] ?? null;
+            $isForcedAttribute = $forcedValueId !== null;
+
+            foreach ($attribute->values as $value) {
+                $numericVal = $this->numericFromString($value->value);
+                $isDisabledByDimension = false;
+
+                if (isset($constraintsMap[$attributeId]) && $constraintsMap[$attributeId]['val'] > 0) {
+                    $check = $constraintsMap[$attributeId];
+                    $isDisabledByDimension = $check['type'] === 'min'
+                        ? ($numericVal < $check['val'])
+                        : ($numericVal > $check['val']);
+                }
+
+                $isAvailableInResults = in_array((int) $value->id, $availableValueIds, true);
+                $isRequiredByBuild = $isForcedAttribute && (int) $forcedValueId === (int) $value->id;
+                $isSelectedInRequest = in_array((int) $value->id, $selectedAttrs[$attributeId] ?? [], true);
+                $shouldBeChecked = $isForcedAttribute ? $isRequiredByBuild : $isSelectedInRequest;
+                $isGrayedOut = $isDisabledByDimension || (!$isAvailableInResults && !$shouldBeChecked);
+                $shouldBeDisabled = $isForcedAttribute || $isGrayedOut;
+
+                $states[$attributeId][(int) $value->id] = [
+                    'display_value' => $this->displayValue($value->value),
+                    'isDisabledByDimension' => $isDisabledByDimension,
+                    'isAvailableInResults' => $isAvailableInResults,
+                    'shouldBeChecked' => $shouldBeChecked,
+                    'shouldBeDisabled' => $shouldBeDisabled,
+                    'labelClass' => $shouldBeDisabled ? 'opacity-25 cursor-not-allowed grayscale' : 'cursor-pointer',
+                    'textClass' => $shouldBeDisabled ? 'text-white/20' : 'text-white/60 group-hover:text-neon-blue',
+                ];
+            }
+        }
+
+        return $states;
+    }
+
+    private function filterQueryParams(int $categoryId, array $filterState): array
+    {
+        $params = ['category_id' => $categoryId];
+
+        if ($filterState['change']) {
+            $params['change'] = '1';
+        }
+
+        if ($filterState['replace_index'] !== null) {
+            $params['replace_index'] = $filterState['replace_index'];
+        }
+
+        if ($filterState['sort']) {
+            $params['sort'] = $filterState['sort'];
+        }
+
+        if ($filterState['min_price'] !== null) {
+            $params['min_price'] = $filterState['min_price'];
+        }
+
+        if ($filterState['max_price'] !== null) {
+            $params['max_price'] = $filterState['max_price'];
+        }
+
+        if (!empty($filterState['brands'])) {
+            $params['brands'] = $filterState['brands'];
+        }
+
+        if (!empty($filterState['attrs'])) {
+            $params['attrs'] = $filterState['attrs'];
+        }
+
+        return $params;
+    }
+
+    private function resetFilterParams(int $categoryId, array $filterState): array
+    {
+        $params = ['category_id' => $categoryId];
+
+        if ($filterState['change']) {
+            $params['change'] = '1';
+        }
+
+        if ($filterState['replace_index'] !== null) {
+            $params['replace_index'] = $filterState['replace_index'];
+        }
+
+        return $params;
+    }
+
+    private function flattenBuildItems(array $build): array
+    {
+        return collect($build)
+            ->flatMap(fn ($item) => isset($item['id']) ? [$item] : (is_array($item) ? $item : []))
+            ->filter(fn ($item) => is_array($item) && isset($item['id']))
+            ->values()
+            ->all();
+    }
+
+    private function calculateDiscount(Product $product): int
+    {
+        return ($product->base_price > 0 && $product->promo_price && $product->promo_price < $product->base_price)
+            ? (int) round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
+            : 0;
+    }
+
+    private function displayValue($value): string
+    {
+        return match (strtolower((string) $value)) {
+            'true' => 'Posiada',
+            'false', '0' => 'Nie posiada',
+            default => (string) $value,
+        };
+    }
+
+    private function numericFromString($value): float
+    {
+        return (float) preg_replace('/[^0-9.]/', '', (string) $value);
     }
 
     private function sanitizeIdArray(array $values): array

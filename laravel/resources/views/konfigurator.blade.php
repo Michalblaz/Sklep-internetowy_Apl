@@ -1,46 +1,11 @@
-@extends('app')
+﻿@extends('app')
 
 @section('content')
 
-@php
-    $totalPrice = 0;
-    $totalPowerDraw = 0;
-
-    $buildItems = session('configurator_build', []);
-    $buttonClass = 'w-60 py-3 bg-linear-to-r from-purple-800 to-indigo-900 hover:from-purple-700 hover:to-indigo-800 text-white font-bold rounded-full transition-all duration-200 active:scale-95 shadow-md hover:shadow-lg';
-    $productIdsForPower = collect($buildItems)
-        ->flatMap(fn ($data) => isset($data['id']) ? [$data['id']] : collect($data)->pluck('id'))
-        ->filter()
-        ->unique();
-    $powerDrawByProductId = \App\Models\Product::whereIn('id', $productIdsForPower)->pluck('power_draw_w', 'id');
-
-    foreach($buildItems as $catId => $data) {
-        if (isset($data['price'])) {
-            $totalPrice += $data['price'];
-            $totalPowerDraw += (int) ($data['power_draw_w'] ?? $powerDrawByProductId[$data['id']] ?? 0);
-        } else {
-            // Jeśli to tablica (RAM/Dyski)
-            foreach($data as $item) {
-                $totalPrice += $item['price'];
-                $totalPowerDraw += (int) ($item['power_draw_w'] ?? $powerDrawByProductId[$item['id']] ?? 0);
-            }
-        }
-    }
-
-    $minPsuWatts = $totalPowerDraw > 0 ? ceil(($totalPowerDraw * 1.10) / 50) * 50 : 0; // +10% i zaokrąglenie w górę do 50W
-    $recommendedPsuWatts = $totalPowerDraw > 0 ? ceil(($totalPowerDraw * 1.30) / 50) * 50 : 0; // +30% i zaokrąglenie w górę do 50W
-
-    // Sprawdzamy, czy aktualnie wybrany zasilacz spełnia te normy
-    $selectedPsu = $buildItems[6] ?? null;
-    $selectedPsuWatts = 0;
-    if ($selectedPsu) {
-        $selectedPsuWatts = $selectedPsuWatts = (new \App\Http\Controllers\ConfiguratorController)->getNumericValueFromSession($selectedPsu, 20);
-    }
-@endphp
 <div class="w-full px-4 lg:px-8 py-6">
     @if(session('error'))
         <div class="col-span-full mb-4 p-4 bg-red-500/20 border border-red-500 text-red-500 rounded-xl font-bruno text-xs uppercase tracking-widest">
-            ⚠️ {{ session('error') }}
+            ⚠️{{ session('error') }}
         </div>
     @endif
     <div class="grid grid-cols-12 gap-6 items-start">
@@ -50,47 +15,30 @@
             <div id="filter-panel" class="bg-black/40 p-5 rounded-r-2xl border-y border-r border-white/10 backdrop-blur-xl sticky top-6 -ml-4 lg:-ml-8 shadow-2xl shadow-purple-900/10">
                 <h2 class="text-neon-blue font-bruno text-sm mb-6 uppercase tracking-widest italic">Panel Filtrów</h2>
                 <form id="filter-form" action="{{ route('konfigurator.index') }}" method="GET" class="space-y-6">
-                    @php
-                        $build = session('configurator_build', []);
-                        $requiredValueIds = [];
-
-                        // Standardowe atrybuty (Socket itp)
-                        foreach($build as $catId => $bItem) {
-                            if ($category && $catId == $category->id) {
-                                continue;
-                            }
-                            $itemData = isset($bItem[0]) ? $bItem[0] : $bItem; // Obsługa tablic np. dla RAMu
-                            if(isset($itemData['attributes'])) {
-                                foreach($itemData['attributes'] as $aId => $vId) {
-                                    $requiredValueIds[$aId] = is_array($vId) ? $vId[0] : $vId;
-                                }
-                            }
-                        }
-                    @endphp
                     <input type="hidden" name="category_id" value="{{ $category->id ?? '' }}">
-                    @if(request('change') == '1')
+                    @if($filterState['change'])
                         <input type="hidden" name="change" value="1">
                     @endif
                     <div class="mb-6 border-t border-white/5 pt-4">
                         <label class="text-[9px] text-text-muted uppercase mb-3 block font-bold tracking-widest">Sortowanie</label>
                         <select name="sort" class="w-full bg-black/20 border border-white/10 rounded-lg py-2 px-3 text-[11px] text-white focus:border-neon-purple outline-none cursor-pointer">
-                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Najnowsze</option>
-                            <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Cena rosnąco ↑</option>
-                            <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Cena malejąco ↓</option>
-                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nazwa A-Z</option>
-                            <option value="rating_desc" {{ request('sort') == 'rating_desc' ? 'selected' : '' }}>Najwyżej oceniane</option>
-                            <option value="stock_desc" {{ request('sort') == 'stock_desc' ? 'selected' : '' }}>Dostępność: od największej</option>
+                            <option value="newest" {{ $filterState['sort'] == 'newest' ? 'selected' : '' }}>Najnowsze</option>
+                            <option value="price_asc" {{ $filterState['sort'] == 'price_asc' ? 'selected' : '' }}>Cena rosnąco ↑</option>
+                            <option value="price_desc" {{ $filterState['sort'] == 'price_desc' ? 'selected' : '' }}>Cena malejąco ↓</option>
+                            <option value="name_asc" {{ $filterState['sort'] == 'name_asc' ? 'selected' : '' }}>Nazwa A-Z</option>
+                            <option value="rating_desc" {{ $filterState['sort'] == 'rating_desc' ? 'selected' : '' }}>Najwyżej oceniane</option>
+                            <option value="stock_desc" {{ $filterState['sort'] == 'stock_desc' ? 'selected' : '' }}>Dostępność: od największej</option>
                         </select>
                     </div>
                        <div class="mb-6">
                             <label class="text-[9px] text-text-muted uppercase mb-3 block font-bold tracking-widest">Cena</label>
                             <div class="flex items-center gap-2">
-                                <input type="number" name="min_price" value="{{ request('min_price') }}" placeholder="Od"
+                                <input type="number" name="min_price" value="{{ $filterState['min_price'] }}" placeholder="Od"
                                     class="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-[11px] text-white focus:border-neon-blue focus:ring-0 outline-none transition">
 
                                 <div class="h-px w-4 bg-white/20"></div>
 
-                                <input type="number" name="max_price" value="{{ request('max_price') }}" placeholder="Do"
+                                <input type="number" name="max_price" value="{{ $filterState['max_price'] }}" placeholder="Do"
                                     class="w-full bg-white/5 border border-white/10 rounded-lg py-2 px-3 text-[11px] text-white focus:border-neon-blue focus:ring-0 outline-none transition">
                             </div>
                         </div>
@@ -99,7 +47,7 @@
                         <div class="space-y-2">
                             @foreach($brands as $brand)
                                 <label class="flex items-center gap-3 cursor-pointer group">
-                                    <input type="checkbox" name="brands[]" value="{{ $brand->id }}" {{ in_array($brand->id, request('brands', [])) ? 'checked' : '' }}
+                                    <input type="checkbox" name="brands[]" value="{{ $brand->id }}" {{ in_array((int) $brand->id, $filterState['brands'], true) ? 'checked' : '' }}
                                         class="w-3 h-3 rounded border-white/20 bg-white/5 text-neon-purple focus:ring-neon-purple">
                                     <span class="text-[11px] text-white/60 group-hover:text-white transition"> {{ $brand->name }} </span>
                                 </label>
@@ -108,20 +56,6 @@
                     </div>
 
                 @foreach($category->attributes as $attribute)
-                    @php
-                        $forcedValueId = $requiredValueIds[$attribute->id] ?? null;
-                        $isForcedAttribute = !is_null($forcedValueId);
-                        //Wczytywanie z sesji odpowiednich atrybutów do dopasowania długości
-                        $constraintsMap = [
-                            24 => ['val' => $buildLimits['gpu_len'],      'type' => 'min'],
-                            25 => ['val' => $buildLimits['cooler_h'],     'type' => 'min'],
-                            50 => ['val' => $buildLimits['radiator_s'],   'type' => 'min'],
-                            40 => ['val' => $buildLimits['case_gpu'],     'type' => 'max'],
-                            41 => ['val' => $buildLimits['case_cooler'],  'type' => 'max'],
-                            49 => ['val' => $buildLimits['case_radiator'],'type' => 'max'],
-                        ];
-                    @endphp
-
                     <div class="mb-1 border-t border-white/5 pt-2" x-data="{ open: false }">
                         <label class="text-[9px] text-text-muted uppercase mb-3 block font-bold tracking-widest">
                             {{ $attribute->display_name }}
@@ -129,44 +63,17 @@
 
                         <div class="space-y-2">
                         @foreach($attribute->values as $index => $val)
-                           @php
-                                $numericVal = (float) preg_replace('/[^0-9.]/', '', $val->value);
-                                $isDisabledByDimension = false;
-
-                                if (isset($constraintsMap[$attribute->id])) {
-                                    $check = $constraintsMap[$attribute->id];
-                                    if ($check['val'] > 0) {
-                                        $isDisabledByDimension = ($check['type'] === 'min')
-                                            ? ($numericVal < $check['val'])
-                                            : ($numericVal > $check['val']);
-                                    }
-                                }
-
-                                $isAvailableInResults = in_array($val->id, $availableValueIds ?? []);
-                                $isRequiredByBuild = $isForcedAttribute && (int) $forcedValueId === (int) $val->id;
-                                $isSelectedInRequest = is_array(request()->input('attrs.' . $attribute->id)) && in_array($val->id, request()->input('attrs.' . $attribute->id));
-                                $shouldBeChecked = $isForcedAttribute ? $isRequiredByBuild : $isSelectedInRequest;
-
-                                $isGrayedOut = $isDisabledByDimension || (!$isAvailableInResults && !$shouldBeChecked);
-                                $shouldBeDisabled = $isForcedAttribute || $isGrayedOut;
-                                $displayVal = strtolower((string) $val->value);
-                            @endphp
-
-                            <label class="flex items-center gap-3 group {{ $shouldBeDisabled ? 'opacity-25 cursor-not-allowed grayscale' : 'cursor-pointer' }}" x-show="open || {{ $index }} < 3">
+                            <label class="flex items-center gap-3 group {{ $filterValueStates[$attribute->id][$val->id]['labelClass'] }}" x-show="open || {{ $index }} < 3">
                                 <input type="checkbox" name="attrs[{{ $attribute->id }}][]" value="{{ $val->id }}"
-                                    {{ $shouldBeChecked ? 'checked' : '' }}
-                                    {{ $shouldBeDisabled ? 'disabled' : '' }}
+                                    {{ $filterValueStates[$attribute->id][$val->id]['shouldBeChecked'] ? 'checked' : '' }}
+                                    {{ $filterValueStates[$attribute->id][$val->id]['shouldBeDisabled'] ? 'disabled' : '' }}
                                     class="w-3 h-3 rounded border-white/20 bg-white/5 text-neon-blue focus:ring-neon-blue transition-all">
 
-                                <span class="text-[11px] {{ $shouldBeDisabled ? 'text-white/20' : 'text-white/60 group-hover:text-neon-blue' }} transition uppercase font-bruno">
-                                        {{ match($displayVal) {
-                                            'true' => 'Posiada',
-                                            'false', '0' => 'Nie posiada',
-                                            default => $val->value,
-                                        } }}
-                                        @if($isDisabledByDimension)
+                                <span class="text-[11px] {{ $filterValueStates[$attribute->id][$val->id]['textClass'] }} transition uppercase font-bruno">
+                                        {{ $filterValueStates[$attribute->id][$val->id]['display_value'] }}
+                                        @if($filterValueStates[$attribute->id][$val->id]['isDisabledByDimension'])
                                         <span class="text-[7px] text-red-500/70 ml-1 font-sans">(NIE ZMIEŚCI SIĘ)</span>
-                                    @elseif(!$isAvailableInResults && !$shouldBeChecked)
+                                    @elseif(!$filterValueStates[$attribute->id][$val->id]['isAvailableInResults'] && !$filterValueStates[$attribute->id][$val->id]['shouldBeChecked'])
                                         <span class="text-[7px] text-white/30 ml-1 font-sans">(0)</span>
                                     @endif
                                 </span>
@@ -189,7 +96,7 @@
                         Filtruj wyniki
                     </button>
 
-                    <a href="{{ route('konfigurator.index', array_merge(['category_id' => $category->id], request('change') == '1' ? ['change' => '1'] : [])) }}"
+                    <a href="{{ route('konfigurator.index', $resetFilterParams) }}"
                         class="relative z-10 w-full block shrink-0 !py-1 text-base text-center font-bold uppercase rounded-full border border-red-500 bg-red-950/20 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.15)] hover:bg-red-600 hover:text-white hover:shadow-[0_0_25px_rgba(239,68,68,0.45)] transition-all duration-200 active:scale-95">
                         Resetuj filtry
                     </a>
@@ -212,52 +119,16 @@
                     <p class="text-text-muted max-w-md font-light leading-relaxed">Wybierz kategorię z menu po prawej, aby rozpocząć budowę swojej maszyny.</p>
                 </div>
             @else
-                @php
-                    $selectedInThisCategory = session('configurator_build.' . $category->id);
-                    $replaceIndex = request('replace_index');
-
-                    // Konwersja na tablicę, aby obsłużyć wiele przedmiotów dla RAM (4) i Dysków (5)
-                    $categoryItems = [];
-                    if ($selectedInThisCategory) {
-                        if (is_array($selectedInThisCategory) && isset($selectedInThisCategory[0])) {
-                            $categoryItems = $selectedInThisCategory;
-                        } else {
-                            $categoryItems = [$selectedInThisCategory];
-                        }
-                    }
-
-                    $isChanging = request('change') == '1';
-                    $isMultiCategory = in_array($category->id, [4, 5]); // RAM = 4, Dyski = 5
-
-                @endphp
-
-                {{-- JEŚLI MAMY PRZEDMIOT(Y) I NIE KLIKNĘLIŚMY "ZMIEŃ" (LUB "DODAJ") --}}
-                @if(count($categoryItems) > 0 && !$isChanging)
+                 {{-- JEŚLI MAMY PRZEDMIOT(Y) I NIE KLIKNĘLIŚMY "ZMIEŃ" (LUB "DODAJ") --}}
+                @if(count($selectedCategoryItems) > 0 && !$isChanging)
                     <div class="space-y-8 mb-8">
-                        @foreach($categoryItems as $index => $selectedItemData)
-                            @php
-                                // Pobieramy model dla KRAŻDEGO z wybranych przedmiotów (żeby atrybuty/ceny się zgadzały)
-                                $selectedProductModel = $selectedItemData ? \App\Models\Product::with(['attributeValues.attribute'])->find($selectedItemData['id']) : null;
-
-                                // Zabezpieczenie: Przygotowujemy atrybuty specyficzne dla tego wybranego modelu
-                                $selectedProductAttributes = [];
-                                if ($selectedProductModel) {
-                                    foreach ($selectedProductModel->attributeValues as $attrVal) {
-                                        $rawName = $attrVal->attribute->name ?? 'Parametr';
-                                        $selectedProductAttributes[] = [
-                                            'label' => ucfirst(str_replace('_', ' ', $rawName)), // Możesz podpiąć tu swoje tłumaczenia, jeśli masz je w modelu
-                                            'value' => $attrVal->value
-                                        ];
-                                    }
-                                }
-                            @endphp
-
+                        @foreach($selectedCategoryItems as $index => $selectedItem)
                             <div class="relative bg-black/40 border border-neon-blue/30 rounded-2xl p-6 lg:p-10 backdrop-blur-md shadow-[0_0_30px_rgba(0,240,255,0.05)] overflow-hidden flex flex-col md:flex-row items-center gap-10">
 
                                 <div class="w-56 h-56 bg-white rounded-xl p-4 flex items-center justify-center shrink-0 shadow-lg">
-                                    @if($selectedProductModel && $selectedProductModel->image_url)
-                                        <img src="{{ asset('images/' . $selectedProductModel->image_url) }}"
-                                            alt="{{ $selectedProductModel->name }}"
+                                    @if($selectedItem['image_url'])
+                                        <img src="{{ asset('images/' . $selectedItem['image_url']) }}"
+                                            alt="{{ $selectedItem['name'] }}"
                                             class="max-w-full max-h-full object-contain">
                                     @else
                                         <span class="text-gray-400 text-[10px] font-bruno">Brak zdjęcia</span>
@@ -271,53 +142,37 @@
                                         </span>
                                     </div>
 
-                                    <h2 class="text-3xl font-bold text-white mb-2 uppercase tracking-tight">{{ $selectedItemData['name'] }}</h2>
+                                    <h2 class="text-3xl font-bold text-white mb-2 uppercase tracking-tight">{{ $selectedItem['name'] }}</h2>
 
-                                    @php
-                                        $selectedModelDiscount = ($selectedProductModel && $selectedProductModel->base_price > 0 && $selectedProductModel->promo_price && $selectedProductModel->promo_price < $selectedProductModel->base_price)
-                                            ? round((($selectedProductModel->base_price - $selectedProductModel->promo_price) / $selectedProductModel->base_price) * 100)
-                                            : 0;
-                                        $selectedDiscount = $selectedItemData['discount'] ?? $selectedModelDiscount;
-                                        $selectedBasePrice = $selectedItemData['base_price'] ?? $selectedProductModel?->base_price ?? $selectedItemData['price'];
-                                        $selectedPromoPrice = $selectedItemData['promo_price'] ?? ($selectedModelDiscount > 0 ? $selectedProductModel->promo_price : null);
-                                    @endphp
-
-                                    @if($selectedDiscount > 0 && $selectedPromoPrice)
+                                    @if($selectedItem['discount'] > 0 && $selectedItem['promo_price'])
                                         <div class="flex items-center gap-3 mb-6">
                                             <div class="flex flex-col leading-tight">
                                                 <span class="text-gray-400 line-through text-sm font-bruno">
-                                                    {{ number_format($selectedBasePrice, 0, ',', ' ') }} z&#322;
+                                                    {{ number_format($selectedItem['base_price'], 0, ',', ' ') }} z&#322;
                                                 </span>
                                                 <span class="text-green-400 font-bruno text-2xl">
-                                                    {{ number_format($selectedPromoPrice, 0, ',', ' ') }} z&#322;
+                                                    {{ number_format($selectedItem['promo_price'], 0, ',', ' ') }} z&#322;
                                                 </span>
                                             </div>
                                             <span class="bg-red-600/90 text-white font-bold px-3 py-1 rounded-full text-xs shadow-[0_0_15px_rgba(220,38,38,0.5)] font-bruno">
-                                                -{{ $selectedDiscount }}%
+                                                -{{ $selectedItem['discount'] }}%
                                             </span>
                                         </div>
                                     @else
                                         <div class="text-green-400 font-bruno text-2xl mb-6">
-                                            {{ number_format($selectedItemData['price'], 0, ',', ' ') }} zł
+                                            {{ number_format($selectedItem['price'], 0, ',', ' ') }} zł
                                         </div>
                                     @endif
 
-                                    @if($selectedProductModel && $selectedProductModel->attributeValues)
+                                    @if(!empty($selectedItem['attributes']))
                                         <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                                            @foreach($selectedProductAttributes as $attr)
+                                            @foreach($selectedItem['attributes'] as $attr)
                                             <div class="flex flex-col border-l-2 border-neon-blue/30 pl-4 py-1 bg-white/5 rounded-r-xl transition-all hover:bg-white/10">
                                                 <span class="text-[9px] text-gray-400 uppercase font-bruno">
                                                     {{ $attr['label'] }}
                                                 </span>
                                             <span class="text-white text-sm font-semibold">
-                                                    @php
-                                                        $value = strtolower((string) $attr['value']);
-                                                    @endphp
-                                                    {{ match($value) {
-                                                        'true' => 'Posiada',
-                                                        'false', '0' => 'Nie posiada',
-                                                        default => $attr['value'],
-                                                    } }}
+                                                    {{ $attr['display_value'] }}
                                                 </span>
                                             </div>
                                             @endforeach
@@ -338,7 +193,7 @@
                                             <button type="submit"
                                                 class="inline-flex items-center gap-2 bg-red-500/10 hover:bg-red-600 border border-red-500/50 hover:border-red-600 text-red-400 hover:text-white py-3 px-6 rounded-full font-bold text-[10px] uppercase tracking-widest transition-all">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                            Usuń z zestawu
+                                             Usuń z zestawu
                                             </button>
                                         </form>
                                     </div>
@@ -358,7 +213,7 @@
                         @endif
                     </div>
 
-                {{-- TUTAJ KLUCZOWA ZMIANA: WYŚWIETL LISTĘ TYLKO JEŚLI NIE WYBRANO LUB KLIKNIĘTO ZMIEŃ/DODAJ --}}
+                  {{-- TUTAJ KLUCZOWA ZMIANA: WYŚWIETL LISTĘ TYLKO JEŚLI NIE WYBRANO LUB KLIKNIĘTO ZMIEŃ/DODAJ --}}
                 @else
                     <div class="flex items-center gap-4 mb-8">
                         <div class="h-px grow bg-linear-to-r from-neon-blue/50 to-transparent"></div>
@@ -366,7 +221,7 @@
                         <span class="text-[10px] text-text-muted uppercase">Dostępnych: {{ $products->total() }}</span>
                         <div class="h-px grow bg-linear-to-l from-neon-blue/50 to-transparent"></div>
                     </div>
-                    @if($category->id == 6 && $totalPowerDraw > 0)
+                    @if($category->id == 6 && $summary['totalPowerDraw'] > 0)
                         <div class="col-span-full mb-6 space-y-3">
                             {{-- Alert o minimalnej mocy --}}
                             <div class="flex items-center gap-4 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl">
@@ -375,7 +230,7 @@
                                 </div>
                                 <div>
                                     <h4 class="text-white font-bruno text-xs uppercase tracking-wider">Wymagana moc minimalna</h4>
-                                    <p class="text-orange-200/70 text-[11px]">Twój zestaw pobiera ok. <b>{{ $totalPowerDraw }}W</b>. Wybierz zasilacz o mocy minimum <b>{{ $minPsuWatts }}W</b> (+10% zapasu).</p>
+                                    <p class="text-orange-200/70 text-[11px]">Twój zestaw pobiera około <b>{{ $summary['totalPowerDraw'] }}W</b>. Wybierz zasilacz o mocy minimum <b>{{ $summary['minPsuWatts'] }}W</b> (+10% zapasu).</p>
                                 </div>
                             </div>
 
@@ -391,9 +246,9 @@
                             </div>
 
                             {{-- Walidacja wybranego modelu --}}
-                            @if($selectedPsuWatts > 0 && $selectedPsuWatts < $minPsuWatts)
+                            @if($summary['selectedPsuWatts'] > 0 && $summary['selectedPsuWatts'] < $summary['minPsuWatts'])
                                 <div class="p-3 bg-red-500/20 border border-red-500 rounded-lg animate-pulse">
-                                    <p class="text-red-400 text-[10px] font-bruno text-center uppercase">⚠️ UWAGA: Wybrany zasilacz ({{ $selectedPsuWatts }}W) jest za słaby dla tego zestawu!</p>
+                                    <p class="text-red-400 text-[10px] font-bruno text-center uppercase">⚠️ UWAGA: Wybrany zasilacz ({{ $summary['selectedPsuWatts'] }}W) jest za słaby dla tego zestawu!</p>
                                 </div>
                             @endif
                         </div>
@@ -401,12 +256,7 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10">
                         @forelse($products as $product)
-                            @php
-                                $discount = ($product->base_price > 0 && $product->promo_price && $product->promo_price < $product->base_price)
-                                    ? round((($product->base_price - $product->promo_price) / $product->base_price) * 100)
-                                    : 0;
-                            @endphp
-                            <x-product-card :product="$product" :discount="$discount" :replaceIndex="request('replace_index')" />
+                            <x-product-card :product="$product" :discount="$product->configurator_discount" :replaceIndex="$replaceIndex" />
                         @empty
                            <div class="col-span-full py-16">
                                 <div class="mx-auto max-w-2xl rounded-[1.8rem] border border-dashed border-purple-500/30 bg-purple-900/10 px-5 py-12 text-center shadow-[0_0_15px_rgba(168,85,247,0.1)]">
@@ -423,7 +273,7 @@
                     </div>
 
                     <div class="mt-8 flex justify-end px-4">
-                        {{ $products->appends(request()->query())->links() }}
+                        {{ $products->appends($filterQueryParams)->links() }}
                     </div>
                 @endif
             @endif
@@ -431,30 +281,11 @@
 
         <aside class="col-span-12 lg:col-span-2 xl:col-span-2">
            <section class="flex flex-col bg-black/30 p-6 rounded-lg border border-white/5 backdrop-blur-sm">
-                @php
-                    $cpuSelection = session('configurator_build.1');
-                    $cpuRequiresGpu = (bool) ($cpuSelection['requires_gpu'] ?? false);
-                    $cpuRequiresCooler = (bool) ($cpuSelection['requires_cooler'] ?? false);
-
-                    if ($cpuSelection && (!array_key_exists('requires_gpu', $cpuSelection) || !array_key_exists('requires_cooler', $cpuSelection))) {
-                        $cpuFlags = \DB::table('product_attributes')
-                            ->join('attribute_values', 'product_attributes.attribute_value_id', '=', 'attribute_values.id')
-                            ->where('product_attributes.product_id', $cpuSelection['id'])
-                            ->whereIn('product_attributes.attribute_category_id', [7, 38])
-                            ->pluck('attribute_values.value', 'product_attributes.attribute_category_id');
-
-                        $cpuRequiresGpu = strtolower((string) ($cpuFlags[7] ?? 'true')) === 'false';
-                        $cpuRequiresCooler = strtolower((string) ($cpuFlags[38] ?? 'true')) === 'false';
-                    }
-
-                    $gpuMissing = $cpuRequiresGpu && !session()->has('configurator_build.2');
-                    $coolerMissing = $cpuRequiresCooler && !session()->has('configurator_build.12');
-                @endphp
                 <div class="text-[11px] tracking-[2px] mb-5 text-text-muted font-bruno">BUILD STATUS</div>
                 <div class="text-neon-blue text-[10px] mb-3 uppercase font-bruno">Wymagane elementy</div>
                 <ul class="space-y-2 mb-8">
                    <a href="{{ route('konfigurator.index', ['category_id' => 1]) }}"> <x-config-item label="CPU" id="cpu-status" :categoryId="1" /> </a>
-                    <a href="{{ route('konfigurator.index', ['category_id' => 2]) }}"> <x-config-item label="GPU" id="gpu-status" :categoryId="2" :required-warning="$gpuMissing" required-text="Procesor nie ma zintegrowanej grafiki" /> </a>
+                    <a href="{{ route('konfigurator.index', ['category_id' => 2]) }}"> <x-config-item label="GPU" id="gpu-status" :categoryId="2" :required-warning="$buildStatus['gpuMissing']" required-text="Procesor nie ma zintegrowanej grafiki" /> </a>
                     <a href="{{ route('konfigurator.index', ['category_id' => 3]) }}"> <x-config-item label="Płyta główna" id="plyta-status" :categoryId="3" /></a>
                     <a href="{{ route('konfigurator.index', ['category_id' => 4]) }}"> <x-config-item label="Pamięć RAM" id="ram-status" :categoryId="4" /></a>
                     <a href="{{ route('konfigurator.index', ['category_id' => 5]) }}"> <x-config-item label="Dysk" id="dysk-status" :categoryId="5"/></a>
@@ -468,18 +299,18 @@
                     <a href="{{ route('konfigurator.index', ['category_id' => 9]) }}"><x-config-item label="Klawiatura" id="klawiatura-status" :categoryId="9"/></a>
                     <a href="{{ route('konfigurator.index', ['category_id' => 10]) }}"><x-config-item label="Słuchawki" id="sluchawki-status" :categoryId="10" /></a>
                     <a href="{{ route('konfigurator.index', ['category_id' => 11]) }}"><x-config-item label="Głośniki" id="glosniki-status" :categoryId="11" /></a>
-                    <a href="{{ route('konfigurator.index', ['category_id' => 12]) }}"><x-config-item label="Chłodzenie CPU" id="chlodzenie-status" :categoryId="12" :required-warning="$coolerMissing" required-text="Procesor nie ma chłodzenia w zestawie" /></a>
+                    <a href="{{ route('konfigurator.index', ['category_id' => 12]) }}"><x-config-item label="Chłodzenie CPU" id="chlodzenie-status" :categoryId="12" :required-warning="$buildStatus['coolerMissing']" required-text="Procesor nie ma chłodzenia w zestawie" /></a>
                     <a href="{{ route('konfigurator.index', ['category_id' => 13]) }}"><x-config-item label="Karty sieciowe" id="karty_sieciowe-status" :categoryId="13" /></a>
                     <a href="{{ route('konfigurator.index', ['category_id' => 14]) }}"><x-config-item label="Monitor" id="monitor-status" :categoryId="14"/></a>
                 </ul>
                     <div class="mt-auto pt-6 border-t border-white/10 space-y-3">
                     <div class="bg-white/5 p-3 rounded flex justify-between items-center">
                         <span class="text-[10px] text-text-muted uppercase">Wartość:</span>
-                        <span class="text-neon-blue font-bruno text-lg">{{ number_format($totalPrice, 2) }} zł</span>
+                        <span class="text-neon-blue font-bruno text-lg">{{ number_format($summary['totalPrice'], 2) }} zł</span>
                     </div>
                     <div class="bg-red-500/10 p-3 rounded flex justify-between items-center border border-red-500/30 shadow-[0_0_18px_rgba(239,68,68,0.18)]">
                         <span class="text-[10px] text-red-200 uppercase font-bruno">Pobór mocy:</span>
-                        <span class="text-red-400 font-bruno text-lg drop-shadow-[0_0_8px_rgba(248,113,113,0.75)]">~{{ number_format($totalPowerDraw, 0, ',', ' ') }} W</span>
+                        <span class="text-red-400 font-bruno text-lg drop-shadow-[0_0_8px_rgba(248,113,113,0.75)]">~{{ number_format($summary['totalPowerDraw'], 0, ',', ' ') }} W</span>
                     </div>
 
 
@@ -515,7 +346,7 @@
             window.scrollTo({
                 top: parseInt(savedScrollPosition, 10),
                 behavior: 'instant' // 'instant' sprawia, że użytkownik nawet nie zauważy mignięcia/skoku
-            });
+             });
             // Czyścimy pamięć sesji, żeby przy zwykłym odświeżeniu F5 nie blokować użytkownika
             sessionStorage.removeItem('configurator_scroll_pos');
         }
