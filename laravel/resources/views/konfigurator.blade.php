@@ -241,7 +241,7 @@
                                 </div>
                                 <div>
                                     <h4 class="text-white font-bruno text-xs uppercase tracking-wider">Zalecana moc (Optymalna)</h4>
-                                    <p class="text-green-200/70 text-[11px]">Dla najlepszej kultury pracy i sprawności zalecamy zasilacz <b>{{ $recommendedPsuWatts }}W</b> (+30% zapasu).</p>
+                                    <p class="text-green-200/70 text-[11px]">Dla najlepszej kultury pracy i sprawności zalecamy zasilacz <b>{{ $summary['recommendedPsuWatts'] }}W</b> (+30% zapasu).</p>
                                 </div>
                             </div>
 
