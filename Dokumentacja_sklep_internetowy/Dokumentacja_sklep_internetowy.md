@@ -27,7 +27,7 @@ Podział został opracowany na podstawie historii commitów w repozytorium.
 ### Backend
 
 - PHP 8.5 w kontenerze Docker
-- Laravel 12
+- Laravel 13
 - Livewire 4
 - Eloquent ORM 
 - PostgreSQL 18
@@ -58,6 +58,16 @@ zamówień, listy obserwowanych produktów i możliwość kontaktu ze sklepem
 w ramach reklamacji.
 
 Panel administratora służy do zarządzania ofertą i bieżącą obsługą sklepu.
+
+
+## Przykładowe kierunki dalszego rozwoju
+
+- dodanie uwierzytelniania API przy pomocy Laravel Sanctum,
+- dodanie faktur PDF i integracji z rzeczywistym operatorem płatności,
+- integracja z API firm kurierskich i mapą punktów odbioru,
+- rozszerzenie testów jednostkowych, funkcjonalnych i integracyjnych,
+- poprawa dostępności zgodnie z WCAG,
+
 
 ## Funkcjonalności
 
@@ -125,46 +135,11 @@ Panel administratora służy do zarządzania ofertą i bieżącą obsługą skle
 - kody HTTP między innymi `204`, `400`, `401`, `403`, `404` i `422`,
 - nagłówki bezpieczeństwa dodawane przez middleware.
 
-## Interfejs HTTP i REST API
 
-Aplikacja posiada endpointy zwracające JSON, wykorzystywane między innymi
-przez podpowiedzi wyszukiwania, koszyk i listy obserwowanych produktów.
-Przykłady:
-
-| Metoda | Endpoint | Działanie |
-|---|---|---|
-| `GET` | `/wyszukiwanie/podpowiedzi` | Zwraca podpowiedzi produktów w JSON |
-| `POST` | `/koszyk/dodaj` | Dodaje produkt i zwraca odpowiedź JSON |
-| `POST` | `/koszyk/aktualizuj` | Aktualizuje ilość produktu |
-| `GET` | `/products/{id}/wishlists` | Zwraca listy obserwowanych użytkownika |
-| `POST` | `/products/{id}/wishlists` | Zapisuje produkt na wybranej liście |
-
-
-Aplikacja udostępnia proste REST API w formacie JSON pod prefiksem /api.
-
- Dostępne endpointy pozwalają pobierać status API :
-- listę produktów
-- szczegóły produktu
-- kategorie
-- marki. 
- 
-Lista produktów obsługuje wyszukiwanie, filtrowanie, sortowanie i paginację.
-Przykłady użycia:
-
-Pokazanie produktów: http://localhost/api/products
-
-![BAZA](zdjecia/API.png)
-
-Wyszukiwanie: http://localhost/api/products?search=rtx
-
-![BAZA](zdjecia/API2.png)
-
-lub wiele filtrów naraz: http://localhost/api/products?category_id=6&min_price=200&max_price=800&sort=price_asc
-
-![BAZA](zdjecia/API3.png)
 
 ## Baza danych
 
+### Schemat ERD
 
 ![BAZA](zdjecia/baza.png)
 
@@ -182,9 +157,7 @@ Najważniejsze zasoby:
 - reklamacje i wiadomości,
 - historia przeglądania oraz statystyki odwiedzin.
 
-### Schemat ERD
-
-
+### Schemat
 
 Pełny schemat bazy znajduje się w:
 `laravel/database/seeders/sql/store_schema.sql`.
@@ -316,19 +289,20 @@ zamówienia, profilu i panelu administratora.
 
 Przykładowy proces złożenia zamówienia:
 
-1. Użytkownik otwiera stronę główną i wybiera kategorię procesorów.
-2. Filtruje produkty według marki, ceny i dostępności.
-3. Sortuje wyniki według ceny lub oceny.
-4. Otwiera szczegóły produktu i zapoznaje się ze specyfikacją oraz opiniami.
-5. Dodaje produkt do koszyka.
-6. Opcjonalnie używa konfiguratora, aby dobrać kompatybilne podzespoły.
-7. Przechodzi do koszyka, ustala ilości i wybiera ubezpieczenie.
-8. W formularzu transakcji podaje dane odbiorcy, adres, dostawę i płatność.
-9. Backend waliduje dane oraz zapisuje zamówienie i jego pozycje w transakcji
-   bazodanowej.
-10. Zalogowany użytkownik obserwuje status zamówienia w swoim profilu.
-11. Po dostawie może wystawić ocenę albo utworzyć reklamację.
-12. Administrator odpowiada na reklamację i aktualizuje jej status.
+
+1. okno logowania na głownej stronie przenosi nas do panelu.
+![TESTY](zdjecia/Logowanie.png)
+2. opcja rejestracji na głownej stronie przenosi nas do panelu rejestracji.
+![TESTY](zdjecia/Rejestracja.png)
+3. Wyszukiwanie produktu w panelu wyszukiwania.
+![TESTY](zdjecia/Mysz_wyszukiwarka.png)
+4. Przeglądamy stronę produktu gdzie mamy opinie oraz specyfikacje możemy bezpośrednio z tąd dodać do koszyka.
+![TESTY](zdjecia/produkt.png)
+5. Po wejściu do koszyka, użytkownik ustala ilości produktów które chce kupić i wybiera ubezpieczenie.
+![TESTY](zdjecia/Koszyk.png)
+6. Opcjonalnie można użyć konfiguratora, aby zbudować dobry zestaw kompatybilnych podzespołów.
+![TESTY](zdjecia/Konfigurator.png)
+
 
 ## Obsługa błędów i kody HTTP
 
@@ -341,11 +315,41 @@ Aplikacja wykorzystuje mechanizmy Laravel do walidacji i obsługi błędów:
 - `204 No Content` dla operacji zakończonych bez treści odpowiedzi,
 - komunikaty sesyjne po poprawnych lub nieudanych operacjach formularzy.
 
-## Przykładowe kierunki dalszego rozwoju
+## Interfejs HTTP i REST API
 
-- dodanie uwierzytelniania API przy pomocy Laravel Sanctum,
-- dodanie faktur PDF i integracji z rzeczywistym operatorem płatności,
-- integracja z API firm kurierskich i mapą punktów odbioru,
-- rozszerzenie testów jednostkowych, funkcjonalnych i integracyjnych,
-- poprawa dostępności zgodnie z WCAG,
+Aplikacja posiada endpointy zwracające JSON, wykorzystywane między innymi
+przez podpowiedzi wyszukiwania, koszyk i listy obserwowanych produktów.
+Przykłady:
+
+| Metoda | Endpoint | Działanie |
+|---|---|---|
+| `GET` | `/wyszukiwanie/podpowiedzi` | Zwraca podpowiedzi produktów w JSON |
+| `POST` | `/koszyk/dodaj` | Dodaje produkt i zwraca odpowiedź JSON |
+| `POST` | `/koszyk/aktualizuj` | Aktualizuje ilość produktu |
+| `GET` | `/products/{id}/wishlists` | Zwraca listy obserwowanych użytkownika |
+| `POST` | `/products/{id}/wishlists` | Zapisuje produkt na wybranej liście |
+
+
+Aplikacja udostępnia proste REST API w formacie JSON pod prefiksem /api.
+
+ Dostępne endpointy pozwalają pobierać status API :
+- listę produktów
+- szczegóły produktu
+- kategorie
+- marki. 
+ 
+Lista produktów obsługuje wyszukiwanie, filtrowanie, sortowanie i paginację.
+Przykłady użycia:
+
+Pokazanie produktów: http://localhost/api/products
+
+![BAZA](zdjecia/API.png)
+
+Wyszukiwanie: http://localhost/api/products?search=rtx
+
+![BAZA](zdjecia/API2.png)
+
+lub wiele filtrów naraz: http://localhost/api/products?category_id=6&min_price=200&max_price=800&sort=price_asc
+
+![BAZA](zdjecia/API3.png)
 
