@@ -45,7 +45,6 @@ Podział został opracowany na podstawie historii commitów w repozytorium.
 - Docker Compose
 - Nginx
 - PHP-FPM
-- pgAdmin
 - Git i GitHub
 
 ## Przeznaczenie aplikacji
@@ -168,7 +167,6 @@ Pełny schemat bazy znajduje się w:
 .
 |-- compose.yaml                    # definicja usług Docker Compose
 |-- nginx/                          # konfiguracja i obraz Nginx
-|-- php-cli/                        # obraz narzędzi CLI
 |-- php-fpm/                        # obraz aplikacji PHP-FPM
 |-- laravel/
 |   |-- app/Http/Controllers/       # kontrolery aplikacji
@@ -188,7 +186,7 @@ Pełny schemat bazy znajduje się w:
 
 - Docker Desktop lub Docker Engine z Docker Compose,
 - Git,
-- wolne porty `80`, `5432` i `8888`.
+- wolne porty `80` i `5432`.
 
 Lokalne instalowanie PHP, PostgreSQL i Nginx nie jest wymagane.
 
@@ -201,80 +199,43 @@ Lokalne instalowanie PHP, PostgreSQL i Nginx nie jest wymagane.
    cd Sklep-internetowy_Apl
    ```
 
-2. Utwórz pliki środowiskowe:
-
-   PowerShell:
-
-   ```powershell
-   Copy-Item .env.example .env
-   Copy-Item laravel/.env.example laravel/.env
-   ```
-3. Zbuduj i uruchom kontenery:
+2. Zbuduj i uruchom kontenery:
 
    ```bash
    docker compose up -d --build
    ```
 
-4. Wygeneruj klucz aplikacji:
-
-   ```bash
-   docker compose exec php-cli php artisan key:generate
-   ```
-
-5. Utwórz schemat i automatycznie załaduj dane:
-
-   ```bash
-   docker compose exec php-cli php artisan migrate --seed
-   ```
-
-6. Otwórz aplikację:
+3. Otworz aplikacje:
 
    - sklep: [http://localhost](http://localhost)
-   - pgAdmin: [http://localhost:8888](http://localhost:8888)
    - kontrola stanu Laravel: [http://localhost/up](http://localhost/up)
-
-### Konfiguracja pgAdmin
-
-| Pole | Wartość |
-|---|---|
-| Login pgAdmin | `user-name@domain-name.com` |
-| Hasło pgAdmin | `strong-password` |
-| Host bazy | `postgres` |
-| Port | `5432` |
-| Baza | `app` |
-| Użytkownik | `user` |
-| Hasło | `9f3irfsdhidw` |
 
 Seeder tworzy konto administratora o adresie `admin@admin`.
 ## Automatyczne seedowanie
 
-Seeder uruchamiany jest poleceniem:
+Przy starcie kontener `php-fpm` wykonuje `php artisan migrate --force`.
+Dane demonstracyjne sa ładowane przez `php artisan db:seed --force` tylko wtedy, gdy tabela `products` jest pusta, dzieki czemu zwykły restart kontenerow nie duplikuje produktow.
+
+Ręczne uruchomienie migracji lub seedera:
 
 ```bash
-docker compose exec php-cli php artisan migrate --seed
+docker compose exec php-fpm php artisan migrate --force
+docker compose exec php-fpm php artisan db:seed --force
 ```
-
-Przebieg:
-
-1. Migracja `create_store_schema` tworzy schemat PostgreSQL.
-2. `DatabaseSeeder` uruchamia `StoreSeeder`.
-3. `StoreSeeder` ładuje dane z pliku
-   `laravel/database/seeders/sql/store_data.sql`.
 
 Ponowne utworzenie bazy od zera:
 
 ```bash
-docker compose exec php-cli php artisan migrate:fresh --seed
+docker compose exec php-fpm php artisan migrate:fresh --seed --force
 ```
 
 Polecenie usuwa istniejące dane.
-
 ## Testy
 
 Uruchomienie testów:
 
 ```bash
-docker compose exec php-cli php artisan test
+docker compose exec php-fpm php artisan test
 ```
 
 Projekt zawiera testy zabezpieczenia komentarzy produktów przed

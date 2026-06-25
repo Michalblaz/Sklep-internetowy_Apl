@@ -1,31 +1,33 @@
 #!/bin/sh
 set -e
 
-# Initialize storage directory if empty
-# -----------------------------------------------------------
-# If the storage directory is empty, copy the initial contents
-# and set the correct permissions.
-# -----------------------------------------------------------
-if [ ! "$(ls -A /var/www/storage)" ]; then
-  echo "Initializing storage directory..."
+if [ ! "$(ls -A /var/www/storage 2>/dev/null)" ]; then
+  echo "Initializing Laravel storage volume..."
   cp -R /var/www/storage-init/. /var/www/storage
 fi
 
-# Remove storage-init directory
-rm -rf /var/www/storage-init
+if [ ! "$(ls -A /var/www/public/images/products 2>/dev/null)" ]; then
+  echo "Initializing product images volume..."
+  cp -R /var/www/product-images-init/. /var/www/public/images/products
+fi
 
-# Run Laravel migrations
-# -----------------------------------------------------------
-# Ensure the database schema is up to date.
-# -----------------------------------------------------------
-# php artisan migrate --force
+chown -R www-data:www-data /var/www/storage /var/www/public/images/products
+rm -rf /var/www/storage-init /var/www/product-images-init
 
-# Clear and cache configurations
-# -----------------------------------------------------------
-# Improves performance by caching config and routes.
-# -----------------------------------------------------------
 php artisan config:clear
 php artisan route:clear
 
-# Run the default command
+if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
+  php artisan migrate --force
+fi
+
+if [ "${RUN_SEEDER:-true}" = "true" ]; then
+  PRODUCT_COUNT="$(PGPASSWORD="${DB_PASSWORD}" psql -h "${DB_HOST:-postgres}" -p "${DB_PORT:-5432}" -U "${DB_USERNAME}" -d "${DB_DATABASE}" -tAc "SELECT COUNT(*) FROM products;" 2>/dev/null || echo 0)"
+  PRODUCT_COUNT="$(echo "${PRODUCT_COUNT}" | tr -d '[:space:]')"
+
+  if [ "${PRODUCT_COUNT:-0}" = "0" ]; then
+    php artisan db:seed --force
+  fi
+fi
+
 exec "$@"
