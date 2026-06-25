@@ -40,24 +40,6 @@ class AdminController extends Controller
         $lowStockThreshold = (int) ($filters['low_stock_threshold'] ?? 5);
         $archivalDateFilter = $filters['archival_date'] ?? 'all';
         $stockSearch = trim($filters['stock_search'] ?? '');
-
-        $categoryLabels = [
-            1 => 'Procesory',
-            2 => 'Karty Graficzne',
-            3 => 'Płyty Główne',
-            4 => 'RAM',
-            5 => 'Dyski',
-            6 => 'Zasilacze',
-            7 => 'Obudowa',
-            8 => 'Myszka',
-            9 => 'Klawiatura',
-            10 => 'Słuchawki',
-            11 => 'Głośniki',
-            12 => 'Chłodzenie Procesora',
-            13 => 'Karty sieciowe',
-            14 => 'Monitor',
-        ];
-
         $customerQuery = User::query()
             ->where(function ($query) {
                 $query->where('is_Admin', false)
@@ -110,26 +92,27 @@ class AdminController extends Controller
                 ->count(),
         ];
 
-       $productsCount = Product::sum('stock_quantity');
+        $productsCount = Product::sum('stock_quantity');
 
-        $categoryChartDataRaw = DB::table('products')
-    ->select(
-        'products.category_id',
-        DB::raw('SUM(products.stock_quantity) as product_count')
-    )
-    ->where('products.isarchival', 0)
-    ->whereNotNull('products.category_id')
-    ->groupBy('products.category_id')
-    ->get()
-    ->keyBy('category_id');
-
-$categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($categoryChartDataRaw) {
-    return [
-        'id' => $id,
-        'label' => $label,
-        'value' => (int) ($categoryChartDataRaw[$id]->product_count ?? 0),
-    ];
-})->sortByDesc('value')->values();
+        $categoryChartData = DB::table('categories')
+            ->leftJoin('products', function ($join) {
+                $join->on('products.category_id', '=', 'categories.id')
+                    ->where('products.isarchival', 0);
+            })
+            ->select(
+                'categories.id',
+                'categories.name as label',
+                DB::raw('COALESCE(SUM(products.stock_quantity), 0) as value')
+            )
+            ->groupBy('categories.id', 'categories.name')
+            ->orderByDesc('value')
+            ->orderBy('categories.name')
+            ->get()
+            ->map(fn ($category) => [
+                'id' => (int) $category->id,
+                'label' => $category->label,
+                'value' => (int) $category->value,
+            ]);
 
         $modelChartDataByCategory = DB::table('products')
             ->select(
@@ -319,6 +302,45 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             ->orderBy('products.name')
             ->get();
 
+        $attributeCategoryTable = $this->attributeCategoryTable();
+        $adminAttributes = DB::table($attributeCategoryTable)
+            ->orderBy('name')
+            ->get();
+
+        $adminShippingMethods = DB::table('shipping_methods')
+            ->orderBy('id')
+            ->get();
+
+        $editableUsers = User::query()
+            ->select('id', 'email', 'first_name', 'last_name', 'phone', 'is_Admin')
+            ->orderBy('id')
+            ->get();
+
+        $editableOrders = DB::table('orders')
+            ->leftJoin('users', 'orders.user_id', '=', 'users.id')
+            ->leftJoin('shipping_methods', 'orders.shipping_method_id', '=', 'shipping_methods.id')
+            ->select(
+                'orders.id',
+                'orders.user_id',
+                'orders.shipping_method_id',
+                'orders.tracking_status',
+                'orders.shipping_cost',
+                'orders.created_at',
+                'orders.shipping_first_name',
+                'orders.shipping_last_name',
+                'orders.shipping_street',
+                'orders.shipping_city',
+                'orders.shipping_postal_code',
+                'orders.shipping_phone',
+                'orders.payment_method',
+                'orders.pickup_point_info',
+                'users.email as user_email',
+                'shipping_methods.name as shipping_method_name'
+            )
+            ->orderByDesc('orders.id')
+            ->limit(60)
+            ->get();
+
         return view('Admin', [
             'storeStats' => [
                 'customers' => $customersCount,
@@ -347,7 +369,140 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
             'lowStockThreshold' => $lowStockThreshold,
             'archivalDateFilter' => $archivalDateFilter,
             'stockSearch' => $stockSearch,
+            'adminAttributes' => $adminAttributes,
+            'adminShippingMethods' => $adminShippingMethods,
+            'editableUsers' => $editableUsers,
+            'editableOrders' => $editableOrders,
         ]);
+    }
+
+    public function storeAttributeCategory(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'min:2', 'max:100'],
+        ]);
+
+        DB::table($this->attributeCategoryTable())->insert([
+            'name' => $this->normalizeAdminText($validated['name']),
+        ]);
+
+        return redirect(route('admin') . '#zarzadzanie-atrybuty')
+            ->with('admin_status', 'Atrybut zostal dodany.');
+    }
+
+    public function updateAttributeCategory(Request $request, int $attribute)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'min:2', 'max:100'],
+        ]);
+
+        DB::table($this->attributeCategoryTable())
+            ->where('id', $attribute)
+            ->update([
+                'name' => $this->normalizeAdminText($validated['name']),
+            ]);
+
+        return redirect(route('admin') . '#zarzadzanie-atrybuty')
+            ->with('admin_status', 'Atrybut zostal zaktualizowany.');
+    }
+
+    public function storeShippingMethod(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'min:2', 'max:100'],
+            'price' => ['required', 'numeric', 'min:0', 'max:999999.99'],
+        ]);
+
+        DB::table('shipping_methods')->insert([
+            'name' => $this->normalizeAdminText($validated['name']),
+            'price' => round((float) $validated['price'], 2),
+        ]);
+
+        return redirect(route('admin') . '#zarzadzanie-dostawy')
+            ->with('admin_status', 'Metoda dostawy zostala dodana.');
+    }
+
+    public function updateShippingMethod(Request $request, int $method)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'min:2', 'max:100'],
+            'price' => ['required', 'numeric', 'min:0', 'max:999999.99'],
+        ]);
+
+        DB::table('shipping_methods')
+            ->where('id', $method)
+            ->update([
+                'name' => $this->normalizeAdminText($validated['name']),
+                'price' => round((float) $validated['price'], 2),
+            ]);
+
+        return redirect(route('admin') . '#zarzadzanie-dostawy')
+            ->with('admin_status', 'Metoda dostawy zostala zaktualizowana.');
+    }
+
+    public function updateUser(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'first_name' => ['nullable', 'string', 'max:100'],
+            'last_name' => ['nullable', 'string', 'max:100'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'is_Admin' => ['nullable', 'boolean'],
+        ]);
+
+        $isAdmin = (bool) ($validated['is_Admin'] ?? false);
+
+        if (Auth::id() === $user->id && ! $isAdmin) {
+            return redirect(route('admin') . '#zarzadzanie-uzytkownicy')
+                ->with('admin_error', 'Nie mozesz odebrac uprawnien administratora wlasnemu kontu.');
+        }
+
+        $user->forceFill([
+            'first_name' => $this->nullableAdminText($validated['first_name'] ?? null),
+            'last_name' => $this->nullableAdminText($validated['last_name'] ?? null),
+            'phone' => $this->nullableAdminText($validated['phone'] ?? null),
+            'email' => $this->normalizeAdminText($validated['email']),
+            'is_Admin' => $isAdmin,
+        ])->save();
+
+        return redirect(route('admin') . '#zarzadzanie-uzytkownicy')
+            ->with('admin_status', 'Uzytkownik zostal zaktualizowany.');
+    }
+
+    public function updateOrder(Request $request, int $order)
+    {
+        $validated = $request->validate([
+            'shipping_method_id' => ['nullable', 'integer', 'exists:shipping_methods,id'],
+            'tracking_status' => ['nullable', 'string', 'max:100'],
+            'shipping_cost' => ['nullable', 'numeric', 'min:0', 'max:999999.99'],
+            'payment_method' => ['nullable', 'string', 'max:100'],
+            'pickup_point_info' => ['nullable', 'string', 'max:255'],
+            'shipping_first_name' => ['nullable', 'string', 'max:255'],
+            'shipping_last_name' => ['nullable', 'string', 'max:255'],
+            'shipping_street' => ['nullable', 'string', 'max:255'],
+            'shipping_city' => ['nullable', 'string', 'max:255'],
+            'shipping_postal_code' => ['nullable', 'string', 'max:20'],
+            'shipping_phone' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        DB::table('orders')
+            ->where('id', $order)
+            ->update([
+                'shipping_method_id' => $validated['shipping_method_id'] ?? null,
+                'tracking_status' => $this->nullableAdminText($validated['tracking_status'] ?? null),
+                'shipping_cost' => isset($validated['shipping_cost']) ? round((float) $validated['shipping_cost'], 2) : null,
+                'payment_method' => $this->nullableAdminText($validated['payment_method'] ?? null),
+                'pickup_point_info' => $this->nullableAdminText($validated['pickup_point_info'] ?? null),
+                'shipping_first_name' => $this->nullableAdminText($validated['shipping_first_name'] ?? null),
+                'shipping_last_name' => $this->nullableAdminText($validated['shipping_last_name'] ?? null),
+                'shipping_street' => $this->nullableAdminText($validated['shipping_street'] ?? null),
+                'shipping_city' => $this->nullableAdminText($validated['shipping_city'] ?? null),
+                'shipping_postal_code' => $this->nullableAdminText($validated['shipping_postal_code'] ?? null),
+                'shipping_phone' => $this->nullableAdminText($validated['shipping_phone'] ?? null),
+            ]);
+
+        return redirect(route('admin') . '#zarzadzanie-zamowienia')
+            ->with('admin_status', 'Zamowienie zostalo zaktualizowane.');
     }
 
     public function archiveProduct(Request $request, int $product)
@@ -538,6 +693,29 @@ $categoryChartData = collect($categoryLabels)->map(function ($label, $id) use ($
     private function likePattern(string $value): string
     {
         return '%' . addcslashes(mb_strtolower($value), '\\%_') . '%';
+    }
+
+    private function attributeCategoryTable(): string
+    {
+        return Schema::hasTable('attribute_cathegory')
+            ? 'attribute_cathegory'
+            : 'attribute_category';
+    }
+
+    private function normalizeAdminText(string $value): string
+    {
+        return preg_replace('/\s+/', ' ', trim($value));
+    }
+
+    private function nullableAdminText(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $value = $this->normalizeAdminText($value);
+
+        return $value === '' ? null : $value;
     }
 
     private function usersPanelRedirect()

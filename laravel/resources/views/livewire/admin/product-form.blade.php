@@ -33,15 +33,21 @@
                                 <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                             @endforeach
                         </select>
+                        <input type="text" wire:model.live="new_category_name" placeholder="Lub wpisz nowa kategorie" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-sm text-white focus:border-purple-500 outline-none transition-all">
+                        @error('category_id') <span class="text-[10px] text-red-500 ml-2 uppercase">{{ $message }}</span> @enderror
+                        @error('new_category_name') <span class="text-[10px] text-red-500 ml-2 uppercase">{{ $message }}</span> @enderror
                     </div>
                     <div class="space-y-2">
                         <label class="text-[11px] uppercase tracking-[0.2em] text-gray-500 ml-1 font-bold">Producent</label>
-                        <select wire:model="brand_id" class="w-full bg-slate-900 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-purple-500 outline-none transition-all appearance-none cursor-pointer">
+                        <select wire:model.live="brand_id" class="w-full bg-slate-900 border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-purple-500 outline-none transition-all appearance-none cursor-pointer">
                             <option value="">Wybierz markę</option>
                             @foreach($brands as $brand)
                                 <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                             @endforeach
                         </select>
+                        <input type="text" wire:model.live="new_brand_name" placeholder="Lub wpisz nowego producenta" class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-sm text-white focus:border-purple-500 outline-none transition-all">
+                        @error('brand_id') <span class="text-[10px] text-red-500 ml-2 uppercase">{{ $message }}</span> @enderror
+                        @error('new_brand_name') <span class="text-[10px] text-red-500 ml-2 uppercase">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
@@ -82,18 +88,36 @@
                         class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-5 text-white focus:border-purple-500 outline-none text-center font-mono text-base transition-all">
                     <div class="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-0 group-focus-within:w-full bg-purple-500 transition-all duration-500 shadow-[0_0_15px_#a855f7]"></div>
                 </div>
+                    <div class="mt-4">
+                        <input
+                            type="file"
+                            wire:model="product_image"
+                            accept="image/jpeg,image/png,image/webp"
+                            class="block w-full cursor-pointer rounded-xl border border-white/10 bg-white/5 text-sm text-gray-300 file:mr-4 file:border-0 file:bg-purple-600 file:px-4 file:py-3 file:text-sm file:font-bold file:uppercase file:tracking-widest file:text-white hover:file:bg-purple-500"
+                        >
+                        <div wire:loading wire:target="product_image" class="mt-2 text-[10px] uppercase tracking-widest text-purple-300">
+                            Wgrywanie pliku...
+                        </div>
+                        @error('product_image') <span class="mt-2 block text-[10px] text-red-500 uppercase">{{ $message }}</span> @enderror
+                    </div>
                     <div class="mt-4 p-3 rounded-lg bg-black/20 border border-white/5">
                         <p class="text-[9px] text-gray-500 uppercase tracking-widest mb-1">ścieżka automatyczna, Nazwa:</p>
                         <p class="text-[11px] font-mono text-purple-300/80 break-all">
                             @php
                                 $source = $file_name_input ?: ($name ?: 'nazwa_produktu');
-                                $cleaned = preg_replace('/\.jpg$/i', '', $source);
+                                $cleaned = preg_replace('/\.(jpe?g|png|webp)$/i', '', $source);
                                 $previewFormatted = \Illuminate\Support\Str::ascii($cleaned); // Usuwa ą, ć, ś itp.
                                 $previewFormatted = str_replace(' ', '_', $previewFormatted);
 
                                 $folder = $categoryFolderMap[$category_id] ?? 'others';
+                                $extension = 'jpg';
+
+                                if ($product_image && method_exists($product_image, 'getClientOriginalExtension')) {
+                                    $extension = strtolower($product_image->getClientOriginalExtension());
+                                    $extension = $extension === 'jpeg' ? 'jpg' : $extension;
+                                }
                             @endphp
-                            <span class="text-white font-bold">{{ $previewFormatted }}</span><span class="text-cyan-400">.jpg</span>
+                            <span class="text-gray-500">products/{{ $folder }}/</span><span class="text-white font-bold">{{ $previewFormatted }}</span><span class="text-cyan-400">.{{ $extension }}</span>
                         </p>
                     </div>
                 </div>

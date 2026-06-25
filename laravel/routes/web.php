@@ -70,6 +70,12 @@ use App\Livewire\Admin\ProductForm;
          Route::post('/admin/reklamacje/{complaint}/decyzja', [AdminController::class, 'updateComplaint'])->middleware('throttle:30,1')->whereNumber('complaint')->name('admin.complaints.update');
          Route::post('/admin/products/{product}/archive', [AdminController::class, 'archiveProduct'])->middleware('throttle:30,1')->whereNumber('product')->name('admin.products.archive');
          Route::post('/admin/products/{product}/restore', [AdminController::class, 'restoreProduct'])->middleware('throttle:30,1')->whereNumber('product')->name('admin.products.restore');
+         Route::post('/admin/attribute-categories', [AdminController::class, 'storeAttributeCategory'])->middleware('throttle:30,1')->name('admin.attribute-categories.store');
+         Route::patch('/admin/attribute-categories/{attribute}', [AdminController::class, 'updateAttributeCategory'])->middleware('throttle:30,1')->whereNumber('attribute')->name('admin.attribute-categories.update');
+         Route::post('/admin/shipping-methods', [AdminController::class, 'storeShippingMethod'])->middleware('throttle:30,1')->name('admin.shipping-methods.store');
+         Route::patch('/admin/shipping-methods/{method}', [AdminController::class, 'updateShippingMethod'])->middleware('throttle:30,1')->whereNumber('method')->name('admin.shipping-methods.update');
+         Route::patch('/admin/users/{user}/edit', [AdminController::class, 'updateUser'])->middleware('throttle:30,1')->whereNumber('user')->name('admin.users.update');
+         Route::patch('/admin/orders/{order}', [AdminController::class, 'updateOrder'])->middleware('throttle:30,1')->whereNumber('order')->name('admin.orders.update');
      });
 
      // Logowanie / Rejestracja

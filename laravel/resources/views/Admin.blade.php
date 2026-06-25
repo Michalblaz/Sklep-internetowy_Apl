@@ -842,6 +842,8 @@
                 </div>
 
             </section>
+
+            @include('admin.manage-data')
         @endif
     </div>
 
@@ -855,6 +857,7 @@
             <a href="{{ route('admin') }}#stany-magazynowe" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Stany</a>
             <a href="{{ route('admin') }}#reklamacje" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Reklamacje</a>
             <a href="{{ route('admin') }}#uzytkownicy" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Użytkownicy</a>
+            <a href="{{ route('admin') }}#zarzadzanie" class="rounded-xl border border-transparent px-3 py-2 hover:text-white hover:border-white/10 hover:bg-white/5 transition">Zarzadzanie</a>
             <hr class="border-white/10 my-2">
            <a href="{{ route('admin', ['action' => 'add-product']) }}"
                 class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 transition">
