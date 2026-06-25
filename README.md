@@ -140,7 +140,7 @@ Panel administratora służy do zarządzania ofertą i bieżącą obsługą skle
 
 ### Schemat ERD
 
-![BAZA](zdjecia/baza.png)
+![BAZA](Dokumentacja_sklep_internetowy/zdjecia/baza.png)
 
 
 Projekt wykorzystuje PostgreSQL. Schemat jest tworzony automatycznie przez
