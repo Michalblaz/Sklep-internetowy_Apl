@@ -1,5 +1,5 @@
 # Stage 1: Build environment and Composer dependencies
-FROM php:8.5-fpm AS builder
+FROM php:8.5-fpm
 
 # Install system dependencies and PHP extensions for Laravel with MySQL/PostgreSQL support.
 # Dependencies in this stage are only required for building the final image.
@@ -44,14 +44,13 @@ WORKDIR /var/www
 # In other cases, it would be possible to copy composer files
 # first, to leverage Docker's layer caching mechanism.
 # -----------------------------------------------------------
-COPY ./laravel /var/www
+# COPY ./laravel /var/www
 
 # Install Composer and dependencies
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-    && composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
+# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+#     && composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
 
 # Stage 2: Production environment
-FROM php:8.5-fpm AS production
 
 # Install only runtime libraries needed in production
 # libfcgi-bin and procps are required for the php-fpm-healthcheck script
@@ -73,12 +72,12 @@ COPY ./php-fpm/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Copy the initial storage structure
-COPY ./laravel/storage /var/www/storage-init
+# COPY ./laravel/storage /opt/storage-init
 
 # Copy PHP extensions and libraries from the builder stage
-COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
-COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
-COPY --from=builder /usr/local/bin/docker-php-ext-* /usr/local/bin/
+# COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
+# COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
+# COPY --from=builder /usr/local/bin/docker-php-ext-* /usr/local/bin/
 
 # Use the recommended production PHP configuration
 # -----------------------------------------------------------
@@ -95,7 +94,14 @@ COPY ./php-fpm/conf.d/*.conf /usr/local/etc/php-fpm.d/
 #RUN sed -i 's/variables_order = "GPCS"/variables_order = "EGPCS"/' "$PHP_INI_DIR/php.ini"
 
 # Copy the application code and dependencies from the build stage
-COPY --from=builder /var/www /var/www
+# COPY --from=builder /var/www /var/www
+
+# Install Node.js and build tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    nodejs \
+    npm \
+    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Set working directory
 WORKDIR /var/www
