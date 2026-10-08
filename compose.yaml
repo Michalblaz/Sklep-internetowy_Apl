@@ -12,7 +12,7 @@ services:
       # The 'php-fpm' service mounts the same volume without ':ro' to allow write operations.
       # -----------------------------------------------------------
       - ./laravel:/var/www
-      - ./laravel-storage-production:/var/www/storage:ro
+      # - ./laravel-storage-production:/var/www/storage:rw
 
     ports:
       # Map port 80 inside the container to the port specified by 'NGINX_PORT' on the host machine.
@@ -30,11 +30,11 @@ services:
     build:
       context: .
       dockerfile: ./php-fpm/Dockerfile
-      target: production # Use the 'production' stage in the Dockerfile
+      # target: production # Use the 'production' stage in the Dockerfile
     restart: unless-stopped
     volumes:
       - ./laravel:/var/www
-      - ./laravel-storage-production:/var/www/storage # Mount the storage volume
+      # - ./laravel-storage-production:/var/www/storage # Mount the storage volume
 
     healthcheck:
       test: ["CMD-SHELL", "php-fpm-healthcheck || exit 1"]
